@@ -14,8 +14,12 @@ const router = express.Router();
 
 router.get('/', protect, getUserNotifications);
 router.get('/all-admin', protect, admin, getAllNotifications);
-router.put('/:id/read', protect, markNotificationAsRead);
+
+// ⚠️ IMPORTANT: /read-all MUST be registered before /:id/read
+// Otherwise Express matches "read-all" as the :id parameter, causing a CastError
 router.put('/read-all', protect, markAllNotificationsAsRead);
+router.put('/:id/read', protect, markNotificationAsRead);
+
 router.post('/', protect, admin, validateNotification, createNotification);
 router.delete('/:id', protect, deleteNotification);
 

@@ -123,7 +123,7 @@ export const validateCreatePlan = [
 ];
 
 export const validateDeposit = [
-  body('amount').isFloat({ min: 100 }).withMessage('Minimum deposit is 100'),
+  body('amount').isFloat({ min: 300 }).withMessage('Minimum deposit is 300'),
   body('paymentMethod').isIn(['JazzCash', 'Easypaisa', 'Allied Bank', 'HBL', 'Bank Alfalah', 'Bank Al Habib']).withMessage('Invalid payment method'),
   body('transactionId').trim().isLength({ min: 5, max: 50 }).withMessage('Transaction ID must be 5-50 characters'),
   handleValidationErrors,

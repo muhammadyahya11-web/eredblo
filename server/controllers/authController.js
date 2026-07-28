@@ -246,7 +246,8 @@ const forgotPassword = async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
+    const clientUrl = process.env.CLIENT_URL || `${req.protocol}://${req.get('host')}`;
+    const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
     const message = `You are receiving this email because you (or someone else) has requested a password reset. Click the link to reset your password:\n\n${resetUrl}\n\nThis link will expire in 10 minutes. If you did not request this, please ignore this email.`;
 
     try {

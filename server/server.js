@@ -23,25 +23,43 @@ import earningsRoutes from './routes/earningsRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import maintenanceMode from './middlewares/maintenanceMode.js';
 import { isServerlessRuntime } from './utils/uploadPath.js';
+import { startProfitScheduler } from './utils/profitEngine.js';
 import Settings from './models/Settings.js';
 
 dotenv.config();
 
-await connectDB();
+if (process.env.NODE_ENV !== 'test') {
+  await connectDB();
 
-// Initialize default settings if none exist
-try {
-  const existingSettings = await Settings.findOne();
-  if (!existingSettings) {
-    await Settings.create({});
-    console.log('[Settings] Default settings initialized.');
+  // Initialize default settings if none exist
+  try {
+    const existingSettings = await Settings.findOne();
+    if (!existingSettings) {
+      await Settings.create({});
+      console.log('[Settings] Default settings initialized.');
+    }
+  } catch (err) {
+    console.error('[Settings] Failed to initialize settings:', err.message);
   }
-} catch (err) {
-  console.error('[Settings] Failed to initialize settings:', err.message);
+
+  // Start profit distribution scheduler (only on traditional servers, not serverless)
+  if (!isServerlessRuntime) {
+    startProfitScheduler();
+  }
 }
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
+
+// Build list of allowed origins for CSP connectSrc
+const allowedConnectSrc = ["'self'"];
+if (isProd && process.env.CLIENT_URL) {
+  allowedConnectSrc.push(process.env.CLIENT_URL);
+  // Also add the API server URL itself so the frontend can reach it
+  if (process.env.API_URL) allowedConnectSrc.push(process.env.API_URL);
+} else {
+  allowedConnectSrc.push('http://localhost:*', 'http://127.0.0.1:*');
+}
 
 app.set('trust proxy', 1);
 app.use(helmet({
@@ -51,14 +69,14 @@ app.use(helmet({
       scriptSrc: isProd ? ["'self'"] : ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'", "http://localhost:*"],
+      connectSrc: allowedConnectSrc,
       fontSrc: ["'self'", "data:"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
       frameSrc: ["'none'"],
     },
   },
-  crossOriginEmbedderPolicy: !isProd,
+  crossOriginEmbedderPolicy: false, // Disabled to avoid breaking third-party resources
   hsts: {
     maxAge: 31536000,
     includeSubDomains: true,
@@ -135,6 +153,9 @@ app.use('/api/auth/register', slowDown({ windowMs: 60 * 60 * 1000, delayAfter: 2
 app.use('/api/auth/send-login-otp', slowDown({ windowMs: 15 * 60 * 1000, delayAfter: 3, delayMs: () => 500 }));
 app.use('/api/auth/login-with-otp', slowDown({ windowMs: 15 * 60 * 1000, delayAfter: 3, delayMs: () => 500 }));
 
+// ⚠️ Maintenance mode must be applied BEFORE routes so all API calls are blocked
+app.use(maintenanceMode);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
@@ -147,8 +168,6 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/earnings', earningsRoutes);
-
-app.use(maintenanceMode);
 
 app.get('/', (req, res) => {
   res.json({ message: 'ERED BLOO API is running...', status: 'ok' });

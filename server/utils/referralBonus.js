@@ -8,7 +8,7 @@ const MAX_BONUS = 5000;
 const INVESTMENT_THRESHOLD = 100000;
 
 export const checkAndAwardReferralBonus = async (userId) => {
-  const user = await User.findById(userId).select('referredBy totalInvestment');
+  const user = await User.findById(userId).select('referredBy totalInvestment name');
   if (!user || !user.referredBy) return;
 
   const referrer = await User.findById(user.referredBy).select('status referralBonusesGiven');
