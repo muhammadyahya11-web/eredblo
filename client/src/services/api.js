@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = https://eredbloo-server.vercel.app/   || '/api';
+const baseURL = import.meta.env.VITE_API_URL || 'https://eredbloo-server.vercel.app/api';
 
 const api = axios.create({
   baseURL,
@@ -24,7 +24,7 @@ api.interceptors.response.use(
     if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
       error.message = 'Request timed out. Please check your connection and try again.';
     } else if (!error.response) {
-      error.message = 'Cannot reach the server. Please ensure the backend is running on port 5000.';
+      error.message = 'Cannot reach the server. Please check your connection and try again.';
     } else if (error.response && error.response.status === 502) {
       error.message = 'Server error (502). The backend may be down or restarting. Please try again shortly.';
     } else if (error.response && error.response.status === 503) {
