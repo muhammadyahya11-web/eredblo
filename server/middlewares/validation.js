@@ -144,6 +144,11 @@ export const validateSupportTicket = [
   handleValidationErrors,
 ];
 
+export const validateSupportReply = [
+  body('message').trim().isLength({ min: 5, max: 2000 }).withMessage('Message must be 5-2000 characters'),
+  handleValidationErrors,
+];
+
 export const validateSettingsUpdate = [
   body('websiteLogo').optional().trim(),
   body('heroBanner').optional().trim(),

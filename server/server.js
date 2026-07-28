@@ -22,7 +22,6 @@ import settingsRoutes from './routes/settingsRoutes.js';
 import earningsRoutes from './routes/earningsRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import maintenanceMode from './middlewares/maintenanceMode.js';
-import { startProfitScheduler } from './utils/profitEngine.js';
 import { isServerlessRuntime } from './utils/uploadPath.js';
 import Settings from './models/Settings.js';
 
@@ -39,12 +38,6 @@ try {
   }
 } catch (err) {
   console.error('[Settings] Failed to initialize settings:', err.message);
-}
-
-// Start the automatic profit distribution scheduler only for long-running Node
-// servers. Vercel serverless functions should use a cron-triggered endpoint/job.
-if (!isServerlessRuntime) {
-  startProfitScheduler();
 }
 
 const app = express();
@@ -137,10 +130,10 @@ app.use('/api/auth/login-with-otp', createRateLimiter(15 * 60 * 1000, 5, 'Too ma
 app.use('/api/auth/forgot-password', createRateLimiter(15 * 60 * 1000, 10, 'Too many attempts'));
 app.use('/api/auth/reset-password', createRateLimiter(15 * 60 * 1000, 10, 'Too many attempts'));
 
-app.use('/api/auth/login', slowDown({ windowMs: 15 * 60 * 1000, delayAfter: 3, delayMs: 500 }));
-app.use('/api/auth/register', slowDown({ windowMs: 60 * 60 * 1000, delayAfter: 2, delayMs: 1000 }));
-app.use('/api/auth/send-login-otp', slowDown({ windowMs: 15 * 60 * 1000, delayAfter: 3, delayMs: 500 }));
-app.use('/api/auth/login-with-otp', slowDown({ windowMs: 15 * 60 * 1000, delayAfter: 3, delayMs: 500 }));
+app.use('/api/auth/login', slowDown({ windowMs: 15 * 60 * 1000, delayAfter: 3, delayMs: () => 500 }));
+app.use('/api/auth/register', slowDown({ windowMs: 60 * 60 * 1000, delayAfter: 2, delayMs: () => 1000 }));
+app.use('/api/auth/send-login-otp', slowDown({ windowMs: 15 * 60 * 1000, delayAfter: 3, delayMs: () => 500 }));
+app.use('/api/auth/login-with-otp', slowDown({ windowMs: 15 * 60 * 1000, delayAfter: 3, delayMs: () => 500 }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -168,10 +161,11 @@ app.get('/api/health', (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-
-const server = app.listen(PORT, () => {
-  console.log(`Server running in ${isProd ? 'production' : 'development'} mode on port ${PORT}`);
-});
+if (!isServerlessRuntime) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running in ${isProd ? 'production' : 'development'} mode on port ${PORT}`);
+  });
+}
 
 export default app;
