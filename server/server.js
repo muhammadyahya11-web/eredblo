@@ -6,7 +6,6 @@ import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
 import cookieParser from 'cookie-parser';
 import xss from 'xss';
-import path from 'path';
 import { existsSync, mkdirSync } from 'fs';
 
 import connectDB from './config/db.js';
@@ -25,6 +24,7 @@ import earningsRoutes from './routes/earningsRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import maintenanceMode from './middlewares/maintenanceMode.js';
 import { startProfitScheduler } from './utils/profitEngine.js';
+import { isServerlessRuntime, uploadsDir } from './utils/uploadPath.js';
 import Settings from './models/Settings.js';
 
 dotenv.config();
@@ -42,18 +42,15 @@ try {
   console.error('[Settings] Failed to initialize settings:', err.message);
 }
 
-// Vercel's deployment bundle is read-only (/var/task). Use /tmp for temporary
-// upload staging there, and the local uploads folder in development.
-const uploadsDir = process.env.VERCEL
-  ? path.join('/tmp', 'uploads')
-  : path.join(process.cwd(), 'uploads');
+// Vercel/AWS deployment bundles are read-only. Upload staging uses the
+// serverless runtime's writable temporary directory instead.
 if (!existsSync(uploadsDir)) {
   mkdirSync(uploadsDir, { recursive: true });
 }
 
 // Start the automatic profit distribution scheduler only for long-running Node
 // servers. Vercel serverless functions should use a cron-triggered endpoint/job.
-if (!process.env.VERCEL) {
+if (!isServerlessRuntime) {
   startProfitScheduler();
 }
 

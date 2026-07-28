@@ -9,9 +9,9 @@ import {
 } from '../controllers/depositController.js';
 import { protect, admin } from '../middlewares/authMiddleware.js';
 import { validateDeposit } from '../middlewares/validation.js';
+import { uploadsDir } from '../utils/uploadPath.js';
 
 const router = express.Router();
-const uploadsDir = process.env.VERCEL ? '/tmp/uploads' : 'uploads/';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
