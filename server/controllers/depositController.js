@@ -15,20 +15,20 @@ const cloudinaryConfigured = () =>
 
 const resolveScreenshotUrl = async (file) => {
   if (!file) return '';
-  // Upload to Cloudinary when configured; otherwise fall back to the locally
-  // stored file so the flow works in development without cloud credentials.
-  if (cloudinaryConfigured()) {
-    try {
-      const result = await cloudinary.uploader.upload(file.path, {
-        folder: 'ered-bloo/deposits',
-        resource_type: 'auto',
-      });
-      return result.secure_url;
-    } catch (error) {
-      console.error('Cloudinary upload error:', error.message);
-    }
+  if (!cloudinaryConfigured()) {
+    throw new Error('Screenshot storage is not configured. Set Cloudinary environment variables.');
   }
-  return `/uploads/${file.filename}`;
+
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'ered-bloo/deposits', resource_type: 'auto' },
+      (error, result) => {
+        if (error) return reject(new Error('Failed to upload payment screenshot'));
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(file.buffer);
+  });
 };
 
 const createDeposit = async (req, res, next) => {

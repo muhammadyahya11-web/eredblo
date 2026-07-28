@@ -6,7 +6,6 @@ import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
 import cookieParser from 'cookie-parser';
 import xss from 'xss';
-import { existsSync, mkdirSync } from 'fs';
 
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
@@ -24,7 +23,7 @@ import earningsRoutes from './routes/earningsRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import maintenanceMode from './middlewares/maintenanceMode.js';
 import { startProfitScheduler } from './utils/profitEngine.js';
-import { isServerlessRuntime, uploadsDir } from './utils/uploadPath.js';
+import { isServerlessRuntime } from './utils/uploadPath.js';
 import Settings from './models/Settings.js';
 
 dotenv.config();
@@ -40,12 +39,6 @@ try {
   }
 } catch (err) {
   console.error('[Settings] Failed to initialize settings:', err.message);
-}
-
-// Vercel/AWS deployment bundles are read-only. Upload staging uses the
-// serverless runtime's writable temporary directory instead.
-if (!existsSync(uploadsDir)) {
-  mkdirSync(uploadsDir, { recursive: true });
 }
 
 // Start the automatic profit distribution scheduler only for long-running Node
@@ -120,8 +113,6 @@ app.use((req, res, next) => {
   } catch {}
   next();
 });
-
-app.use('/uploads', express.static(uploadsDir));
 
 const createRateLimiter = (windowMs, max, message) =>
   rateLimit({

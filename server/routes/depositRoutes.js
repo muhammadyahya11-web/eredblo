@@ -9,22 +9,13 @@ import {
 } from '../controllers/depositController.js';
 import { protect, admin } from '../middlewares/authMiddleware.js';
 import { validateDeposit } from '../middlewares/validation.js';
-import { uploadsDir } from '../utils/uploadPath.js';
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, `deposit-${uniqueSuffix}${path.extname(file.originalname)}`);
-  },
-});
-
 const upload = multer({
-  storage,
+  // Vercel's filesystem is ephemeral/read-only. The controller streams this
+  // in-memory buffer directly to Cloudinary.
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|webp|pdf/;
