@@ -7,6 +7,11 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    outDir: "dist",
+    // Increase chunk size warning limit to avoid spurious warnings
+    chunkSizeWarningLimit: 1500,
+  },
   server: {
     host: "0.0.0.0",
     port: 5173,
@@ -16,5 +21,10 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: './src/tests/setup.js',
+    globals: true,
   },
 });
