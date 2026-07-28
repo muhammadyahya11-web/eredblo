@@ -42,12 +42,19 @@ try {
   console.error('[Settings] Failed to initialize settings:', err.message);
 }
 
-// Start the automatic profit distribution scheduler (runs every hour)
-startProfitScheduler();
-
-const uploadsDir = path.join(process.cwd(), 'uploads');
+// Vercel's deployment bundle is read-only (/var/task). Use /tmp for temporary
+// upload staging there, and the local uploads folder in development.
+const uploadsDir = process.env.VERCEL
+  ? path.join('/tmp', 'uploads')
+  : path.join(process.cwd(), 'uploads');
 if (!existsSync(uploadsDir)) {
   mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Start the automatic profit distribution scheduler only for long-running Node
+// servers. Vercel serverless functions should use a cron-triggered endpoint/job.
+if (!process.env.VERCEL) {
+  startProfitScheduler();
 }
 
 const app = express();

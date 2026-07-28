@@ -11,10 +11,11 @@ import { protect, admin } from '../middlewares/authMiddleware.js';
 import { validateDeposit } from '../middlewares/validation.js';
 
 const router = express.Router();
+const uploadsDir = process.env.VERCEL ? '/tmp/uploads' : 'uploads/';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
