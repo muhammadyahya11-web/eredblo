@@ -3,7 +3,7 @@ import Plan from '../models/Plan.js';
 import Investment from '../models/Investment.js';
 import Transaction from '../models/Transaction.js';
 import Notification from '../models/Notification.js';
-import { distributeProfits, startProfitScheduler } from '../utils/profitEngine.js';
+import { distributeProfits } from '../utils/profitEngine.js';
 import { checkAndAwardReferralBonus } from '../utils/referralBonus.js';
 
 const createInvestment = async (req, res, next) => {

@@ -1,5 +1,4 @@
 import User from '../models/User.js';
-import { validateCreateAdmin } from '../middlewares/validation.js';
 
 const getStats = async (req, res, next) => {
   try {

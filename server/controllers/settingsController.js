@@ -1,5 +1,4 @@
 import Settings from '../models/Settings.js';
-import { validateSettingsUpdate } from '../middlewares/validation.js';
 
 const getSettings = async (req, res, next) => {
   try {
