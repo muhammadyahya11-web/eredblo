@@ -143,4 +143,12 @@ export const settingsAPI = {
   update: (data) => api.put('/settings', data),
 };
 
+export const giftAPI = {
+  getMyGifts: () => api.get('/gifts/my-gifts'),
+  openGift: (id) => api.post(`/gifts/${id}/open`),
+  adminSendGift: (data) => api.post('/gifts/send', data),
+  adminGetAllGifts: (params) => api.get('/gifts/admin/all', { params }),
+  adminDeleteGift: (id) => api.delete(`/gifts/admin/${id}`),
+};
+
 export default api;

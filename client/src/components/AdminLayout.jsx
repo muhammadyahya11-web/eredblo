@@ -3,7 +3,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   FiGrid, FiUsers, FiDownload, FiUpload, FiList,
   FiTrendingUp, FiHelpCircle, FiSettings, FiLogOut,
-  FiBell, FiMenu, FiChevronDown, FiShield
+  FiBell, FiMenu, FiChevronDown, FiShield, FiGift
 } from 'react-icons/fi';
 import { AuthContext } from '../context/AuthContext';
 
@@ -32,6 +32,7 @@ const AdminLayout = () => {
     if (path === '/admin/earnings') return { title: 'Earnings', sub: 'Platform earnings overview' };
     if (path === '/admin/support') return { title: 'Support Tickets', sub: 'Manage user support tickets' };
     if (path === '/admin/notifications') return { title: 'Notifications', sub: 'Send and manage notifications' };
+    if (path === '/admin/gifts') return { title: 'Gift Boxes', sub: 'Manage & send 2-hour timed gift boxes' };
     if (path === '/admin/settings') return { title: 'Settings', sub: 'Admin panel settings' };
     return { title: '', sub: '' };
   };
@@ -80,6 +81,9 @@ const AdminLayout = () => {
           </NavLink>
           <NavLink to="/admin/notifications" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-red-600 text-white font-medium shadow-[0_4px_20px_rgba(220,38,38,0.3)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiBell size={18} /> Notifications
+          </NavLink>
+          <NavLink to="/admin/gifts" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-red-600 text-white font-medium shadow-[0_4px_20px_rgba(220,38,38,0.3)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+            <FiGift size={18} /> Gift Boxes
           </NavLink>
           <NavLink to="/admin/settings" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-red-600 text-white font-medium shadow-[0_4px_20px_rgba(220,38,38,0.3)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiSettings size={18} /> Settings

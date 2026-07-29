@@ -20,6 +20,7 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import supportRoutes from './routes/supportRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
 import earningsRoutes from './routes/earningsRoutes.js';
+import giftRoutes from './routes/giftRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import maintenanceMode from './middlewares/maintenanceMode.js';
 import { isServerlessRuntime } from './utils/uploadPath.js';
@@ -168,6 +169,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/earnings', earningsRoutes);
+app.use('/api/gifts', giftRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'ERED BLOO API is running...', status: 'ok' });

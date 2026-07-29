@@ -10,6 +10,7 @@ import giftImg from "../../assets/gift_box.jpg";
 import userAvatar from "../../assets/man.webp";
 import { AuthContext } from "../../context/AuthContext";
 import { userAPI, transactionAPI, earningsAPI } from "../../services/api";
+import GiftBoxSection from "../../components/GiftBoxSection";
 
 /* ─── CountUp Animation ────────────────────────────────────────── */
 function CountUp({ end, duration = 1400, prefix = "", suffix = "", decimals = 0 }) {
@@ -461,6 +462,9 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* ══ MYSTERY GIFT BOXES SECTION ══════════════════════════════ */}
+      <GiftBoxSection />
 
       {/* ══ STAT CARDS ══════════════════════════════════════════════ */}
       <div className="db-stat-grid">

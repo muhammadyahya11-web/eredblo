@@ -6,6 +6,7 @@ import Settings from '../models/Settings.js';
 import cloudinary from '../config/cloudinary.js';
 import { distributeReferralCommission } from '../utils/referralCommission.js';
 import { checkAndAwardReferralBonus } from '../utils/referralBonus.js';
+import GiftBox from '../models/GiftBox.js';
 
 const cloudinaryConfigured = () =>
   process.env.CLOUDINARY_CLOUD_NAME &&
@@ -169,6 +170,45 @@ const updateDepositStatus = async (req, res, next) => {
       // Multi-level referral commission on approved deposits
       await distributeReferralCommission(deposit.user, deposit.amount, 'deposit');
       await checkAndAwardReferralBonus(deposit.user, deposit.amount);
+
+      // 🎁 AUTO GIFT BOX: If deposit is 50,000 or more, create a 2-hour locked Gift Box!
+      if (deposit.amount >= 50000) {
+        const unlocksAt = new Date(Date.now() + 2 * 60 * 60 * 1000); // 2 hours from now
+
+        // Check if gift box already created for this deposit to prevent duplicate
+        const existingGift = await GiftBox.findOne({ depositId: deposit._id });
+        if (!existingGift) {
+          // Select default gift option or money reward for 50k+ deposit
+          const giftTypes = ['Money', 'Motorcycle', 'Laptop', 'Phone'];
+          const randomType = giftTypes[Math.floor(Math.random() * giftTypes.length)];
+          
+          let giftName = 'PKR 5,000 Special Cash Reward';
+          let amount = 5000;
+
+          if (randomType === 'Motorcycle') giftName = 'Honda CD 70 Motorcycle';
+          else if (randomType === 'Laptop') giftName = 'HP Core i7 Laptop';
+          else if (randomType === 'Phone') giftName = 'iPhone 15 Smart Phone';
+
+          await GiftBox.create({
+            user: deposit.user,
+            depositId: deposit._id,
+            title: `🎁 VIP 50K+ Deposit Gift Box`,
+            giftType: randomType,
+            giftName,
+            amount: randomType === 'Money' ? amount : 0,
+            description: `Reward for depositing PKR ${deposit.amount.toLocaleString()}. Unlocks in 2 hours!`,
+            unlocksAt,
+          });
+
+          await Notification.create({
+            user: deposit.user,
+            title: '🎁 VIP Gift Box Received!',
+            message: `Congratulations! Because your deposit is PKR ${deposit.amount.toLocaleString()}, you received a VIP Mystery Gift Box! It will unlock in 2 hours.`,
+            type: 'Offer',
+            isImportant: true,
+          });
+        }
+      }
     } else {
       await Transaction.updateOne(
         { referenceId: deposit._id, type: 'Deposit' },

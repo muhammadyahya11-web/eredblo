@@ -3,7 +3,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Download, Upload, List,
   TrendingUp, HelpCircle, Settings, LogOut,
-  Bell, Menu, ChevronDown, Shield, UserCheck
+  Bell, Menu, ChevronDown, Shield, UserCheck, Gift
 } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -18,6 +18,7 @@ const navItems = [
   { to: '/super-admin/earnings', icon: TrendingUp, label: 'Earnings' },
   { to: '/super-admin/support', icon: HelpCircle, label: 'Support' },
   { to: '/super-admin/notifications', icon: Bell, label: 'Notifications' },
+  { to: '/super-admin/gifts', icon: Gift, label: 'Gift Boxes' },
   { to: '/super-admin/settings', icon: Settings, label: 'Settings' },
 ];
 
@@ -32,6 +33,7 @@ const titles = {
   '/super-admin/earnings': { title: 'Earnings', sub: 'Platform earnings overview' },
   '/super-admin/support': { title: 'Support Tickets', sub: 'Manage user support tickets' },
   '/super-admin/notifications': { title: 'Notifications', sub: 'Send and manage notifications' },
+  '/super-admin/gifts': { title: 'Gift Boxes', sub: 'Manage & send 2-hour timed gift boxes' },
   '/super-admin/settings': { title: 'Settings', sub: 'Super admin panel settings' },
 };
 

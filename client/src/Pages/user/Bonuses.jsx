@@ -3,6 +3,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { userAPI, transactionAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 import { FiUsers, FiDollarSign, FiGift, FiCalendar } from 'react-icons/fi';
+import GiftBoxSection from '../../components/GiftBoxSection';
 
 const Bonuses = () => {
   const { user } = useContext(AuthContext);
@@ -51,6 +52,9 @@ const Bonuses = () => {
     <div className="bonuses-page">
       <h2 className="page-title">Bonuses & Referrals</h2>
       <p className="page-subtitle text-slate-400 text-sm mb-6">Track your referral earnings and team performance</p>
+
+      {/* Gift Boxes */}
+      <GiftBoxSection />
 
       <div className="stats-grid mb-6">
         <div className="stat-card p-compact">

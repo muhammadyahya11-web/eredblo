@@ -18,6 +18,7 @@ import AdminEarnings from './Pages/Admin/AdminEarnings';
 import AdminSupport from './Pages/Admin/AdminSupport';
 import AdminNotifications from './Pages/Admin/AdminNotifications';
 import AdminSettings from './Pages/Admin/AdminSettings';
+import AdminGifts from './Pages/Admin/AdminGifts';
 import SuperAdminDashboard from './Pages/SuperAdmin/Dashboard';
 import SuperAdminAdmins from './Pages/SuperAdmin/Admins';
 import SuperAdminUsers from './Pages/SuperAdmin/Users';
@@ -113,6 +114,7 @@ function App() {
             <Route path="earnings" element={<AdminEarnings />} />
             <Route path="support" element={<AdminSupport />} />
             <Route path="notifications" element={<AdminNotifications />} />
+            <Route path="gifts" element={<AdminGifts />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
         </Route>
@@ -130,6 +132,7 @@ function App() {
             <Route path="earnings" element={<SuperAdminEarnings />} />
             <Route path="support" element={<SuperAdminSupport />} />
             <Route path="notifications" element={<SuperAdminNotifications />} />
+            <Route path="gifts" element={<AdminGifts />} />
             <Route path="settings" element={<SuperAdminSettings />} />
           </Route>
         </Route>
