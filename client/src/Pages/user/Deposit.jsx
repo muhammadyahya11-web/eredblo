@@ -24,7 +24,7 @@ const FALLBACK_ACCOUNTS = [
   {
     method: 'JazzCash',
     accountTitle: 'Muhammad Abdullah',
-    accountNumber: '03184271931',
+    accountNumber: '0318-4371931',
     bankName: '',
     branchCode: '',
     iban: '',

@@ -146,9 +146,9 @@ export const settingsAPI = {
 export const giftAPI = {
   getMyGifts: () => api.get('/gifts/my-gifts'),
   openGift: (id) => api.post(`/gifts/${id}/open`),
-  adminSendGift: (data) => api.post('/gifts/send', data),
-  adminGetAllGifts: (params) => api.get('/gifts/admin/all', { params }),
-  adminDeleteGift: (id) => api.delete(`/gifts/admin/${id}`),
+  adminSendGift: (data) => api.post('/gifts/send', data).catch(() => api.post('/admin/gifts/send', data)),
+  adminGetAllGifts: (params) => api.get('/gifts/admin/all', { params }).catch(() => api.get('/admin/gifts/all', { params })),
+  adminDeleteGift: (id) => api.delete(`/gifts/admin/${id}`).catch(() => api.delete(`/admin/gifts/${id}`)),
 };
 
 export default api;

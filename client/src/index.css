@@ -32,8 +32,24 @@
   }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* 3D Transform Utilities */
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.-rotate-x-120 {
+  transform: rotateX(-120deg);
+}
+
+@keyframes float3D {
+  0%, 100% {
+    transform: translateY(0px) rotateX(4deg) rotateY(-4deg);
   }
+  50% {
+    transform: translateY(-8px) rotateX(-4deg) rotateY(4deg);
+  }
+}
+
+.animate-float-3d {
+  animation: float3D 4s ease-in-out infinite;
 }
