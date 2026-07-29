@@ -78,7 +78,7 @@ const createInvestment = async (req, res, next) => {
       isImportant: true,
     });
 
-    await checkAndAwardReferralBonus(req.user._id);
+    await checkAndAwardReferralBonus(req.user._id, amount);
 
     res.status(201).json({ success: true, data: investment, message: 'Investment created successfully' });
   } catch (error) {

@@ -24,8 +24,7 @@ export const validateRegister = [
     .isEmail().withMessage('Valid email is required')
     .normalizeEmail(),
   body('password')
-    .isLength({ min: 8, max: 128 }).withMessage('Password must be 8-128 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/).withMessage('Password must contain uppercase, lowercase, number, and special character'),
+    .notEmpty().withMessage('Password is required'),
 
   body('phone')
     .matches(/^\+?[1-9]\d{6,14}|0\d{6,14}$/).withMessage('Valid phone number is required'),
@@ -70,8 +69,7 @@ export const validateForgotPassword = [
 export const validateResetPassword = [
   param('token').isLength({ min: 40, max: 40 }).withMessage('Invalid token format'),
   body('password')
-    .isLength({ min: 8, max: 128 }).withMessage('Password must be 8-128 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/).withMessage('Password must contain uppercase, lowercase, number, and special character'),
+    .notEmpty().withMessage('Password is required'),
   body('confirmPassword').optional({ checkFalsy: true }).custom((value, { req }) => {
     if (value && value !== req.body.password) {
       throw new Error('Passwords do not match');
@@ -84,8 +82,7 @@ export const validateResetPassword = [
 export const validateChangePassword = [
   body('oldPassword').notEmpty().withMessage('Current password is required'),
   body('newPassword')
-    .isLength({ min: 8, max: 128 }).withMessage('New password must be 8-128 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/).withMessage('New password must contain uppercase, lowercase, number, and special character'),
+    .notEmpty().withMessage('New password is required'),
   body('confirmPassword').optional({ checkFalsy: true }).custom((value, { req }) => {
     if (value && value !== req.body.newPassword) {
       throw new Error('Passwords do not match');
@@ -106,8 +103,7 @@ export const validateCreateAdmin = [
   body('name').trim().isLength({ min: 2, max: 50 }).withMessage('Name must be 2-50 characters'),
   body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
   body('password')
-    .isLength({ min: 8, max: 128 }).withMessage('Password must be 8-128 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/).withMessage('Password must contain uppercase, lowercase, number, and special character'),
+    .notEmpty().withMessage('Password is required'),
   body('phone').matches(/^\+?[1-9]\d{6,14}|0\d{6,14}$/).withMessage('Valid phone number is required'),
   handleValidationErrors,
 ];

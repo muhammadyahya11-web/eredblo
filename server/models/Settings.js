@@ -48,6 +48,8 @@ const settingsSchema = new mongoose.Schema(
       level2: { type: Number, default: 5 },
       level3: { type: Number, default: 2 },
     },
+    referralBonusPercentage: { type: Number, default: 5 },
+    referralBonusMax: { type: Number, default: 5000 },
     maintenanceMode: {
       type: Boolean,
       default: false,

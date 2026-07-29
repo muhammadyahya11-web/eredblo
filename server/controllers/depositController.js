@@ -168,7 +168,7 @@ const updateDepositStatus = async (req, res, next) => {
 
       // Multi-level referral commission on approved deposits
       await distributeReferralCommission(deposit.user, deposit.amount, 'deposit');
-      await checkAndAwardReferralBonus(deposit.user);
+      await checkAndAwardReferralBonus(deposit.user, deposit.amount);
     } else {
       await Transaction.updateOne(
         { referenceId: deposit._id, type: 'Deposit' },

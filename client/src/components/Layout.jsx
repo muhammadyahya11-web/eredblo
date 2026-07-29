@@ -61,9 +61,7 @@ const Layout = () => {
 
   const { title, sub } = getPageTitle();
   const userName = user?.name || 'User';
-  const avatarUrl = user?.profilePicture && !user.profilePicture.includes('default')
-    ? user.profilePicture
-    : `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=0f2c6e&color=60a5fa&bold=true`;
+  const hasRealPicture = user?.profilePicture && !user.profilePicture.includes('default');
 
   return (
     <div className="app-container flex min-h-screen bg-[#060a14] text-white">
@@ -189,7 +187,13 @@ const Layout = () => {
               <FiHeadphones size={20} />
             </button>
             <div className="flex items-center gap-2 cursor-pointer border-l border-[#1a2340] pl-5 ml-1" onClick={() => navigate('/dashboard/profile')}>
-              <img src={avatarUrl} alt={userName} className="w-8 h-8 rounded-full object-cover ring-2 ring-blue-500/30" />
+              {hasRealPicture ? (
+                <img src={user.profilePicture} alt={userName} className="w-8 h-8 rounded-full object-cover ring-2 ring-blue-500/30" />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-white font-bold text-sm ring-2 ring-blue-500/30 select-none">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+              )}
               <span className="text-sm font-medium text-white hidden sm:block">{userName}</span>
               <FiChevronDown className="text-slate-400 hidden sm:block" size={16} />
             </div>

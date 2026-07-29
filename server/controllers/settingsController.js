@@ -49,6 +49,8 @@ const getPublicSettings = async (req, res, next) => {
         maximumWithdrawal: settings.maximumWithdrawal,
         minimumDeposit: settings.minimumDeposit,
         referralCommissionRates: settings.referralCommissionRates,
+        referralBonusPercentage: settings.referralBonusPercentage,
+        referralBonusMax: settings.referralBonusMax,
         maintenanceMode: settings.maintenanceMode,
       },
     });

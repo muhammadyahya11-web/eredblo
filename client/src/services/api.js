@@ -58,6 +58,7 @@ export const authAPI = {
 export const userAPI = {
   getProfile: () => api.get('/users/profile'),
   updateProfile: (data) => api.put('/users/profile', data),
+  uploadProfilePicture: (formData) => api.post('/users/profile/picture', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
   getDashboard: () => api.get('/users/dashboard'),
   getReferralStats: () => api.get('/users/referral-stats'),
 };

@@ -1,7 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { FiMail, FiPhone, FiMessageCircle, FiGlobe, FiInstagram, FiTwitter, FiYoutube, FiTool, FiDollarSign, FiDownload, FiUpload } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
+import {
+  FiMail, FiPhone, FiMessageCircle, FiGlobe,
+  FiInstagram, FiTwitter, FiYoutube, FiTool,
+  FiDollarSign, FiDownload, FiUpload, FiGift,
+  FiUsers, FiPercent, FiShield, FiInfo,
+} from 'react-icons/fi';
 import { settingsAPI } from '../../services/api';
 import toast from 'react-hot-toast';
+
+const InfoRow = ({ icon: Icon, iconColor, label, value }) => (
+  <div className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-blue-500/10">
+    <div className={`w-9 h-9 rounded-full flex items-center justify-center ${iconColor || 'bg-blue-500/10 text-blue-400'}`}>
+      <Icon size={16} />
+    </div>
+    <div>
+      <p className="text-[11px] text-slate-400">{label}</p>
+      <p className="text-white text-sm font-semibold">{value}</p>
+    </div>
+  </div>
+);
 
 const Settings = () => {
   const [settings, setSettings] = useState(null);
@@ -11,10 +28,8 @@ const Settings = () => {
     const fetchSettings = async () => {
       try {
         const { data } = await settingsAPI.getPublic();
-        if (data.success) {
-          setSettings(data.data);
-        }
-      } catch (error) {
+        if (data.success) setSettings(data.data);
+      } catch {
         toast.error('Failed to load settings');
       } finally {
         setLoading(false);
@@ -25,136 +40,177 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div className="settings-page">
-        <div className="loading-state">Loading settings...</div>
+      <div className="p-8">
+        <div className="flex items-center gap-3 text-slate-400">
+          <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+          Loading settings...
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="settings-page">
-      <h2 className="page-title">Platform Settings</h2>
-      <p className="page-subtitle text-slate-400 text-sm mb-6">Public platform information and configuration</p>
+  const rates = settings?.referralCommissionRates;
 
+  return (
+    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6">
+
+      {/* Maintenance Mode Banner */}
       {settings?.maintenanceMode && (
-        <div className="section-card mb-6 border-amber-500/30 bg-amber-500/5">
-          <div className="flex items-center gap-3">
-            <FiTool className="text-amber-500" size={20} />
-            <div>
-              <h3 className="text-amber-500 font-semibold">Maintenance Mode Active</h3>
-              <p className="text-slate-400 text-sm">The platform is currently under maintenance. Some features may be unavailable.</p>
-            </div>
+        <div className="flex items-center gap-3 p-4 rounded-xl border border-amber-500/30 bg-amber-500/5">
+          <FiTool className="text-amber-500 shrink-0" size={20} />
+          <div>
+            <p className="text-amber-400 font-semibold text-sm">Maintenance Mode Active</p>
+            <p className="text-slate-400 text-xs">The platform is currently under maintenance. Some features may be temporarily unavailable.</p>
           </div>
         </div>
       )}
 
+      {/* Grid layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="section-card">
-          <h3 className="section-title">Platform Information</h3>
-          <div className="space-y-4">
-            {settings?.websiteLogo && (
-              <div className="flex items-center gap-4">
-                <img src={settings.websiteLogo} alt="Logo" className="w-16 h-16 object-contain rounded-lg bg-[#050810] border border-blue-500/10 p-2" />
+
+        {/* Platform Info */}
+        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FiInfo className="text-blue-400" size={16} />
+            <h3 className="text-white font-semibold text-sm">Platform Information</h3>
+          </div>
+
+          {settings?.websiteLogo && (
+            <div className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-blue-500/10">
+              <img src={settings.websiteLogo} alt="Logo" className="w-10 h-10 object-contain rounded bg-[#060a14] p-1" />
+              <div>
+                <p className="text-[11px] text-slate-400">Website Logo</p>
+                <a href={settings.websiteLogo} target="_blank" rel="noopener noreferrer" className="text-blue-400 text-xs hover:text-blue-300 break-all">View</a>
+              </div>
+            </div>
+          )}
+
+          <InfoRow icon={FiMail} iconColor="bg-blue-500/10 text-blue-400" label="Contact Email" value={settings?.contactEmail || 'N/A'} />
+          <InfoRow icon={FiPhone} iconColor="bg-green-500/10 text-green-400" label="Contact Phone" value={settings?.contactPhone || 'N/A'} />
+          <InfoRow icon={FiMessageCircle} iconColor="bg-green-500/10 text-green-400" label="WhatsApp Number" value={settings?.whatsappNumber || 'N/A'} />
+        </div>
+
+        {/* Deposit & Withdrawal Limits */}
+        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FiDollarSign className="text-blue-400" size={16} />
+            <h3 className="text-white font-semibold text-sm">Limits</h3>
+          </div>
+
+          <InfoRow icon={FiDownload} iconColor="bg-blue-500/10 text-blue-400" label="Minimum Deposit" value={`PKR ${settings?.minimumDeposit?.toLocaleString() || '300'}`} />
+          <InfoRow icon={FiUpload} iconColor="bg-green-500/10 text-green-400" label="Minimum Withdrawal" value={`PKR ${settings?.minimumWithdrawal?.toLocaleString() || '300'}`} />
+          <InfoRow icon={FiUpload} iconColor="bg-amber-500/10 text-amber-400" label="Maximum Withdrawal" value={`PKR ${settings?.maximumWithdrawal?.toLocaleString() || '500,000'}`} />
+        </div>
+
+        {/* Referral Commission Rates */}
+        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FiUsers className="text-purple-400" size={16} />
+            <h3 className="text-white font-semibold text-sm">Referral Commission Rates</h3>
+          </div>
+          <p className="text-[11px] text-slate-500">Earn commission when your referred members make deposits.</p>
+
+          <div className="space-y-3">
+            {[
+              { level: 'Level 1', rate: rates?.level1 ?? 10, color: 'bg-blue-500/10 text-blue-400 border-blue-500/20', desc: 'Direct referral' },
+              { level: 'Level 2', rate: rates?.level2 ?? 5, color: 'bg-purple-500/10 text-purple-400 border-purple-500/20', desc: "Referral's referral" },
+              { level: 'Level 3', rate: rates?.level3 ?? 2, color: 'bg-pink-500/10 text-pink-400 border-pink-500/20', desc: 'Third level' },
+            ].map(({ level, rate, color, desc }) => (
+              <div key={level} className="flex items-center justify-between p-3 bg-[#050810] rounded-lg border border-[#1c2a4a]">
                 <div>
-                  <p className="text-xs text-slate-400 mb-1">Website Logo</p>
-                  <a href={settings.websiteLogo} target="_blank" rel="noopener noreferrer" className="text-blue-400 text-sm hover:text-blue-300 break-all">{settings.websiteLogo}</a>
+                  <p className="text-white text-sm font-medium">{level}</p>
+                  <p className="text-[11px] text-slate-500">{desc}</p>
                 </div>
+                <span className={`text-sm font-bold px-3 py-1 rounded-full border ${color}`}>{rate}%</span>
               </div>
-            )}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
-                <FiMail size={18} />
-              </div>
-              <div>
-                <p className="text-xs text-slate-400 mb-1">Contact Email</p>
-                <p className="text-white text-sm font-medium">{settings?.contactEmail || 'N/A'}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-400">
-                <FiPhone size={18} />
-              </div>
-              <div>
-                <p className="text-xs text-slate-400 mb-1">Contact Phone</p>
-                <p className="text-white text-sm font-medium">{settings?.contactPhone || 'N/A'}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-400">
-                <FiMessageCircle size={18} />
-              </div>
-              <div>
-                <p className="text-xs text-slate-400 mb-1">WhatsApp Number</p>
-                <p className="text-white text-sm font-medium">{settings?.whatsappNumber || 'N/A'}</p>
-              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Referral Bonus */}
+        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-1">
+            <FiGift className="text-amber-400" size={16} />
+            <h3 className="text-white font-semibold text-sm">Referral Investment Bonus</h3>
+          </div>
+          <p className="text-[11px] text-slate-500">Earn a one-time bonus every time your referred member makes an investment.</p>
+
+          <div className="p-4 bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-xl text-center">
+            <p className="text-4xl font-bold text-amber-400 mb-1">{settings?.referralBonusPercentage ?? 5}%</p>
+            <p className="text-xs text-slate-400">of investment amount</p>
+          </div>
+
+          <div className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-amber-500/10">
+            <FiPercent className="text-amber-400 shrink-0" size={16} />
+            <div>
+              <p className="text-[11px] text-slate-400">Maximum Bonus Per Investment</p>
+              <p className="text-white font-semibold text-sm">PKR {(settings?.referralBonusMax ?? 5000).toLocaleString()}</p>
             </div>
           </div>
         </div>
 
-        <div className="section-card">
-          <h3 className="section-title">Limits & Rates</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-[#050810] rounded-lg border border-blue-500/10">
-              <div className="flex items-center gap-3">
-                <FiDownload className="text-blue-400" size={18} />
-                <div>
-                  <p className="text-xs text-slate-400">Minimum Deposit</p>
-                  <p className="text-white font-semibold">PKR {settings?.minimumDeposit?.toLocaleString() || '300'}</p>
+        {/* Security Info */}
+        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 space-y-4 lg:col-span-2">
+          <div className="flex items-center gap-2 mb-1">
+            <FiShield className="text-green-400" size={16} />
+            <h3 className="text-white font-semibold text-sm">Platform Security</h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { label: 'SSL Encrypted', desc: 'All data is transmitted over secure SSL connections', color: 'text-green-400 bg-green-500/10' },
+              { label: 'Fund Protection', desc: 'Your funds are secured and insured against unauthorized access', color: 'text-blue-400 bg-blue-500/10' },
+              { label: '24/7 Monitoring', desc: 'Our systems are monitored around the clock for safety', color: 'text-purple-400 bg-purple-500/10' },
+            ].map(({ label, desc, color }) => (
+              <div key={label} className="p-4 bg-[#050810] rounded-lg border border-[#1c2a4a]">
+                <div className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${color} mb-2`}>
+                  <FiShield size={11} /> {label}
                 </div>
+                <p className="text-[11px] text-slate-400">{desc}</p>
               </div>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-[#050810] rounded-lg border border-blue-500/10">
-              <div className="flex items-center gap-3">
-                <FiUpload className="text-green-400" size={18} />
-                <div>
-                  <p className="text-xs text-slate-400">Minimum Withdrawal</p>
-                  <p className="text-white font-semibold">PKR {settings?.minimumWithdrawal?.toLocaleString() || '300'}</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-[#050810] rounded-lg border border-blue-500/10">
-              <div className="flex items-center gap-3">
-                <FiUpload className="text-amber-400" size={18} />
-                <div>
-                  <p className="text-xs text-slate-400">Maximum Withdrawal</p>
-                  <p className="text-white font-semibold">PKR {settings?.maximumWithdrawal?.toLocaleString() || '500,000'}</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
-        {settings?.socialLinks && (
-          <div className="section-card lg:col-span-2">
-            <h3 className="section-title">Social Links</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Social Links */}
+        {settings?.socialLinks && Object.values(settings.socialLinks).some(Boolean) && (
+          <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 lg:col-span-2 space-y-4">
+            <div className="flex items-center gap-2 mb-1">
+              <FiGlobe className="text-blue-400" size={16} />
+              <h3 className="text-white font-semibold text-sm">Follow Us</h3>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {settings.socialLinks.facebook && (
-                <a href={settings.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-blue-500/10 hover:border-blue-500/30 transition-all">
-                  <FiFacebook className="text-blue-600" size={20} />
-                  <span className="text-sm text-slate-300">Facebook</span>
+                <a href={settings.socialLinks.facebook} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-[#1c2a4a] hover:border-blue-500/30 transition-all group">
+                  <FiFacebook className="text-blue-600 group-hover:scale-110 transition-transform" size={18} />
+                  <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Facebook</span>
                 </a>
               )}
               {settings.socialLinks.twitter && (
-                <a href={settings.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-blue-500/10 hover:border-blue-500/30 transition-all">
-                  <FiTwitter className="text-blue-400" size={20} />
-                  <span className="text-sm text-slate-300">Twitter</span>
+                <a href={settings.socialLinks.twitter} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-[#1c2a4a] hover:border-blue-500/30 transition-all group">
+                  <FiTwitter className="text-blue-400 group-hover:scale-110 transition-transform" size={18} />
+                  <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Twitter</span>
                 </a>
               )}
               {settings.socialLinks.instagram && (
-                <a href={settings.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-blue-500/10 hover:border-blue-500/30 transition-all">
-                  <FiInstagram className="text-pink-500" size={20} />
-                  <span className="text-sm text-slate-300">Instagram</span>
+                <a href={settings.socialLinks.instagram} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-[#1c2a4a] hover:border-pink-500/30 transition-all group">
+                  <FiInstagram className="text-pink-500 group-hover:scale-110 transition-transform" size={18} />
+                  <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Instagram</span>
                 </a>
               )}
               {settings.socialLinks.youtube && (
-                <a href={settings.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-blue-500/10 hover:border-blue-500/30 transition-all">
-                  <FiYoutube className="text-red-500" size={20} />
-                  <span className="text-sm text-slate-300">YouTube</span>
+                <a href={settings.socialLinks.youtube} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-[#1c2a4a] hover:border-red-500/30 transition-all group">
+                  <FiYoutube className="text-red-500 group-hover:scale-110 transition-transform" size={18} />
+                  <span className="text-sm text-slate-300 group-hover:text-white transition-colors">YouTube</span>
                 </a>
               )}
             </div>
           </div>
         )}
+
       </div>
     </div>
   );

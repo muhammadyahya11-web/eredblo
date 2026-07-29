@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Transaction from '../models/Transaction.js';
+import cloudinary from '../config/cloudinary.js';
 import { validateUpdateProfile } from '../middlewares/validation.js';
 
 const getUserProfile = async (req, res, next) => {
@@ -138,4 +139,54 @@ const getReferralStats = async (req, res, next) => {
   }
 };
 
-export { getUserProfile, updateUserProfile, getDashboardStats, getReferralStats };
+const uploadProfilePicture = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image file provided' });
+    }
+
+    // Upload to Cloudinary
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'ered-bloo/profiles', resource_type: 'image', transformation: [{ width: 300, height: 300, crop: 'fill', gravity: 'face' }] },
+        (error, result) => {
+          if (error) return reject(new Error('Failed to upload image'));
+          resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { profilePicture: result.secure_url },
+      { new: true }
+    );
+
+    // Update user context data
+    const userData = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      cnic: user.cnic,
+      role: user.role,
+      isVerified: user.isVerified,
+      referralCode: user.referralCode,
+      profilePicture: user.profilePicture,
+      totalBalance: user.totalBalance,
+      totalInvestment: user.totalInvestment,
+      totalEarnings: user.totalEarnings,
+      todayEarnings: user.todayEarnings,
+      totalWithdrawals: user.totalWithdrawals,
+      referralEarnings: user.referralEarnings,
+      createdAt: user.createdAt,
+    };
+
+    res.json({ success: true, data: userData, message: 'Profile picture updated successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { getUserProfile, updateUserProfile, getDashboardStats, getReferralStats, uploadProfilePicture };
