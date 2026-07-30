@@ -243,7 +243,7 @@ const GiftBoxSection = () => {
                   </span>
                 ) : isReady ? (
                   <span className="flex items-center gap-1.5 text-[11px] font-black px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 text-black shadow-lg animate-bounce">
-                    <FiSparkles size={12} /> READY TO UNBOX!
+                     READY TO UNBOX!
                   </span>
                 ) : (
                   <span className="flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
@@ -281,9 +281,9 @@ const GiftBoxSection = () => {
                 <button
                   onClick={() => handleOpenGift(gift._id)}
                   disabled={openingId === gift._id}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-extrabold text-sm transition-all shadow-[0_0_25px_rgba(245,158,11,0.6)] flex items-center justify-center gap-2 transform active:scale-95 cursor-pointer disabled:opacity-50"
+                  className=" py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-black font-extrabold text-sm transition-all shadow-[0_0_25px_rgba(245,158,11,0.6)] flex items-center justify-center gap-2 transform active:scale-95 cursor-pointer disabled:opacity-50"
                 >
-                  <FiSparkles className="animate-spin text-lg" />
+                  {/* <FiSparkles className="animate-spin text-lg" /> */}
                   {openingId === gift._id ? 'Unboxing Reward...' : '🎁 OPEN 3D GIFT BOX!'}
                 </button>
               ) : (

@@ -71,7 +71,7 @@ const Layout = () => {
       )}
 
       {/* SIDEBAR */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-[260px] bg-[#060a14] border-r border-[#1a2340] transform transition-transform duration-300 lg:translate-x-0 lg:static flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`fixed inset-y-0 left-0 z-50 w-full bg-[#060a14] border-r border-[#1a2340] transform transition-transform duration-300 lg:translate-x-0 lg:static flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Logo */}
         <div className="flex items-center gap-3 px-6 py-5 border-b border-[#1a2340]">
           <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(37,99,235,0.6)]">
@@ -127,7 +127,7 @@ const Layout = () => {
         </nav>
 
         {/* Sidebar Bottom Card */}
-        <div className="p-4 m-4 rounded-xl border border-blue-500/20 bg-gradient-to-b from-[#0b162c] to-[#060a14] flex flex-col items-center text-center relative overflow-hidden">
+        <div className="p-4 m-4 rounded-xl border border-blue-500/20 bg-gradient-to-b from-[#0b162c] to-[#060a14] flex flex-col items-center w-full text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-blue-500/5 blur-xl"></div>
           <p className="text-blue-400 font-bold text-sm mb-1 z-10">Grow Your Money</p>
           <p className="text-[10px] text-slate-400 mb-3 z-10">Secure - Smart - Transparent</p>
