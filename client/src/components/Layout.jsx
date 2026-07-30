@@ -71,7 +71,7 @@ const Layout = () => {
       )}
 
       {/* SIDEBAR */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-full bg-[#060a14] border-r border-[#1a2340] transform transition-transform duration-300 lg:translate-x-0 lg:static flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`fixed inset-y-0 left-0 z-50 w-full lg:basis-[280px] lg:shrink-0 bg-[#060a14] border-r border-[#1a2340] transform transition-transform duration-300 lg:translate-x-0 lg:static flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Logo */}
         <div className="flex items-center gap-3 px-6 py-5 border-b border-[#1a2340]">
           <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(37,99,235,0.6)]">

@@ -392,7 +392,7 @@ export default function Dashboard() {
         {/* Left: Avatar */}
         <div className="db-avatar-wrap db-slidein-left" style={{ animationDelay: "100ms" }}>
           <div className="db-avatar-ring">
-            <img src={userAvatar} alt="avatar" className="db-avatar-img" />
+            <img src={user.profilePicture} alt="avatar" className="db-avatar-img" />
           </div>
           <div className="db-avatar-badge">
             <CheckCircle2 size={12} color="#fff" strokeWidth={3} />
