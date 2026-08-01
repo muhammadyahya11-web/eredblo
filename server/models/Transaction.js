@@ -39,5 +39,14 @@ const transactionSchema = new mongoose.Schema(
   }
 );
 
+transactionSchema.index(
+  { user: 1, type: 1, referenceId: 1, description: 1 },
+  { unique: true, partialFilterExpression: { referenceId: { $type: 'objectId' }, type: 'Referral Commission' } }
+);
+transactionSchema.index(
+  { user: 1, type: 1, referenceId: 1 },
+  { unique: true, partialFilterExpression: { referenceId: { $type: 'objectId' }, type: 'Referral Bonus' } }
+);
+
 const Transaction = mongoose.model('Transaction', transactionSchema);
 export default Transaction;

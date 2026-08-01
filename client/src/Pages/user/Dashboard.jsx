@@ -227,7 +227,7 @@ export default function Dashboard() {
   const userName = user?.name || "User";
   const firstName = userName.split(" ")[0];
   const referralCode = stats?.referralCode || user?.referralCode || "";
-  const siteBase = window.location.hostname;
+  const siteBase = window.location.origin;
   const referralLink = referralCode ? `${siteBase}/register?ref=${referralCode}` : `${siteBase}/register`;
 
   useEffect(() => {
@@ -566,7 +566,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <h3 className="db-invite-title">Invite Your Friends &amp; Earn More!</h3>
-                <p className="db-invite-desc">Get 10% lifetime commission on every investment<br />made by your referred members.</p>
+                <p className="db-invite-desc">Get multi-level commission on the first plan investment<br />made by your referred members.</p>
               </div>
             </div>
 

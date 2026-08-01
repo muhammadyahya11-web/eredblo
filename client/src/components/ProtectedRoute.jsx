@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const ProtectedRoute = () => {
-  const { isAuthenticated, isLoading } = useContext(AuthContext);
+  const { user, isAuthenticated, isLoading } = useContext(AuthContext);
 
   if (isLoading) {
     return (
@@ -13,7 +13,9 @@ const ProtectedRoute = () => {
     );
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
+  if (!isAuthenticated) return <Navigate to="/" replace />;
+  if (user?.role !== 'user') return <Navigate to={user?.role === 'super-admin' ? '/super-admin' : '/admin'} replace />;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

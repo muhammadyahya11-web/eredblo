@@ -41,9 +41,7 @@ const maintenanceMode = async (req, res, next) => {
         // Invalid tokens are treated as unauthenticated during maintenance.
       }
     }
-    console.log('Maintenance mode is active. User role:', user?.role);
-
-    if (user?.role === 'Super Admin') {
+    if (user?.role === 'super-admin') {
       return next();
     }
 

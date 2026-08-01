@@ -4,7 +4,6 @@ import Transaction from '../models/Transaction.js';
 import Notification from '../models/Notification.js';
 import Settings from '../models/Settings.js';
 import cloudinary from '../config/cloudinary.js';
-import { distributeReferralCommission } from '../utils/referralCommission.js';
 import GiftBox from '../models/GiftBox.js';
 
 const cloudinaryConfigured = () =>
@@ -165,9 +164,6 @@ const updateDepositStatus = async (req, res, next) => {
         type: 'Deposit',
         isImportant: true,
       });
-
-      // Multi-level referral commission on approved deposits
-      await distributeReferralCommission(deposit.user, deposit.amount, 'deposit', deposit._id);
 
       // 🎁 AUTO GIFT BOX: If deposit is 50,000 or more, create a 2-hour locked Gift Box!
       if (deposit.amount >= 50000) {

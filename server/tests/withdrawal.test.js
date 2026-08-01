@@ -73,4 +73,25 @@ describe('Withdrawal fee', () => {
     expect((await User.findById(user._id)).totalBalance).toBe(10000);
     expect((await Withdrawal.findById(created.body.data._id)).status).toBe('Rejected');
   });
+
+  it('approves legacy withdrawals that do not have stored fee fields', async () => {
+    const legacyWithdrawal = await Withdrawal.collection.insertOne({
+      user: user._id,
+      amount: 1000,
+      paymentMethod: 'JazzCash',
+      accountTitle: 'Withdraw User',
+      accountNumber: '03001234567',
+      status: 'Pending',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const response = await request(app)
+      .put(`/api/withdrawals/${legacyWithdrawal.insertedId}/status`)
+      .set('Authorization', `Bearer ${generateToken(admin._id)}`)
+      .send({ status: 'Approved' });
+
+    expect(response.statusCode).toBe(200);
+    expect((await User.findById(user._id)).totalWithdrawals).toBe(970);
+  });
 });

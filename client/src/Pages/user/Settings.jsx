@@ -108,7 +108,7 @@ const Settings = () => {
             <FiUsers className="text-purple-400" size={16} />
             <h3 className="text-white font-semibold text-sm">Referral Commission Rates</h3>
           </div>
-          <p className="text-[11px] text-slate-500">Earn commission when your referred members make deposits.</p>
+          <p className="text-[11px] text-slate-500">Earn commission when your referred members make their first plan investment.</p>
 
           <div className="space-y-3">
             {[
@@ -133,7 +133,7 @@ const Settings = () => {
             <FiGift className="text-amber-400" size={16} />
             <h3 className="text-white font-semibold text-sm">Referral Investment Bonus</h3>
           </div>
-          <p className="text-[11px] text-slate-500">Earn a one-time bonus every time your referred member makes an investment.</p>
+          <p className="text-[11px] text-slate-500">Earn a one-time bonus when your referred member makes their first plan investment.</p>
 
           <div className="p-4 bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-xl text-center">
             <p className="text-4xl font-bold text-amber-400 mb-1">{settings?.referralBonusPercentage ?? 5}%</p>

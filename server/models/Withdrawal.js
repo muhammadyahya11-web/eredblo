@@ -13,7 +13,7 @@ const withdrawalSchema = new mongoose.Schema(
     },
     feePercentage: { type: Number, required: true, default: 3 },
     feeAmount: { type: Number, required: true, default: 0 },
-    netAmount: { type: Number, required: true },
+    netAmount: { type: Number },
     paymentMethod: {
       type: String,
       required: [true, 'Payment method is required'],

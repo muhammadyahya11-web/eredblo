@@ -5,22 +5,26 @@ import Settings from '../models/Settings.js';
 import Investment from '../models/Investment.js';
 
 /**
- * Awards a referral bonus to the referrer whenever their referred user makes an investment.
- * - No minimum investment threshold — every investment amount earns a bonus.
+ * Awards a referral bonus for a referred user's first successful investment only.
+ * - An atomic processed marker prevents later or concurrent investments from paying again.
  * - Bonus percentage and max cap are admin-configurable via Settings.
  */
 export const checkAndAwardReferralBonus = async (userId, investedAmount, referenceId) => {
   if (!investedAmount || investedAmount <= 0) return;
 
-  // The referral bonus is a one-time reward for the referred user's first investment.
-  const previousInvestment = await Investment.exists({
-    user: userId,
-    ...(referenceId ? { _id: { $ne: referenceId } } : {}),
-  });
-  if (previousInvestment) return;
+  if (!referenceId) return;
 
-  const user = await User.findById(userId).select('referredBy name');
-  if (!user || !user.referredBy) return;
+  const firstInvestment = await Investment.findOne({ user: userId })
+    .sort({ createdAt: 1, _id: 1 })
+    .select('_id');
+  if (!firstInvestment || firstInvestment._id.toString() !== referenceId.toString()) return;
+
+  const user = await User.findOneAndUpdate(
+    { _id: userId, referredBy: { $ne: null }, referralBonusProcessedAt: null },
+    { $set: { referralBonusProcessedAt: new Date(), referralBonusInvestment: referenceId } },
+    { returnDocument: 'after' }
+  ).select('referredBy name');
+  if (!user) return;
 
   const referrer = await User.findById(user.referredBy).select('status name');
   if (!referrer || referrer.status !== 'active') return;
@@ -43,20 +47,30 @@ export const checkAndAwardReferralBonus = async (userId, investedAmount, referen
     if (existingBonus) return;
   }
 
+  try {
+    await Transaction.create({
+      user: referrer._id,
+      type: 'Referral Bonus',
+      amount: roundedBonus,
+      isPositive: true,
+      status: 'Success',
+      description: `Referral bonus (${bonusPercentage}%): ${user.name} invested PKR ${investedAmount.toLocaleString()}`,
+      referenceId,
+    });
+  } catch (error) {
+    if (error?.code === 11000) return;
+    throw error;
+  }
+
   await User.updateOne(
     { _id: referrer._id },
     { $inc: { totalBalance: roundedBonus, referralEarnings: roundedBonus, totalEarnings: roundedBonus } }
   );
 
-  await Transaction.create({
-    user: referrer._id,
-    type: 'Referral Bonus',
-    amount: roundedBonus,
-    isPositive: true,
-    status: 'Success',
-    description: `Referral bonus (${bonusPercentage}%): ${user.name} invested PKR ${investedAmount.toLocaleString()}`,
-    referenceId,
-  });
+  await User.updateOne(
+    { _id: user._id, referralBonusInvestment: referenceId },
+    { $set: { referralBonusPaidAt: new Date() } }
+  );
 
   await Notification.create({
     user: referrer._id,

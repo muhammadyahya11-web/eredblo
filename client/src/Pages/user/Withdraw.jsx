@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { withdrawalAPI, settingsAPI } from '../../services/api';
+import { withdrawalAPI, settingsAPI, userAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 import { FiLock, FiInfo } from 'react-icons/fi';
 
@@ -14,17 +14,27 @@ const Withdraw = () => {
   const [settings, setSettings] = useState(null);
 
   useEffect(() => {
+    const fetchUserBalance = async () => {
+      try {
+        const { data } = await userAPI.getDashboard();
+        if (data.success) updateUser(data.data);
+      } catch {
+        // The server remains the authority when submitting a withdrawal.
+      }
+    };
+
     const fetchSettings = async () => {
       try {
         const { data } = await settingsAPI.getPublic();
         if (data.success) setSettings(data.data);
       } catch {}
     };
+    fetchUserBalance();
     fetchSettings();
   }, []);
 
   const paymentMethods = ['JazzCash', 'Easypaisa', 'Allied Bank', 'HBL', 'Bank Alfalah', 'Bank Al Habib'];
-  const availableBalance = (user?.totalBalance || 0) - (user?.totalWithdrawals || 0);
+  const availableBalance = user?.totalBalance || 0;
   const feePercentage = settings?.withdrawalFeePercentage ?? 3;
   const requestedAmount = Number(amount) || 0;
   const feeAmount = Math.round(requestedAmount * feePercentage) / 100;
@@ -63,6 +73,7 @@ const Withdraw = () => {
         setAccountTitle('');
         setAccountNumber('');
         setPaymentMethod('');
+        updateUser({ totalBalance: availableBalance - parseFloat(amount) });
       } else {
         toast.error(data.message);
       }

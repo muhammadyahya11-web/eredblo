@@ -167,7 +167,7 @@ export default function SuperAdminSettings() {
           <div className="flex items-center justify-between p-4 bg-[#050810] border border-red-500/10 rounded-xl hover:border-red-500/30 transition-all duration-300">
             <div>
               <p className="text-sm font-medium text-white">Maintenance Mode</p>
-              <p className="text-xs text-slate-400">When enabled, only admins and super-admins can log in</p>
+               <p className="text-xs text-slate-400">When enabled, only the super admin can log in</p>
             </div>
             <Toggle value={settings.maintenanceMode} onChange={(v) => setSettings({ ...settings, maintenanceMode: v })} />
           </div>

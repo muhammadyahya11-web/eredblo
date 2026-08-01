@@ -162,17 +162,21 @@ const updateWithdrawalStatus = async (req, res, next) => {
     }
 
     if (status === 'Approved') {
-      await User.updateOne({ _id: withdrawal.user }, { $inc: { totalWithdrawals: withdrawal.netAmount } });
+      const netAmount = withdrawal.netAmount ?? Math.round(
+        withdrawal.amount * (1 - (withdrawal.feePercentage ?? 3) / 100) * 100
+      ) / 100;
+      const feeAmount = withdrawal.feeAmount ?? Math.round((withdrawal.amount - netAmount) * 100) / 100;
+      await User.updateOne({ _id: withdrawal.user }, { $inc: { totalWithdrawals: netAmount } });
 
       await Transaction.updateOne(
         { referenceId: withdrawal._id, type: 'Withdrawal' },
-        { status: 'Approved', description: `Withdrawal approved via ${withdrawal.paymentMethod} (payout PKR ${withdrawal.netAmount}, fee PKR ${withdrawal.feeAmount})` }
+        { status: 'Approved', description: `Withdrawal approved via ${withdrawal.paymentMethod} (payout PKR ${netAmount}, fee PKR ${feeAmount})` }
       );
 
       await Notification.create({
         user: withdrawal.user,
         title: 'Withdrawal Approved',
-        message: `Your withdrawal of PKR ${withdrawal.netAmount} has been approved after a PKR ${withdrawal.feeAmount} fee.`,
+        message: `Your withdrawal of PKR ${netAmount} has been approved after a PKR ${feeAmount} fee.`,
         type: 'Withdrawal',
         isImportant: true,
       });
