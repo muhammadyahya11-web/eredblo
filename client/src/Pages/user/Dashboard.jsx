@@ -297,6 +297,7 @@ export default function Dashboard() {
       icon: <Wallet size={22} className="text-white" />,
       iconBg: "bg-blue-600",
       glow: "rgba(37,99,235,0.35)",
+      path: "/dashboard/deposit",
     },
     {
       label: "Total Investment",
@@ -307,6 +308,7 @@ export default function Dashboard() {
       icon: <TrendingUp size={22} className="text-white" />,
       iconBg: "bg-green-500",
       glow: "rgba(34,197,94,0.35)",
+      path: "/dashboard/my-investments",
     },
     {
       label: "Total Earnings",
@@ -317,6 +319,7 @@ export default function Dashboard() {
       icon: <Activity size={22} className="text-white" />,
       iconBg: "bg-purple-600",
       glow: "rgba(124,58,237,0.35)",
+      path: "/dashboard/earnings",
     },
     {
       label: "Total Withdrawn",
@@ -328,15 +331,22 @@ export default function Dashboard() {
       icon: <ArrowUpCircle size={22} className="text-white" />,
       iconBg: "bg-orange-500",
       glow: "rgba(249,115,22,0.35)",
+      path: "/dashboard/withdraw",
     },
   ];
 
   // ── Quick Actions ──
   const quickActions = [
     {
+      label: "Invest Now", sub: "View Plans",
+      icon: <TrendingUp size={22} className="text-white" />,
+      bg: "bg-blue-600", glow: "rgba(37,99,235,0.5)",
+      path: "/dashboard/my-investments",
+    },
+    {
       label: "Deposit", sub: "Add Funds",
       icon: <ArrowDownCircle size={22} className="text-white" />,
-      bg: "bg-blue-600", glow: "rgba(37,99,235,0.5)",
+      bg: "bg-emerald-600", glow: "rgba(16,185,129,0.5)",
       path: "/dashboard/deposit",
     },
     {
@@ -350,12 +360,6 @@ export default function Dashboard() {
       icon: <Users size={22} className="text-white" />,
       bg: "bg-purple-600", glow: "rgba(124,58,237,0.5)",
       path: "/dashboard/my-team",
-    },
-    {
-      label: "Analytics", sub: "View Reports",
-      icon: <BarChart size={22} className="text-white" />,
-      bg: "bg-orange-500", glow: "rgba(249,115,22,0.5)",
-      path: "/dashboard/earnings",
     },
   ];
 
@@ -471,7 +475,8 @@ export default function Dashboard() {
         {statCards.map((s, i) => (
           <div
             key={i}
-            className="db-stat-card db-fadeup"
+            className="db-stat-card db-fadeup cursor-pointer hover:border-blue-500/50 transition-colors"
+            onClick={() => s.path && navigate(s.path)}
             style={{ animationDelay: `${i * 80 + 200}ms` }}
           >
             <div className="db-stat-icon-wrap" style={{ background: undefined }}>

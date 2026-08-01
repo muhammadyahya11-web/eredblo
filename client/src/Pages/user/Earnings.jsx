@@ -9,17 +9,6 @@ import {
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b'];
 
-// Dummy data for Line Chart
-const chartData = [
-  { name: 'May 1', value: 3000 },
-  { name: 'May 6', value: 4500 },
-  { name: 'May 11', value: 3800 },
-  { name: 'May 16', value: 6000 },
-  { name: 'May 21', value: 5500 },
-  { name: 'May 26', value: 8500 },
-  { name: 'May 31', value: 9500 },
-];
-
 const Earnings = () => {
   const { user } = useContext(AuthContext);
   const [earningsData, setEarningsData] = useState(null);
@@ -41,19 +30,19 @@ const Earnings = () => {
     fetchEarnings();
   }, []);
 
-  // Use dummy data if api doesn't return exactly these fields
   const displayData = {
-    today: earningsData?.todayEarnings || 4000,
-    week: earningsData?.weeklyEarnings || 18500,
-    month: earningsData?.monthlyEarnings || 45000,
-    total: earningsData?.totalEarnings || 100000,
-    breakdown: [
-      { name: 'Daily Profit', value: 20000, color: '#3b82f6' },
-      { name: 'Referral Bonus', value: 15000, color: '#8b5cf6' },
-      { name: 'Team Bonus', value: 7500, color: '#10b981' },
-      { name: 'Other Bonus', value: 2500, color: '#f59e0b' },
-    ]
+    today: earningsData?.todayEarnings ?? 0,
+    week: earningsData?.weeklyEarnings ?? 0,
+    month: earningsData?.monthlyEarnings ?? 0,
+    total: earningsData?.totalEarnings ?? user?.totalEarnings ?? 0,
+    breakdown: earningsData?.breakdown || [
+      { name: 'Daily Profit', value: 0, color: '#3b82f6' },
+      { name: 'Referral Commission', value: 0, color: '#8b5cf6' },
+      { name: 'Referral Bonus', value: 0, color: '#10b981' },
+    ],
   };
+
+  const chartData = earningsData?.weeklyChart || [];
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto">
@@ -121,45 +110,51 @@ const Earnings = () => {
         <div className="lg:col-span-2 bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-white font-semibold">Earnings Overview</h3>
-            <button className="flex items-center gap-2 text-xs text-slate-400 bg-[#090f1e] border border-[#1c2a4a] px-3 py-1.5 rounded-lg hover:border-blue-500 transition-colors">
-              This Month <FiChevronDown />
-            </button>
+            <span className="text-xs text-slate-400 bg-[#090f1e] border border-[#1c2a4a] px-3 py-1.5 rounded-lg">
+              Last 7 Days
+            </span>
           </div>
           
           <div className="h-[280px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1c2a4a" vertical={false} />
-                <XAxis 
-                  dataKey="name" 
-                  stroke="#64748b" 
-                  fontSize={10} 
-                  tickLine={false} 
-                  axisLine={false} 
-                  dy={10}
-                />
-                <YAxis 
-                  stroke="#64748b" 
-                  fontSize={10} 
-                  tickLine={false} 
-                  axisLine={false} 
-                  tickFormatter={(val) => val >= 1000 ? `${val / 1000}K` : val}
-                />
-                <RechartsTooltip 
-                  contentStyle={{ backgroundColor: '#0d152a', borderColor: '#1c2a4a', borderRadius: '8px' }}
-                  itemStyle={{ color: '#3b82f6' }}
-                  formatter={(value) => [`PKR ${value.toLocaleString()}`, 'Earnings']}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#3b82f6" 
-                  strokeWidth={3}
-                  dot={{ r: 4, fill: '#0d152a', stroke: '#3b82f6', strokeWidth: 2 }}
-                  activeDot={{ r: 6, fill: '#3b82f6' }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {chartData.length === 0 || chartData.every(d => d.value === 0) ? (
+              <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+                No recent earnings activity to display
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1c2a4a" vertical={false} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#64748b" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    stroke="#64748b" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tickFormatter={(val) => val >= 1000 ? `${val / 1000}K` : val}
+                  />
+                  <RechartsTooltip 
+                    contentStyle={{ backgroundColor: '#0d152a', borderColor: '#1c2a4a', borderRadius: '8px' }}
+                    itemStyle={{ color: '#3b82f6' }}
+                    formatter={(value) => [`PKR ${value.toLocaleString()}`, 'Earnings']}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="#3b82f6" 
+                    strokeWidth={3}
+                    dot={{ r: 4, fill: '#0d152a', stroke: '#3b82f6', strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: '#3b82f6' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
@@ -191,7 +186,7 @@ const Earnings = () => {
               {/* Inner Text */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span className="text-[10px] text-slate-400">PKR</span>
-                <span className="text-lg font-bold text-white leading-tight">45,000</span>
+                <span className="text-lg font-bold text-white leading-tight">{displayData.total.toLocaleString()}</span>
                 <span className="text-[10px] text-slate-400">Total</span>
               </div>
             </div>
@@ -201,7 +196,7 @@ const Earnings = () => {
               {displayData.breakdown.map((item, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[idx] }}></div>
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
                     <span className="text-xs text-slate-400">{item.name}</span>
                   </div>
                   <span className="text-xs font-semibold text-white">PKR {item.value.toLocaleString()}</span>

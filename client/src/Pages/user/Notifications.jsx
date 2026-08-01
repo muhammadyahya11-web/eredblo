@@ -24,16 +24,7 @@ const Notifications = () => {
     fetchNotifications();
   }, []);
 
-  // Dummy fallback data if API returns empty during dev, matching screenshot
-  const baseData = notifications.length > 0 ? notifications : [
-    { _id: '1', type: 'Withdrawal', title: 'Your withdrawal request of PKR 7,500 has been approved.', createdAt: new Date(Date.now() - 2 * 60000).toISOString(), isRead: false, isImportant: true },
-    { _id: '2', type: 'Profit', title: 'You have received PKR 4,000 as daily profit.', createdAt: new Date(Date.now() - 60 * 60000).toISOString(), isRead: false, isImportant: false },
-    { _id: '3', type: 'Offer', title: 'New investment plan is now available. Check now!', createdAt: new Date(Date.now() - 3 * 60 * 60000).toISOString(), isRead: true, isImportant: true },
-    { _id: '4', type: 'Deposit', title: 'Your deposit of PKR 5,000 has been approved.', createdAt: new Date(Date.now() - 24 * 60 * 60000).toISOString(), isRead: true, isImportant: false },
-    { _id: '5', type: 'System', title: 'System maintenance on 12 May 2024 from 2:00 AM to 4:00 AM.', createdAt: new Date(Date.now() - 48 * 60 * 60000).toISOString(), isRead: true, isImportant: false },
-  ];
-
-  const displayData = baseData.filter((notif) => {
+  const displayData = notifications.filter((notif) => {
     if (activeTab === 'All') return true;
     if (activeTab === 'Unread') return !notif.isRead;
     if (activeTab === 'Important') return notif.isImportant;

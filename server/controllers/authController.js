@@ -3,6 +3,7 @@ import OTP from '../models/OTP.js';
 import generateToken from '../utils/generateToken.js';
 import sendEmail from '../utils/sendEmail.js';
 import crypto from 'crypto';
+import Settings from '../models/Settings.js';
 import {
   validateRegister,
   validateLogin,
@@ -102,6 +103,12 @@ const loginUser = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Your account has been blocked by the admin.' });
     }
 
+    // Only the super admin may sign in while maintenance mode is enabled.
+    const settings = await Settings.findOne();
+    if (settings?.maintenanceMode && user.role !== 'super-admin') {
+      return res.status(503).json({ success: false, message: 'Site is under maintenance. Only the super admin can log in.' });
+    }
+
     if (user.isLocked && user.lockoutUntil && user.lockoutUntil > Date.now()) {
       const minutesLeft = Math.ceil((user.lockoutUntil - Date.now()) / 60000);
       return res.status(403).json({ success: false, message: `Account locked. Try again in ${minutesLeft} minutes.` });
@@ -177,6 +184,11 @@ const sendLoginOTP = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'No account found with this email' });
     }
 
+    const settings = await Settings.findOne();
+    if (settings?.maintenanceMode && user.role !== 'super-admin') {
+      return res.status(503).json({ success: false, message: 'Site is under maintenance. Only the super admin can log in.' });
+    }
+
     const otpCode = crypto.randomInt(100000, 999999).toString();
     await OTP.deleteMany({ email });
     await OTP.create({ email, otp: otpCode });
@@ -214,6 +226,12 @@ const loginWithOTP = async (req, res, next) => {
 
     if (user.status === 'blocked') {
       return res.status(403).json({ success: false, message: 'Your account has been blocked by the admin.' });
+    }
+
+    // Only the super admin may sign in while maintenance mode is enabled.
+    const settings = await Settings.findOne();
+    if (settings?.maintenanceMode && user.role !== 'super-admin') {
+      return res.status(503).json({ success: false, message: 'Site is under maintenance. Only the super admin can log in.' });
     }
 
     await user.resetFailedLogin();

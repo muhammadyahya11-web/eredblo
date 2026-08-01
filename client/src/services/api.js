@@ -28,7 +28,7 @@ api.interceptors.response.use(
     } else if (error.response && error.response.status === 502) {
       error.message = 'Server error (502). The backend may be down or restarting. Please try again shortly.';
     } else if (error.response && error.response.status === 503) {
-      error.message = 'Service temporarily unavailable. Please try again later.';
+      error.message = error.response.data?.message || 'Site is under maintenance. Only the super admin can access the platform.';
     }
 
     if (error.response && error.response.status === 401) {

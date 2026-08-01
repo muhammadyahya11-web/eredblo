@@ -114,24 +114,90 @@ const getDashboardStats = async (req, res, next) => {
 const getReferralStats = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
-    const totalTeamMembers = await User.countDocuments({ referredBy: req.user._id });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Level 1: Direct Referrals
+    const level1Members = await User.find({ referredBy: req.user._id })
+      .select('name email totalInvestment createdAt status')
+      .sort({ createdAt: -1 });
+    const level1Ids = level1Members.map(m => m._id);
+
+    // Level 2 Referrals
+    const level2Members = level1Ids.length > 0
+      ? await User.find({ referredBy: { $in: level1Ids } }).select('name email totalInvestment createdAt status').sort({ createdAt: -1 })
+      : [];
+    const level2Ids = level2Members.map(m => m._id);
+
+    // Level 3 Referrals
+    const level3Members = level2Ids.length > 0
+      ? await User.find({ referredBy: { $in: level2Ids } }).select('name email totalInvestment createdAt status').sort({ createdAt: -1 })
+      : [];
+
+    const totalTeamMembers = level1Members.length + level2Members.length + level3Members.length;
     const totalReferralEarnings = user?.referralEarnings || 0;
 
-    const teamMembers = await User.find({ referredBy: req.user._id })
-      .select('name email totalInvestment createdAt')
-      .sort({ createdAt: -1 });
+    // Aggregate commission earnings by level from transactions
+    const levelEarningsAgg = await Transaction.aggregate([
+      {
+        $match: {
+          user: user._id,
+          type: 'Referral Commission',
+          status: { $in: ['Success', 'Approved'] },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $cond: [
+              { $regexMatch: { input: "$description", regex: /Level 1/i } }, 'level1',
+              { $cond: [
+                { $regexMatch: { input: "$description", regex: /Level 2/i } }, 'level2',
+                { $cond: [
+                  { $regexMatch: { input: "$description", regex: /Level 3/i } }, 'level3',
+                  'other'
+                ]}
+              ]}
+            ]
+          },
+          total: { $sum: '$amount' }
+        }
+      }
+    ]);
+
+    let level1Earn = 0, level2Earn = 0, level3Earn = 0;
+    levelEarningsAgg.forEach(item => {
+      if (item._id === 'level1') level1Earn = item.total;
+      if (item._id === 'level2') level2Earn = item.total;
+      if (item._id === 'level3') level3Earn = item.total;
+    });
 
     res.json({
       success: true,
       data: {
         totalTeamMembers,
         totalReferralEarnings,
-        teamMembers: teamMembers.map(m => ({
+        level1Count: level1Members.length,
+        level2Count: level2Members.length,
+        level3Count: level3Members.length,
+        level1Earn,
+        level2Earn,
+        level3Earn,
+        teamMembers: level1Members.map(m => ({
+          _id: m._id,
           name: m.name,
           email: m.email,
           totalInvestment: m.totalInvestment || 0,
           joinedAt: m.createdAt,
+          status: m.status,
+          level: 1,
         })),
+        allMembers: [
+          ...level1Members.map(m => ({ _id: m._id, name: m.name, email: m.email, totalInvestment: m.totalInvestment || 0, joinedAt: m.createdAt, status: m.status, level: 1 })),
+          ...level2Members.map(m => ({ _id: m._id, name: m.name, email: m.email, totalInvestment: m.totalInvestment || 0, joinedAt: m.createdAt, status: m.status, level: 2 })),
+          ...level3Members.map(m => ({ _id: m._id, name: m.name, email: m.email, totalInvestment: m.totalInvestment || 0, joinedAt: m.createdAt, status: m.status, level: 3 })),
+        ]
       },
     });
   } catch (error) {

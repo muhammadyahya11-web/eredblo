@@ -155,7 +155,7 @@ app.use('/api/auth/send-login-otp', slowDown({ windowMs: 15 * 60 * 1000, delayAf
 app.use('/api/auth/login-with-otp', slowDown({ windowMs: 15 * 60 * 1000, delayAfter: 3, delayMs: () => 500 }));
 
 // ⚠️ Maintenance mode must be applied BEFORE routes so all API calls are blocked
-app.use(maintenanceMode);
+// app.use(maintenanceMode);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

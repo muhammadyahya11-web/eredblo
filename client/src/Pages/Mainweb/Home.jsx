@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import ThreeHeroAnimation from './ThreeHeroAnimation';
 import coinImg from '../../assets/dashbordcoin.png';
+import { AuthContext } from '../../context/AuthContext';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -17,6 +18,9 @@ const stagger = {
 };
 
 export default function Home() {
+  const { user } = useContext(AuthContext);
+  const investTarget = user ? "/dashboard/my-investments" : "/register";
+
   useEffect(() => {
     if (window.location.hash) {
       const el = document.getElementById(window.location.hash.replace('#', ''));
@@ -208,7 +212,7 @@ export default function Home() {
                 Choose a plan that suits you and start earning daily returns.
               </p>
             </div>
-            <Link to="/register"
+            <Link to={investTarget}
               className="text-[13px] font-semibold px-5 py-2.5 rounded-lg border transition-all hover:bg-white/5 text-white inline-flex items-center justify-center md:inline-flex"
               style={{ borderColor: '#334155' }}
             >
@@ -242,7 +246,7 @@ export default function Home() {
                   <span className="font-bold text-white">60 Days</span>
                 </div>
               </div>
-              <Link to="/register"
+              <Link to={investTarget}
                 className="w-full py-2.5 text-center text-[13px] font-bold rounded-lg text-white mt-auto transition-colors"
                 style={{ background: '#2563eb' }}
               >
@@ -270,7 +274,7 @@ export default function Home() {
                   <span className="font-bold text-white">70 Days</span>
                 </div>
               </div>
-              <Link to="/register"
+              <Link to={investTarget}
                 className="w-full py-2.5 text-center text-[13px] font-bold rounded-lg text-white mt-auto transition-colors"
                 style={{ background: '#2563eb' }}
               >
@@ -302,7 +306,7 @@ export default function Home() {
                   <span className="font-bold text-white">90 Days</span>
                 </div>
               </div>
-              <Link to="/register"
+              <Link to={investTarget}
                 className="w-full py-2.5 text-center text-[13px] font-bold rounded-lg text-white mt-auto transition-colors"
                 style={{ background: '#2563eb' }}
               >
@@ -330,7 +334,7 @@ export default function Home() {
                   <span className="font-bold text-white">120 Days</span>
                 </div>
               </div>
-              <Link to="/register"
+              <Link to={investTarget}
                 className="w-full py-2.5 text-center text-[13px] font-bold rounded-lg text-white mt-auto transition-colors"
                 style={{ background: '#2563eb' }}
               >
@@ -362,7 +366,7 @@ export default function Home() {
                   <span className="font-bold text-white">365 Days</span>
                 </div>
               </div>
-              <Link to="/register"
+              <Link to={investTarget}
                 className="w-full py-2.5 text-center text-[13px] font-bold rounded-lg text-black mt-auto transition-colors"
                 style={{ background: '#eab308' }}
               >

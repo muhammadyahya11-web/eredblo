@@ -1,0 +1,4 @@
+◇ injected env (18) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+MongoDB Connected: ac-vo6tbas-shard-00-02.jb81wyw.mongodb.net
+[ProfitEngine] Starting profit distribution scheduler...
+Server running in development mode on port 5000
