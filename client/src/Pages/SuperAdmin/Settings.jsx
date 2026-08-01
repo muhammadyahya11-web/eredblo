@@ -17,7 +17,8 @@ export default function SuperAdminSettings() {
     contactPhone: '',
     whatsappNumber: '',
     minimumDeposit: 300,
-    maximumWithdrawal: 500000,
+     maximumWithdrawal: 500000,
+     withdrawalFeePercentage: 3,
     maintenanceMode: false,
     referralCommissionRates: { level1: 10, level2: 5, level3: 2 },
   });
@@ -37,7 +38,8 @@ export default function SuperAdminSettings() {
             contactPhone: s.contactPhone || '',
             whatsappNumber: s.whatsappNumber || '',
             minimumDeposit: s.minimumDeposit || 300,
-            maximumWithdrawal: s.maximumWithdrawal || 500000,
+             maximumWithdrawal: s.maximumWithdrawal || 500000,
+             withdrawalFeePercentage: s.withdrawalFeePercentage ?? 3,
             maintenanceMode: s.maintenanceMode || false,
             referralCommissionRates: s.referralCommissionRates || { level1: 10, level2: 5, level3: 2 },
           });
@@ -84,10 +86,14 @@ export default function SuperAdminSettings() {
 
   return (
     <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-[#0a0f1e] min-h-full">
-      <div>
+             <div>
         <h1 className="text-2xl font-bold text-white tracking-tight">Settings</h1>
         <p className="text-slate-400 text-sm mt-1">Super admin panel configuration</p>
-      </div>
+              </div>
+             <div>
+               <label className="block text-xs text-slate-400 mb-1.5 font-medium">Withdrawal Fee (%)</label>
+               <input type="number" min="0" max="100" step="0.01" value={settings.withdrawalFeePercentage} onChange={(e) => setSettings({ ...settings, withdrawalFeePercentage: parseFloat(e.target.value) || 0 })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-colors" />
+             </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl p-5">

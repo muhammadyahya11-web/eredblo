@@ -200,7 +200,8 @@ export default function AdminSettings() {
     whatsappNumber: '',
     minimumDeposit: 300,
     minimumWithdrawal: 300,
-    maximumWithdrawal: 500000,
+     maximumWithdrawal: 500000,
+     withdrawalFeePercentage: 3,
     maintenanceMode: false,
     referralCommissionRates: { level1: 10, level2: 5, level3: 2 },
     paymentAccounts: [],
@@ -228,7 +229,8 @@ export default function AdminSettings() {
           whatsappNumber: s.whatsappNumber || '',
           minimumDeposit: s.minimumDeposit || 300,
           minimumWithdrawal: s.minimumWithdrawal || 300,
-          maximumWithdrawal: s.maximumWithdrawal || 500000,
+           maximumWithdrawal: s.maximumWithdrawal || 500000,
+           withdrawalFeePercentage: s.withdrawalFeePercentage ?? 3,
           maintenanceMode: s.maintenanceMode || false,
           referralCommissionRates: s.referralCommissionRates || { level1: 10, level2: 5, level3: 2 },
           paymentAccounts: s.paymentAccounts || [],
@@ -539,6 +541,7 @@ export default function AdminSettings() {
                 { label: 'Min Deposit (PKR)', field: 'minimumDeposit' },
                 { label: 'Min Withdrawal (PKR)', field: 'minimumWithdrawal' },
                 { label: 'Max Withdrawal (PKR)', field: 'maximumWithdrawal' },
+                { label: 'Withdrawal Fee (%)', field: 'withdrawalFeePercentage' },
               ].map(f => (
                 <div key={f.field}>
                   <label style={{ fontSize: 12, color: '#64748b', display: 'block', marginBottom: 6 }}>{f.label}</label>

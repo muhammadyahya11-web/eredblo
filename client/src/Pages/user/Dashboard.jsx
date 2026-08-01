@@ -395,9 +395,20 @@ export default function Dashboard() {
 
         {/* Left: Avatar */}
         <div className="db-avatar-wrap db-slidein-left" style={{ animationDelay: "100ms" }}>
-          <div className="db-avatar-ring">
-            <img src={user.profilePicture} alt="avatar" className="db-avatar-img" />
-          </div>
+        <div className="w-20 h-20 rounded-full overflow-hidden bg-indigo-600 flex items-center justify-center">
+  {!user?.profilePicture || imageError ? (
+    <span className="text-white text-3xl font-bold">
+      {user?.name?.charAt(0).toUpperCase() || "U"}
+    </span>
+  ) : (
+    <img
+      src={user.profilePicture}
+      alt={user?.name}
+      className="w-full h-full object-cover"
+      onError={() => setImageError(true)}
+    />
+  )}
+</div>
           <div className="db-avatar-badge">
             <CheckCircle2 size={12} color="#fff" strokeWidth={3} />
           </div>
@@ -461,9 +472,7 @@ export default function Dashboard() {
           <div className="db-kg-chart">
             <MiniSparkline />
           </div>
-          <div className="db-coins-wrap">
-            <img src={coinsImg} alt="coins" className="db-coins-img" />
-          </div>
+         
         </div>
       </div>
 

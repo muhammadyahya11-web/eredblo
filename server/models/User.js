@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema(
     todayEarnings: { type: Number, default: 0 },
     totalWithdrawals: { type: Number, default: 0 },
 
-    referralCode: { type: String, unique: true, sparse: true },
+    referralCode: { type: String, unique: true, sparse: true, uppercase: true, trim: true },
     referredBy: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',

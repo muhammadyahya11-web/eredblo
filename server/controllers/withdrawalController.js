@@ -22,12 +22,18 @@ const createWithdrawal = async (req, res, next) => {
     const settings = await Settings.findOne();
     const minWithdrawal = settings?.minimumWithdrawal ?? 300;
     const maxWithdrawal = settings?.maximumWithdrawal ?? 500000;
+    const feePercentage = settings?.withdrawalFeePercentage ?? 3;
+    const feeAmount = Math.round(((amt * feePercentage) / 100) * 100) / 100;
+    const netAmount = Math.round((amt - feeAmount) * 100) / 100;
 
     if (amt < minWithdrawal) {
       return res.status(400).json({ success: false, message: `Minimum withdrawal is ${minWithdrawal}` });
     }
     if (amt > maxWithdrawal) {
       return res.status(400).json({ success: false, message: `Maximum withdrawal is ${maxWithdrawal}` });
+    }
+    if (netAmount <= 0) {
+      return res.status(400).json({ success: false, message: 'Withdrawal amount must be greater than the withdrawal fee' });
     }
 
     const pendingWithdrawal = await Withdrawal.findOne({ user: req.user._id, status: 'Pending' });
@@ -51,6 +57,9 @@ const createWithdrawal = async (req, res, next) => {
       withdrawal = await Withdrawal.create({
         user: req.user._id,
         amount: amt,
+        feePercentage,
+        feeAmount,
+        netAmount,
         paymentMethod,
         accountTitle,
         accountNumber,
@@ -68,7 +77,7 @@ const createWithdrawal = async (req, res, next) => {
       amount: amt,
       isPositive: false,
       status: 'Pending',
-      description: `Withdrawal request via ${paymentMethod}`,
+      description: `Withdrawal request via ${paymentMethod} (fee PKR ${feeAmount}, payout PKR ${netAmount})`,
       referenceId: withdrawal._id,
     });
 
@@ -153,17 +162,17 @@ const updateWithdrawalStatus = async (req, res, next) => {
     }
 
     if (status === 'Approved') {
-      await User.updateOne({ _id: withdrawal.user }, { $inc: { totalWithdrawals: withdrawal.amount } });
+      await User.updateOne({ _id: withdrawal.user }, { $inc: { totalWithdrawals: withdrawal.netAmount } });
 
       await Transaction.updateOne(
         { referenceId: withdrawal._id, type: 'Withdrawal' },
-        { status: 'Approved', description: `Withdrawal approved via ${withdrawal.paymentMethod}` }
+        { status: 'Approved', description: `Withdrawal approved via ${withdrawal.paymentMethod} (payout PKR ${withdrawal.netAmount}, fee PKR ${withdrawal.feeAmount})` }
       );
 
       await Notification.create({
         user: withdrawal.user,
         title: 'Withdrawal Approved',
-        message: `Your withdrawal of PKR ${withdrawal.amount} has been approved.`,
+        message: `Your withdrawal of PKR ${withdrawal.netAmount} has been approved after a PKR ${withdrawal.feeAmount} fee.`,
         type: 'Withdrawal',
         isImportant: true,
       });

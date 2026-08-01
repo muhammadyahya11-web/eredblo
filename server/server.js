@@ -87,8 +87,8 @@ app.use(helmet({
 
 const corsOrigin = isProd
   ? [process.env.CLIENT_URL].filter(Boolean)
-  : ["http://localhost:5173", "http://localhost:5174" ,"https://eredblo.vercel.app"];
-
+  : ["http://localhost:5173", "http://localhost:5174" , "https://eredblo.vercel.app"];
+// 
 app.use(
   cors({
     origin: corsOrigin,
@@ -182,7 +182,7 @@ app.get('/api/health', (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-if (!isServerlessRuntime) {
+if (!isServerlessRuntime && process.env.NODE_ENV !== 'test') {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`Server running in ${isProd ? 'production' : 'development'} mode on port ${PORT}`);

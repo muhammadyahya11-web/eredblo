@@ -16,7 +16,7 @@ const round2 = (n) => Math.round(n * 100) / 100;
  * @param {number} baseAmount       The amount commissions are calculated from.
  * @param {string} reason           Short description for the ledger.
  */
-export const distributeReferralCommission = async (userId, baseAmount, reason = 'deposit') => {
+export const distributeReferralCommission = async (userId, baseAmount, reason = 'deposit', referenceId) => {
   if (!baseAmount || baseAmount <= 0) return;
 
   const settings = await Settings.findOne();
@@ -38,6 +38,20 @@ export const distributeReferralCommission = async (userId, baseAmount, reason = 
     if (rate > 0 && referrer.status === 'active') {
       const commission = round2((baseAmount * rate) / 100);
       if (commission > 0) {
+        const description = `Level ${level + 1} referral commission (${reason})`;
+        const existingCommission = referenceId
+          ? await Transaction.exists({
+              user: referrer._id,
+              type: 'Referral Commission',
+              referenceId,
+              description,
+            })
+          : null;
+        if (existingCommission) {
+          current = referrer;
+          continue;
+        }
+
         await User.updateOne(
           { _id: referrer._id },
           { $inc: { totalBalance: commission, referralEarnings: commission, totalEarnings: commission } }
@@ -49,7 +63,8 @@ export const distributeReferralCommission = async (userId, baseAmount, reason = 
           amount: commission,
           isPositive: true,
           status: 'Success',
-          description: `Level ${level + 1} referral commission (${reason})`,
+          description,
+          referenceId,
         });
 
         await Notification.create({

@@ -25,6 +25,10 @@ const Withdraw = () => {
 
   const paymentMethods = ['JazzCash', 'Easypaisa', 'Allied Bank', 'HBL', 'Bank Alfalah', 'Bank Al Habib'];
   const availableBalance = (user?.totalBalance || 0) - (user?.totalWithdrawals || 0);
+  const feePercentage = settings?.withdrawalFeePercentage ?? 3;
+  const requestedAmount = Number(amount) || 0;
+  const feeAmount = Math.round(requestedAmount * feePercentage) / 100;
+  const netAmount = Math.max(0, requestedAmount - feeAmount);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -99,6 +103,10 @@ const Withdraw = () => {
             PKR {settings?.maximumWithdrawal?.toLocaleString() || '500,000'}
           </span>
         </div>
+        <div className="flex flex-col pl-2 justify-center">
+          <span className="text-slate-400 text-xs font-medium mb-2">Withdrawal Fee</span>
+          <span className="text-amber-400 font-bold text-lg">{feePercentage}%</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -124,6 +132,13 @@ const Withdraw = () => {
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400">PKR</span>
                 </div>
               </div>
+
+              {requestedAmount > 0 && (
+                <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 text-sm">
+                  <div className="flex justify-between text-slate-400"><span>Fee ({feePercentage}%)</span><span>PKR {feeAmount.toLocaleString()}</span></div>
+                  <div className="flex justify-between text-white font-semibold mt-2"><span>You receive</span><span>PKR {netAmount.toLocaleString()}</span></div>
+                </div>
+              )}
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs text-slate-400">Payment Method</label>
@@ -186,7 +201,8 @@ const Withdraw = () => {
               <li>Withdrawal requests are processed within 24 hours.</li>
               <li>Please ensure your account details are correct.</li>
               <li>Minimum withdrawal amount is PKR {settings?.minimumWithdrawal?.toLocaleString() || '300'}.</li>
-              <li>Only profits can be withdrawn.</li>
+               <li>Only profits can be withdrawn.</li>
+               <li>A {feePercentage}% withdrawal fee is deducted from the requested amount.</li>
             </ul>
           </div>
         </div>

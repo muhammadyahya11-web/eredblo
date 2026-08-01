@@ -30,11 +30,13 @@ const registerUser = async (req, res, next) => {
     }
 
     let referredBy = null;
-    if (referralCode) {
-      const referrer = await User.findOne({ referralCode });
-      if (referrer) {
-        referredBy = referrer._id;
+    const normalizedReferralCode = referralCode?.trim().toUpperCase();
+    if (normalizedReferralCode) {
+      const referrer = await User.findOne({ referralCode: normalizedReferralCode });
+      if (!referrer || referrer.status !== 'active') {
+        return res.status(400).json({ success: false, message: 'Invalid or inactive referral code' });
       }
+      referredBy = referrer._id;
     }
 
     const user = await User.create({
@@ -79,9 +81,10 @@ const registerUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = email.trim().toLowerCase();
     const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
 
-    const limiterKey = `${clientIP}:${email}`;
+    const limiterKey = `${clientIP}:${normalizedEmail}`;
     const attempts = loginLimiter.get(limiterKey) || { count: 0, lastAttempt: 0 };
 
     if (attempts.count >= MAX_LOGIN_ATTEMPTS && Date.now() - attempts.lastAttempt < LOCKOUT_DURATION) {
@@ -90,7 +93,7 @@ const loginUser = async (req, res, next) => {
       return res.status(429).json({ success: false, message: `Too many failed attempts. Try again in ${remainingMin} minutes.` });
     }
 
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email: normalizedEmail }).select('+password');
 
     if (!user) {
       attempts.count = (attempts.count || 0) + 1;

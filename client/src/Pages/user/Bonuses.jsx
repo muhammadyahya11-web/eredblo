@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import React, { useState, useEffect } from 'react';
 import { userAPI, transactionAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 import { FiUsers, FiDollarSign, FiGift, FiCalendar } from 'react-icons/fi';
 import GiftBoxSection from '../../components/GiftBoxSection';
 
 const Bonuses = () => {
-  const { user } = useContext(AuthContext);
   const [referralStats, setReferralStats] = useState(null);
   const [bonusHistory, setBonusHistory] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -24,14 +22,14 @@ const Bonuses = () => {
 
         if (statsRes.data.success) {
           setReferralStats(statsRes.data.data);
-          setTeamMembers(statsRes.data.data.teamMembers || []);
+          setTeamMembers(statsRes.data.data.allMembers || statsRes.data.data.teamMembers || []);
         }
 
         if (txRes.data.success) {
           setBonusHistory(txRes.data.data || []);
           setTotalPages(txRes.data.pages || 1);
         }
-      } catch (error) {
+      } catch {
         toast.error('Failed to load bonus data');
       } finally {
         setLoading(false);
@@ -75,14 +73,14 @@ const Bonuses = () => {
           <div className="stat-icon purple"><FiGift /></div>
           <div className="stat-info">
             <p>Total Bonuses</p>
-            <h3>PKR {(referralStats?.totalBonuses || 0).toLocaleString()}</h3>
+            <h3>PKR {Number(referralStats?.totalBonuses || 0).toLocaleString()}</h3>
           </div>
         </div>
         <div className="stat-card p-compact">
           <div className="stat-icon orange"><FiCalendar /></div>
           <div className="stat-info">
             <p>This Month</p>
-            <h3>PKR {(referralStats?.monthlyEarnings || 0).toLocaleString()}</h3>
+            <h3>PKR {Number(referralStats?.monthlyEarnings || 0).toLocaleString()}</h3>
           </div>
         </div>
       </div>
@@ -97,6 +95,7 @@ const Bonuses = () => {
               <table className="data-table">
                 <thead>
                   <tr>
+                    <th>Level</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Investment</th>
@@ -106,6 +105,7 @@ const Bonuses = () => {
                 <tbody>
                   {teamMembers.map((member) => (
                     <tr key={member._id}>
+                      <td className="text-blue-400">Level {member.level || 1}</td>
                       <td className="font-medium">{member.name}</td>
                       <td className="text-slate-400">{member.email}</td>
                       <td className="text-green">PKR {(member.totalInvestment || 0).toLocaleString()}</td>

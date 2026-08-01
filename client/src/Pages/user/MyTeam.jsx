@@ -27,7 +27,7 @@ const MyTeam = () => {
         if (statsRes.data.success) {
           const data = statsRes.data.data;
           setReferralStats(data);
-          setTeamMembers(data.teamMembers || []);
+           setTeamMembers(data.allMembers || data.teamMembers || []);
         }
       } catch (error) {
         toast.error('Failed to load team data');
@@ -121,7 +121,8 @@ const MyTeam = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[#1c2a4a]">
-                  <th className="py-4 px-4 text-xs font-medium text-slate-400">Name</th>
+                   <th className="py-4 px-4 text-xs font-medium text-slate-400">Level</th>
+                   <th className="py-4 px-4 text-xs font-medium text-slate-400">Name</th>
                   <th className="py-4 px-4 text-xs font-medium text-slate-400">Email</th>
                   <th className="py-4 px-4 text-xs font-medium text-slate-400">Invested</th>
                   <th className="py-4 px-4 text-xs font-medium text-slate-400">Join Date</th>
@@ -129,12 +130,13 @@ const MyTeam = () => {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan="4" className="py-8 text-center text-slate-400 text-sm">Loading team...</td></tr>
+                   <tr><td colSpan="5" className="py-8 text-center text-slate-400 text-sm">Loading team...</td></tr>
                 ) : teamMembers.length === 0 ? (
-                  <tr><td colSpan="4" className="py-8 text-center text-slate-400 text-sm">No team members yet</td></tr>
+                   <tr><td colSpan="5" className="py-8 text-center text-slate-400 text-sm">No team members yet</td></tr>
                 ) : (
                   teamMembers.map((member) => (
-                    <tr key={member._id} className="border-b border-[#1c2a4a]/50 hover:bg-[#1a2c5b]/10 transition-colors">
+                     <tr key={member._id} className="border-b border-[#1c2a4a]/50 hover:bg-[#1a2c5b]/10 transition-colors">
+                       <td className="py-4 px-4 text-sm text-blue-400">Level {member.level || 1}</td>
                       <td className="py-4 px-4 text-sm text-white">{member.name}</td>
                       <td className="py-4 px-4 text-sm text-slate-300">{member.email}</td>
                       <td className="py-4 px-4 text-sm text-green-400">PKR {Number(member.totalInvestment || 0).toLocaleString()}</td>

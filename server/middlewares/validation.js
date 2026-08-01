@@ -158,6 +158,7 @@ export const validateSettingsUpdate = [
   body('maintenanceMode').optional().isBoolean().withMessage('maintenanceMode must be a boolean'),
   body('minimumWithdrawal').optional().isFloat({ min: 0 }).withMessage('Minimum withdrawal must be positive'),
   body('maximumWithdrawal').optional().isFloat({ min: 0 }).withMessage('Maximum withdrawal must be positive'),
+  body('withdrawalFeePercentage').optional().isFloat({ min: 0, max: 100 }).withMessage('Withdrawal fee must be between 0 and 100 percent'),
   body('minimumDeposit').optional().isFloat({ min: 0 }).withMessage('Minimum deposit must be positive'),
   handleValidationErrors,
 ];

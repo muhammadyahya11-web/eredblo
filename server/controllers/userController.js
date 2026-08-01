@@ -135,10 +135,37 @@ const getReferralStats = async (req, res, next) => {
       ? await User.find({ referredBy: { $in: level2Ids } }).select('name email totalInvestment createdAt status').sort({ createdAt: -1 })
       : [];
 
-    const totalTeamMembers = level1Members.length + level2Members.length + level3Members.length;
-    const totalReferralEarnings = user?.referralEarnings || 0;
+    const allMembers = [
+      ...level1Members.map(m => ({ member: m, level: 1 })),
+      ...level2Members.map(m => ({ member: m, level: 2 })),
+      ...level3Members.map(m => ({ member: m, level: 3 })),
+    ];
+    const totalTeamMembers = allMembers.length;
 
-    // Aggregate commission earnings by level from transactions
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+
+    // Aggregate all referral totals from the authoritative transaction ledger.
+    const referralEarningsAgg = await Transaction.aggregate([
+      {
+        $match: {
+          user: user._id,
+          type: { $in: ['Referral Commission', 'Referral Bonus'] },
+          status: { $in: ['Success', 'Approved'] },
+        },
+      },
+      {
+        $group: {
+          _id: '$type',
+          total: { $sum: '$amount' },
+          monthly: {
+            $sum: { $cond: [{ $gte: ['$createdAt', monthStart] }, '$amount', 0] },
+          },
+        },
+      },
+    ]);
+
     const levelEarningsAgg = await Transaction.aggregate([
       {
         $match: {
@@ -166,38 +193,43 @@ const getReferralStats = async (req, res, next) => {
       }
     ]);
 
-    let level1Earn = 0, level2Earn = 0, level3Earn = 0;
+    let level1Earn = 0, level2Earn = 0, level3Earn = 0, totalBonuses = 0;
+    referralEarningsAgg.forEach(item => {
+      if (item._id === 'Referral Bonus') totalBonuses = item.total;
+    });
     levelEarningsAgg.forEach(item => {
       if (item._id === 'level1') level1Earn = item.total;
       if (item._id === 'level2') level2Earn = item.total;
       if (item._id === 'level3') level3Earn = item.total;
     });
 
+    const memberData = allMembers.map(({ member: m, level }) => ({
+      _id: m._id,
+      name: m.name,
+      email: m.email,
+      totalInvestment: m.totalInvestment || 0,
+      joinedAt: m.createdAt,
+      status: m.status,
+      level,
+    }));
+    const totalReferralEarnings = referralEarningsAgg.reduce((sum, item) => sum + item.total, 0);
+    const monthlyEarnings = referralEarningsAgg.reduce((sum, item) => sum + item.monthly, 0);
+
     res.json({
       success: true,
       data: {
         totalTeamMembers,
         totalReferralEarnings,
+        totalBonuses,
+        monthlyEarnings,
         level1Count: level1Members.length,
         level2Count: level2Members.length,
         level3Count: level3Members.length,
         level1Earn,
         level2Earn,
         level3Earn,
-        teamMembers: level1Members.map(m => ({
-          _id: m._id,
-          name: m.name,
-          email: m.email,
-          totalInvestment: m.totalInvestment || 0,
-          joinedAt: m.createdAt,
-          status: m.status,
-          level: 1,
-        })),
-        allMembers: [
-          ...level1Members.map(m => ({ _id: m._id, name: m.name, email: m.email, totalInvestment: m.totalInvestment || 0, joinedAt: m.createdAt, status: m.status, level: 1 })),
-          ...level2Members.map(m => ({ _id: m._id, name: m.name, email: m.email, totalInvestment: m.totalInvestment || 0, joinedAt: m.createdAt, status: m.status, level: 2 })),
-          ...level3Members.map(m => ({ _id: m._id, name: m.name, email: m.email, totalInvestment: m.totalInvestment || 0, joinedAt: m.createdAt, status: m.status, level: 3 })),
-        ]
+        teamMembers: memberData,
+        allMembers: memberData,
       },
     });
   } catch (error) {

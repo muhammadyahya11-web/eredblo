@@ -2,14 +2,22 @@ import User from '../models/User.js';
 import Transaction from '../models/Transaction.js';
 import Notification from '../models/Notification.js';
 import Settings from '../models/Settings.js';
+import Investment from '../models/Investment.js';
 
 /**
  * Awards a referral bonus to the referrer whenever their referred user makes an investment.
  * - No minimum investment threshold — every investment amount earns a bonus.
  * - Bonus percentage and max cap are admin-configurable via Settings.
  */
-export const checkAndAwardReferralBonus = async (userId, investedAmount) => {
+export const checkAndAwardReferralBonus = async (userId, investedAmount, referenceId) => {
   if (!investedAmount || investedAmount <= 0) return;
+
+  // The referral bonus is a one-time reward for the referred user's first investment.
+  const previousInvestment = await Investment.exists({
+    user: userId,
+    ...(referenceId ? { _id: { $ne: referenceId } } : {}),
+  });
+  if (previousInvestment) return;
 
   const user = await User.findById(userId).select('referredBy name');
   if (!user || !user.referredBy) return;
@@ -26,6 +34,15 @@ export const checkAndAwardReferralBonus = async (userId, investedAmount) => {
 
   if (roundedBonus <= 0) return;
 
+  if (referenceId) {
+    const existingBonus = await Transaction.exists({
+      user: referrer._id,
+      type: 'Referral Bonus',
+      referenceId,
+    });
+    if (existingBonus) return;
+  }
+
   await User.updateOne(
     { _id: referrer._id },
     { $inc: { totalBalance: roundedBonus, referralEarnings: roundedBonus, totalEarnings: roundedBonus } }
@@ -38,7 +55,7 @@ export const checkAndAwardReferralBonus = async (userId, investedAmount) => {
     isPositive: true,
     status: 'Success',
     description: `Referral bonus (${bonusPercentage}%): ${user.name} invested PKR ${investedAmount.toLocaleString()}`,
-    referenceId: user._id,
+    referenceId,
   });
 
   await Notification.create({

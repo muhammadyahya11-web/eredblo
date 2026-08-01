@@ -62,6 +62,7 @@ const settingsSchema = new mongoose.Schema(
       type: Number,
       default: 500000,
     },
+    withdrawalFeePercentage: { type: Number, default: 3, min: 0, max: 100 },
     minimumDeposit: {
       type: Number,
       default: 300,

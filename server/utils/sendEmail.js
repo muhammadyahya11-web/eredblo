@@ -1,6 +1,11 @@
 import nodemailer from 'nodemailer';
 
 const sendEmail = async (options) => {
+  // Tests should not depend on an external SMTP server.
+  if (process.env.NODE_ENV === 'test') {
+    return { messageId: 'test-message' };
+  }
+
   // Create a transporter using SMTP
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.mailtrap.io',

@@ -22,8 +22,11 @@ const run = async () => {
       user.isVerified = true;
       user.failedLoginAttempts = 0;
       user.lockoutUntil = null;
+      if (process.env.SUPER_ADMIN_PASSWORD) {
+        user.password = process.env.SUPER_ADMIN_PASSWORD;
+      }
       await user.save();
-      console.log(`Existing account promoted to super-admin: ${email}`);
+      console.log(`Existing super-admin account synchronized: ${email}`);
     } else {
       user = await User.create({
         name,

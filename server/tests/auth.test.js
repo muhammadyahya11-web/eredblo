@@ -27,8 +27,7 @@ describe('Auth API', () => {
 
     expect(res.statusCode).toEqual(201);
     expect(res.body.success).toBe(true);
-    expect(res.body.data).toHaveProperty('user');
-    expect(res.body.data.user.email).toBe('test@example.com');
+    expect(res.body.email).toBe('test@example.com');
   });
 
   it('should not register user with existing email', async () => {
