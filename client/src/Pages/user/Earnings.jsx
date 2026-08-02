@@ -38,7 +38,6 @@ const Earnings = () => {
     breakdown: earningsData?.breakdown || [
       { name: 'Daily Profit', value: 0, color: '#3b82f6' },
       { name: 'Referral Commission', value: 0, color: '#8b5cf6' },
-      { name: 'Referral Bonus', value: 0, color: '#10b981' },
     ],
   };
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { userAPI, transactionAPI } from '../../services/api';
 import toast from 'react-hot-toast';
-import { FiUsers, FiDollarSign, FiGift, FiCalendar } from 'react-icons/fi';
+import { FiUsers, FiDollarSign, FiCalendar } from 'react-icons/fi';
 import GiftBoxSection from '../../components/GiftBoxSection';
 
 const Bonuses = () => {
   const [referralStats, setReferralStats] = useState(null);
-  const [bonusHistory, setBonusHistory] = useState([]);
+  const [commissionHistory, setCommissionHistory] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -17,7 +17,7 @@ const Bonuses = () => {
       try {
         const [statsRes, txRes] = await Promise.all([
           userAPI.getReferralStats(),
-          transactionAPI.getMyTransactions({ page, limit: 10, type: 'Referral Bonus' }),
+          transactionAPI.getMyTransactions({ page, limit: 10, type: 'Referral Commission' }),
         ]);
 
         if (statsRes.data.success) {
@@ -26,11 +26,11 @@ const Bonuses = () => {
         }
 
         if (txRes.data.success) {
-          setBonusHistory(txRes.data.data || []);
+          setCommissionHistory(txRes.data.data || []);
           setTotalPages(txRes.data.pages || 1);
         }
       } catch {
-        toast.error('Failed to load bonus data');
+        toast.error('Failed to load referral data');
       } finally {
         setLoading(false);
       }
@@ -41,14 +41,14 @@ const Bonuses = () => {
   if (loading) {
     return (
       <div className="bonuses-page">
-        <div className="loading-state">Loading bonus data...</div>
+        <div className="loading-state">Loading referral data...</div>
       </div>
     );
   }
 
   return (
     <div className="bonuses-page">
-      <h2 className="page-title">Bonuses & Referrals</h2>
+      <h2 className="page-title">Referral Commissions</h2>
       <p className="page-subtitle text-slate-400 text-sm mb-6">Track your referral earnings and team performance</p>
 
       {/* Gift Boxes */}
@@ -67,13 +67,6 @@ const Bonuses = () => {
           <div className="stat-info">
             <p>Total Team Members</p>
             <h3>{referralStats?.totalTeamMembers || 0}</h3>
-          </div>
-        </div>
-        <div className="stat-card p-compact">
-          <div className="stat-icon purple"><FiGift /></div>
-          <div className="stat-info">
-            <p>Total Bonuses</p>
-            <h3>PKR {Number(referralStats?.totalBonuses || 0).toLocaleString()}</h3>
           </div>
         </div>
         <div className="stat-card p-compact">
@@ -119,9 +112,9 @@ const Bonuses = () => {
         </div>
 
         <div className="section-card">
-          <h3 className="section-title">Bonus History</h3>
-          {bonusHistory.length === 0 ? (
-            <div className="empty-state">No referral bonuses yet. Keep growing your team!</div>
+          <h3 className="section-title">Commission History</h3>
+          {commissionHistory.length === 0 ? (
+            <div className="empty-state">No referral commissions yet. Keep growing your team!</div>
           ) : (
             <div className="table-responsive">
               <table className="data-table">
@@ -134,7 +127,7 @@ const Bonuses = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {bonusHistory.map((tx) => (
+                  {commissionHistory.map((tx) => (
                     <tr key={tx._id}>
                       <td className="font-medium">{tx.type}</td>
                       <td className="text-green">+ PKR {tx.amount?.toLocaleString()}</td>

@@ -6,7 +6,6 @@ import Settings from '../models/Settings.js';
 import Transaction from '../models/Transaction.js';
 import Investment from '../models/Investment.js';
 import { distributeReferralCommission } from '../utils/referralCommission.js';
-import { checkAndAwardReferralBonus } from '../utils/referralBonus.js';
 
 jest.setTimeout(30000);
 
@@ -94,38 +93,6 @@ describe('Referral payouts', () => {
     expect(await Transaction.countDocuments({ type: 'Referral Commission', referenceId: investment._id })).toBe(1);
   });
 
-  it('awards one capped direct referral bonus per first investment', async () => {
-    await Settings.create({ referralBonusPercentage: 5, referralBonusMax: 5000 });
-    const referrer = await createUser('Referrer');
-    const referredUser = await createUser('Referred', referrer._id);
-    const investment = await createInvestment(referredUser, 200000);
-
-    await checkAndAwardReferralBonus(referredUser._id, 200000, investment._id);
-    await checkAndAwardReferralBonus(referredUser._id, 200000, investment._id);
-
-    const updatedReferrer = await User.findById(referrer._id);
-    expect(updatedReferrer.totalBalance).toBe(5000);
-    expect(updatedReferrer.referralEarnings).toBe(5000);
-    expect(await Transaction.countDocuments({ type: 'Referral Bonus', referenceId: investment._id })).toBe(1);
-    const markedUser = await User.findById(referredUser._id);
-    expect(markedUser.referralBonusPaidAt).not.toBeNull();
-    expect(markedUser.referralBonusInvestment.toString()).toBe(investment._id.toString());
-  });
-
-  it('does not award a bonus when the referred user already invested', async () => {
-    await Settings.create({ referralBonusPercentage: 5, referralBonusMax: 5000 });
-    const referrer = await createUser('Referrer');
-    const referredUser = await createUser('Referred', referrer._id);
-    await createInvestment(referredUser);
-    const laterInvestment = await createInvestment(referredUser, 20000);
-
-    await checkAndAwardReferralBonus(referredUser._id, 20000, laterInvestment._id);
-
-    const updatedReferrer = await User.findById(referrer._id);
-    expect(updatedReferrer.totalBalance).toBe(0);
-    expect(await Transaction.countDocuments({ type: 'Referral Bonus' })).toBe(0);
-  });
-
   it('skips blocked referrers', async () => {
     const referrer = await createUser('Referrer');
     referrer.status = 'blocked';
@@ -134,8 +101,6 @@ describe('Referral payouts', () => {
     const investment = await createInvestment(referredUser, 10000);
 
     await distributeReferralCommission(referredUser._id, 10000, 'investment', investment._id);
-    await checkAndAwardReferralBonus(referredUser._id, 10000, investment._id);
-
     const updatedReferrer = await User.findById(referrer._id);
     expect(updatedReferrer.totalBalance).toBe(0);
     expect(await Transaction.countDocuments({ user: referrer._id })).toBe(0);

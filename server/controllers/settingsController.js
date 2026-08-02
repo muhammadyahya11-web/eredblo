@@ -14,6 +14,17 @@ const getSettings = async (req, res, next) => {
 
 const updateSettings = async (req, res, next) => {
   try {
+    if (
+      req.body.minimumWithdrawal !== undefined &&
+      req.body.maximumWithdrawal !== undefined &&
+      Number(req.body.minimumWithdrawal) > Number(req.body.maximumWithdrawal)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'Minimum withdrawal cannot exceed maximum withdrawal',
+      });
+    }
+
     let settings = await Settings.findOne();
     if (!settings) {
       settings = await Settings.create(req.body);
@@ -50,8 +61,6 @@ const getPublicSettings = async (req, res, next) => {
          withdrawalFeePercentage: settings.withdrawalFeePercentage,
         minimumDeposit: settings.minimumDeposit,
         referralCommissionRates: settings.referralCommissionRates,
-        referralBonusPercentage: settings.referralBonusPercentage,
-        referralBonusMax: settings.referralBonusMax,
         maintenanceMode: settings.maintenanceMode,
       },
     });

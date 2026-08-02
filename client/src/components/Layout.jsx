@@ -42,6 +42,12 @@ const Layout = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const updateUnreadCount = (event) => setUnreadCount(Number(event.detail) || 0);
+    window.addEventListener('notifications:unread-count', updateUnreadCount);
+    return () => window.removeEventListener('notifications:unread-count', updateUnreadCount);
+  }, []);
+
   const getPageTitle = () => {
     const path = location.pathname;
     if (path === '/dashboard') return { title: 'Dashboard', sub: '' };

@@ -46,7 +46,8 @@ export const distributeReferralCommission = async (userId, baseAmount, reason = 
     settings?.referralCommissionRates?.level3 ?? 2,
   ];
 
-  let current = await User.findById(userId).select('referredBy');
+  let current = await User.findById(userId).select('referredBy name');
+  const referredUserName = current?.name || 'your referred member';
 
   for (let level = 0; level < rates.length; level++) {
     if (!current || !current.referredBy) break;
@@ -90,15 +91,16 @@ export const distributeReferralCommission = async (userId, baseAmount, reason = 
           throw error;
         }
 
-        await User.updateOne(
+        const updatedReferrer = await User.findByIdAndUpdate(
           { _id: referrer._id },
-          { $inc: { totalBalance: commission, referralEarnings: commission, totalEarnings: commission } }
+          { $inc: { totalBalance: commission, referralEarnings: commission, totalEarnings: commission } },
+          { returnDocument: 'after' }
         );
 
         await Notification.create({
           user: referrer._id,
           title: 'Referral Commission Earned',
-          message: `You earned PKR ${commission} (Level ${level + 1}) referral commission from ${reason === 'investment' ? 'an investment' : `a ${reason}`}.`,
+          message: `You earned PKR ${commission.toLocaleString()} as a Level ${level + 1} referral commission from ${referredUserName}'s first investment. Total referral earnings: PKR ${(updatedReferrer?.referralEarnings || 0).toLocaleString()}.`,
           type: 'Offer',
           isImportant: false,
         });

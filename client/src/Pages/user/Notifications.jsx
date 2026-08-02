@@ -12,11 +12,31 @@ const Notifications = () => {
       const { data } = await notificationAPI.getMy();
       if (data.success) {
         setNotifications(data.data);
+        if (data.data.some((notification) => !notification.isRead)) {
+          await notificationAPI.markAllAsRead();
+          setNotifications((current) => current.map((notification) => ({ ...notification, isRead: true })));
+        }
+        window.dispatchEvent(new CustomEvent('notifications:unread-count', { detail: 0 }));
       }
     } catch (error) {
       console.error('Failed to load notifications:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const markAsRead = async (notification) => {
+    if (notification.isRead) return;
+
+    try {
+      await notificationAPI.markAsRead(notification._id);
+      setNotifications((current) => current.map((item) =>
+        item._id === notification._id ? { ...item, isRead: true } : item
+      ));
+      const remaining = notifications.filter((item) => !item.isRead && item._id !== notification._id).length;
+      window.dispatchEvent(new CustomEvent('notifications:unread-count', { detail: remaining }));
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
     }
   };
 
@@ -105,7 +125,8 @@ const Notifications = () => {
             displayData.map((notif) => (
               <div 
                 key={notif._id} 
-                className="bg-[#090f1e] border border-[#1c2a4a] rounded-xl p-4 flex items-center justify-between group hover:border-blue-500/50 transition-colors cursor-pointer"
+                onClick={() => markAsRead(notif)}
+                className={`bg-[#090f1e] border rounded-xl p-4 flex items-center justify-between group hover:border-blue-500/50 transition-colors cursor-pointer ${notif.isRead ? 'border-[#1c2a4a] opacity-75' : 'border-blue-500/40'}`}
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-3 rounded-full shrink-0 ${getIconStyle(notif.type)}`}>
@@ -113,12 +134,13 @@ const Notifications = () => {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-white text-sm font-medium leading-relaxed group-hover:text-blue-400 transition-colors">
-                      {notif.title || notif.message}
+                      {notif.title}
                     </span>
+                    <span className="text-slate-300 text-xs mt-1 leading-relaxed">{notif.message}</span>
                     <span className="text-slate-500 text-xs mt-1">{timeAgo(notif.createdAt)}</span>
                   </div>
                 </div>
-                <div className="w-2 h-2 rounded-full bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                {!notif.isRead && <div className="w-2 h-2 rounded-full bg-blue-500"></div>}
               </div>
             ))
           )}

@@ -23,7 +23,7 @@ const getEarningsOverview = async (req, res, next) => {
           $match: {
             user: user._id,
             isPositive: true,
-            type: { $in: ['Profit', 'Referral Commission', 'Referral Bonus'] },
+            type: { $in: ['Profit', 'Referral Commission'] },
             status: { $in: ['Success', 'Approved'] },
             createdAt: { $gte: todayStart },
           },
@@ -35,7 +35,7 @@ const getEarningsOverview = async (req, res, next) => {
           $match: {
             user: user._id,
             isPositive: true,
-            type: { $in: ['Profit', 'Referral Commission', 'Referral Bonus'] },
+            type: { $in: ['Profit', 'Referral Commission'] },
             status: { $in: ['Success', 'Approved'] },
             createdAt: { $gte: weekStart },
           },
@@ -47,7 +47,7 @@ const getEarningsOverview = async (req, res, next) => {
           $match: {
             user: user._id,
             isPositive: true,
-            type: { $in: ['Profit', 'Referral Commission', 'Referral Bonus'] },
+            type: { $in: ['Profit', 'Referral Commission'] },
             status: { $in: ['Success', 'Approved'] },
             createdAt: { $gte: monthStart },
           },
@@ -59,7 +59,7 @@ const getEarningsOverview = async (req, res, next) => {
           $match: {
             user: user._id,
             isPositive: true,
-            type: { $in: ['Profit', 'Referral Commission', 'Referral Bonus'] },
+            type: { $in: ['Profit', 'Referral Commission'] },
             status: { $in: ['Success', 'Approved'] },
           },
         },
@@ -76,18 +76,15 @@ const getEarningsOverview = async (req, res, next) => {
     // Build breakdown array
     let dailyProfitEarned = 0;
     let referralCommissionEarned = 0;
-    let referralBonusEarned = 0;
 
     typeBreakdownAgg.forEach((item) => {
       if (item._id === 'Profit') dailyProfitEarned = item.total;
       if (item._id === 'Referral Commission') referralCommissionEarned = item.total;
-      if (item._id === 'Referral Bonus') referralBonusEarned = item.total;
     });
 
     const breakdown = [
       { name: 'Daily Profit', value: dailyProfitEarned, color: '#3b82f6' },
       { name: 'Referral Commission', value: referralCommissionEarned, color: '#8b5cf6' },
-      { name: 'Referral Bonus', value: referralBonusEarned, color: '#10b981' },
     ];
 
     // Build 7-day chart points
@@ -103,7 +100,7 @@ const getEarningsOverview = async (req, res, next) => {
           $match: {
             user: user._id,
             isPositive: true,
-            type: { $in: ['Profit', 'Referral Commission', 'Referral Bonus'] },
+            type: { $in: ['Profit', 'Referral Commission'] },
             status: { $in: ['Success', 'Approved'] },
             createdAt: { $gte: dayStart, $lte: dayEnd },
           },

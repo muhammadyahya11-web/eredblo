@@ -52,7 +52,10 @@ const markNotificationAsRead = async (req, res, next) => {
 const markAllNotificationsAsRead = async (req, res, next) => {
   try {
     await Notification.updateMany(
-      { user: req.user._id, isRead: false },
+      {
+        $or: [{ user: req.user._id }, { user: null }],
+        isRead: false,
+      },
       { isRead: true }
     );
 

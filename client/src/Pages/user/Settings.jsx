@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   FiMail, FiPhone, FiMessageCircle, FiGlobe,
   FiInstagram, FiTwitter, FiYoutube, FiTool,
-  FiDollarSign, FiDownload, FiUpload, FiGift,
-  FiUsers, FiPercent, FiShield, FiInfo,
+  FiDollarSign, FiDownload, FiUpload,
+  FiUsers, FiShield, FiInfo,
 } from 'react-icons/fi';
 import { settingsAPI } from '../../services/api';
 import toast from 'react-hot-toast';
@@ -124,28 +124,6 @@ const Settings = () => {
                 <span className={`text-sm font-bold px-3 py-1 rounded-full border ${color}`}>{rate}%</span>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Referral Bonus */}
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 space-y-4">
-          <div className="flex items-center gap-2 mb-1">
-            <FiGift className="text-amber-400" size={16} />
-            <h3 className="text-white font-semibold text-sm">Referral Investment Bonus</h3>
-          </div>
-          <p className="text-[11px] text-slate-500">Earn a one-time bonus when your referred member makes their first plan investment.</p>
-
-          <div className="p-4 bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-xl text-center">
-            <p className="text-4xl font-bold text-amber-400 mb-1">{settings?.referralBonusPercentage ?? 5}%</p>
-            <p className="text-xs text-slate-400">of investment amount</p>
-          </div>
-
-          <div className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-amber-500/10">
-            <FiPercent className="text-amber-400 shrink-0" size={16} />
-            <div>
-              <p className="text-[11px] text-slate-400">Maximum Bonus Per Investment</p>
-              <p className="text-white font-semibold text-sm">PKR {(settings?.referralBonusMax ?? 5000).toLocaleString()}</p>
-            </div>
           </div>
         </div>
 

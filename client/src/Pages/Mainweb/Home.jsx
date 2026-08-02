@@ -581,7 +581,7 @@ export default function Home() {
                             { label: 'Deposit', amount: 'PKR 20,000', date: 'May 30, 2024', positive: true },
                             { label: 'Profit', amount: 'PKR 3,000', date: 'May 30, 2024', positive: true },
                             { label: 'Withdrawal', amount: 'PKR 5,000', date: 'May 23, 2024', positive: false },
-                            { label: 'Referral Bonus', amount: 'PKR 1,000', date: 'May 31, 2024', positive: true }
+                            { label: 'Referral Commission', amount: 'PKR 1,000', date: 'May 31, 2024', positive: true }
                           ].map((tx, i) => (
                             <div key={i} className="flex items-center justify-between border-b pb-1.5 last:border-0 last:pb-0"
                               style={{ borderColor: '#111d30' }}>

@@ -4,7 +4,6 @@ import Investment from '../models/Investment.js';
 import Transaction from '../models/Transaction.js';
 import Notification from '../models/Notification.js';
 import { distributeProfits } from '../utils/profitEngine.js';
-import { checkAndAwardReferralBonus } from '../utils/referralBonus.js';
 import { distributeReferralCommission } from '../utils/referralCommission.js';
 
 const createInvestment = async (req, res, next) => {
@@ -81,8 +80,6 @@ const createInvestment = async (req, res, next) => {
 
     // Multi-level referral commission on first plan investment only
     await distributeReferralCommission(req.user._id, amount, 'investment', investment._id);
-    await checkAndAwardReferralBonus(req.user._id, amount, investment._id);
-
     res.status(201).json({ success: true, data: investment, message: 'Investment created successfully' });
   } catch (error) {
     next(error);

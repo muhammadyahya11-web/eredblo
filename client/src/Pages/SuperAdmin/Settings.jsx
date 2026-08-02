@@ -17,8 +17,9 @@ export default function SuperAdminSettings() {
     contactPhone: '',
     whatsappNumber: '',
     minimumDeposit: 300,
-     maximumWithdrawal: 500000,
-     withdrawalFeePercentage: 3,
+    minimumWithdrawal: 300,
+    maximumWithdrawal: 500000,
+    withdrawalFeePercentage: 3,
     maintenanceMode: false,
     referralCommissionRates: { level1: 10, level2: 5, level3: 2 },
   });
@@ -37,9 +38,10 @@ export default function SuperAdminSettings() {
             contactEmail: s.contactEmail || '',
             contactPhone: s.contactPhone || '',
             whatsappNumber: s.whatsappNumber || '',
-            minimumDeposit: s.minimumDeposit || 300,
-             maximumWithdrawal: s.maximumWithdrawal || 500000,
-             withdrawalFeePercentage: s.withdrawalFeePercentage ?? 3,
+            minimumDeposit: s.minimumDeposit ?? 300,
+            minimumWithdrawal: s.minimumWithdrawal ?? 300,
+            maximumWithdrawal: s.maximumWithdrawal ?? 500000,
+            withdrawalFeePercentage: s.withdrawalFeePercentage ?? 3,
             maintenanceMode: s.maintenanceMode || false,
             referralCommissionRates: s.referralCommissionRates || { level1: 10, level2: 5, level3: 2 },
           });
@@ -58,6 +60,10 @@ export default function SuperAdminSettings() {
     try {
       const { data } = await settingsAPI.update({
         ...settings,
+        minimumDeposit: Number(settings.minimumDeposit),
+        minimumWithdrawal: Number(settings.minimumWithdrawal),
+        maximumWithdrawal: Number(settings.maximumWithdrawal),
+        withdrawalFeePercentage: Number(settings.withdrawalFeePercentage),
         referralCommissionRates: {
           level1: parseFloat(settings.referralCommissionRates?.level1) || 10,
           level2: parseFloat(settings.referralCommissionRates?.level2) || 5,
@@ -125,15 +131,15 @@ export default function SuperAdminSettings() {
           <div className="space-y-4">
             <div>
               <label className="block text-xs text-slate-400 mb-1.5 font-medium">Minimum Deposit (PKR)</label>
-              <input type="number" value={settings.minimumDeposit} onChange={(e) => setSettings({ ...settings, minimumDeposit: parseFloat(e.target.value) })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-colors focus:shadow-[0_0_15px_rgba(59,130,246,0.2)]" />
+              <input type="number" min="0" value={settings.minimumDeposit} onChange={(e) => setSettings({ ...settings, minimumDeposit: e.target.value })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-colors focus:shadow-[0_0_15px_rgba(59,130,246,0.2)]" />
             </div>
             <div>
               <label className="block text-xs text-slate-400 mb-1.5 font-medium">Minimum Withdrawal (PKR)</label>
-              <input type="number" value={settings.minimumWithdrawal} onChange={(e) => setSettings({ ...settings, minimumWithdrawal: parseFloat(e.target.value) })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-colors focus:shadow-[0_0_15px_rgba(59,130,246,0.2)]" />
+              <input type="number" min="0" value={settings.minimumWithdrawal} onChange={(e) => setSettings({ ...settings, minimumWithdrawal: e.target.value })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-colors focus:shadow-[0_0_15px_rgba(59,130,246,0.2)]" />
             </div>
             <div>
               <label className="block text-xs text-slate-400 mb-1.5 font-medium">Maximum Withdrawal (PKR)</label>
-              <input type="number" value={settings.maximumWithdrawal} onChange={(e) => setSettings({ ...settings, maximumWithdrawal: parseFloat(e.target.value) })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-colors focus:shadow-[0_0_15px_rgba(59,130,246,0.2)]" />
+              <input type="number" min="0" value={settings.maximumWithdrawal} onChange={(e) => setSettings({ ...settings, maximumWithdrawal: e.target.value })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-colors focus:shadow-[0_0_15px_rgba(59,130,246,0.2)]" />
             </div>
           </div>
         </div>

@@ -10,7 +10,7 @@ const MyTeam = () => {
   const [referralStats, setReferralStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [referralLink, setReferralLink] = useState('');
-  const [commissionRates, setCommissionRates] = useState({ level1: 10, level2: 5, level3: 2 });
+  const [commissionRates, setCommissionRates] = useState({ level1: 2, level2: 1, level3: 0.5 });
 
   useEffect(() => {
     const fetchData = async () => {

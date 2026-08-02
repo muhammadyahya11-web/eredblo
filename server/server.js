@@ -87,8 +87,8 @@ app.use(helmet({
 
 const corsOrigin = isProd
   ? [process.env.CLIENT_URL].filter(Boolean)
-  : ["http://localhost:5173", "http://localhost:5174" , "https://eredblo.vercel.app"];
-// 
+  : ["http://localhost:5173", "http://localhost:5174" ,"https://eredblo.vercel.app"  ];
+//
 app.use(
   cors({
     origin: corsOrigin,

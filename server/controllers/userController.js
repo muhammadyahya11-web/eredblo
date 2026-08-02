@@ -74,7 +74,7 @@ const getDashboardStats = async (req, res, next) => {
         $match: {
           user: user._id,
           isPositive: true,
-          type: { $in: ['Profit', 'Referral Commission', 'Referral Bonus'] },
+          type: { $in: ['Profit', 'Referral Commission'] },
           status: { $in: ['Success', 'Approved'] },
           createdAt: { $gte: todayStart },
         },
@@ -151,7 +151,7 @@ const getReferralStats = async (req, res, next) => {
       {
         $match: {
           user: user._id,
-          type: { $in: ['Referral Commission', 'Referral Bonus'] },
+          type: 'Referral Commission',
           status: { $in: ['Success', 'Approved'] },
         },
       },
@@ -193,10 +193,7 @@ const getReferralStats = async (req, res, next) => {
       }
     ]);
 
-    let level1Earn = 0, level2Earn = 0, level3Earn = 0, totalBonuses = 0;
-    referralEarningsAgg.forEach(item => {
-      if (item._id === 'Referral Bonus') totalBonuses = item.total;
-    });
+    let level1Earn = 0, level2Earn = 0, level3Earn = 0;
     levelEarningsAgg.forEach(item => {
       if (item._id === 'level1') level1Earn = item.total;
       if (item._id === 'level2') level2Earn = item.total;
@@ -220,7 +217,6 @@ const getReferralStats = async (req, res, next) => {
       data: {
         totalTeamMembers,
         totalReferralEarnings,
-        totalBonuses,
         monthlyEarnings,
         level1Count: level1Members.length,
         level2Count: level2Members.length,
