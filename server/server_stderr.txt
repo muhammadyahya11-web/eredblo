@@ -1,0 +1,2 @@
+[ProfitEngine] Error distributing profits: getaddrinfo ENOTFOUND ac-vo6tbas-shard-00-02.jb81wyw.mongodb.net
+[ProfitEngine] Error distributing profits: getaddrinfo ENOTFOUND ac-vo6tbas-shard-00-02.jb81wyw.mongodb.net

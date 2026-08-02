@@ -47,6 +47,9 @@ export default function SuperAdminWithdrawals() {
   };
 
   const filtered = filter === "All" ? withdrawals : withdrawals.filter(w => w.status === filter);
+  const payoutAmount = (withdrawal) => withdrawal.netAmount ?? Math.round(
+    withdrawal.amount * (1 - (withdrawal.feePercentage ?? 3) / 100) * 100
+  ) / 100;
 
   return (
     <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-[#0a0f1e] min-h-full">
@@ -76,7 +79,7 @@ export default function SuperAdminWithdrawals() {
                   <th className="text-left px-5 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">User</th>
                   <th className="text-left px-5 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Method</th>
                   <th className="text-left px-5 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Account</th>
-                  <th className="text-left px-5 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</th>
+                   <th className="text-left px-5 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Payout Amount</th>
                   <th className="text-left px-5 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
                   <th className="text-left px-5 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
                   <th className="text-left px-5 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
@@ -96,7 +99,7 @@ export default function SuperAdminWithdrawals() {
                       </td>
                       <td className="px-5 py-4 text-slate-300">{w.paymentMethod}</td>
                       <td className="text-slate-400 px-5 py-4">{w.accountNumber}</td>
-                      <td className="text-amber-400 font-medium px-5 py-4">PKR {w.amount?.toLocaleString()}</td>
+                       <td className="text-amber-400 font-medium px-5 py-4">PKR {payoutAmount(w).toLocaleString()}</td>
                       <td className="px-5 py-4">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${statusStyles[w.status?.toLowerCase()] || statusStyles.pending}`}>
                           {w.status}

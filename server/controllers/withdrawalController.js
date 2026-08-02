@@ -102,9 +102,20 @@ const getUserWithdrawals = async (req, res, next) => {
       .limit(limit * 1)
       .skip((page - 1) * limit);
 
+    const normalizedWithdrawals = withdrawals.map((withdrawal) => {
+      const data = withdrawal.toObject();
+      if (data.netAmount == null) {
+        const feePercentage = data.feePercentage ?? 3;
+        data.netAmount = Math.round(data.amount * (1 - feePercentage / 100) * 100) / 100;
+        data.feeAmount = Math.round((data.amount - data.netAmount) * 100) / 100;
+        data.feePercentage = feePercentage;
+      }
+      return data;
+    });
+
     const total = await Withdrawal.countDocuments(filter);
 
-    res.json({ success: true, data: withdrawals, total, page: parseInt(page), pages: Math.ceil(total / limit) });
+    res.json({ success: true, data: normalizedWithdrawals, total, page: parseInt(page), pages: Math.ceil(total / limit) });
   } catch (error) {
     next(error);
   }
@@ -123,9 +134,20 @@ const getAllWithdrawals = async (req, res, next) => {
       .limit(limit * 1)
       .skip((page - 1) * limit);
 
+    const normalizedWithdrawals = withdrawals.map((withdrawal) => {
+      const data = withdrawal.toObject();
+      if (data.netAmount == null) {
+        const feePercentage = data.feePercentage ?? 3;
+        data.netAmount = Math.round(data.amount * (1 - feePercentage / 100) * 100) / 100;
+        data.feeAmount = Math.round((data.amount - data.netAmount) * 100) / 100;
+        data.feePercentage = feePercentage;
+      }
+      return data;
+    });
+
     const total = await Withdrawal.countDocuments(filter);
 
-    res.json({ success: true, data: withdrawals, total, page: parseInt(page), pages: Math.ceil(total / limit) });
+    res.json({ success: true, data: normalizedWithdrawals, total, page: parseInt(page), pages: Math.ceil(total / limit) });
   } catch (error) {
     next(error);
   }

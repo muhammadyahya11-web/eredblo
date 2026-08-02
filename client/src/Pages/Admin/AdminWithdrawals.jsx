@@ -58,6 +58,9 @@ export default function AdminWithdrawals() {
   const pendingCount = withdrawals.filter(w => w.status === 'Pending').length;
   const approvedCount = withdrawals.filter(w => w.status === 'Approved').length;
   const rejectedCount = withdrawals.filter(w => w.status === 'Rejected').length;
+  const payoutAmount = (withdrawal) => withdrawal.netAmount ?? Math.round(
+    withdrawal.amount * (1 - (withdrawal.feePercentage ?? 3) / 100) * 100
+  ) / 100;
 
   return (
     <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-[#0a0f1e] min-h-full">
@@ -113,7 +116,7 @@ export default function AdminWithdrawals() {
                   <th>User</th>
                   <th>Method</th>
                   <th>Account</th>
-                  <th>Amount</th>
+                   <th>Payout Amount</th>
                   <th>Status</th>
                   <th>Date</th>
                   <th>Actions</th>
@@ -133,7 +136,7 @@ export default function AdminWithdrawals() {
                       </td>
                       <td>{w.paymentMethod}</td>
                       <td className="text-slate-400">{w.accountNumber}</td>
-                      <td className="text-red-400 font-medium">PKR {w.amount?.toLocaleString()}</td>
+                       <td className="text-red-400 font-medium">PKR {payoutAmount(w).toLocaleString()}</td>
                       <td><span className={`status-badge ${w.status.toLowerCase()}`}>{w.status}</span></td>
                       <td className="text-slate-400">{new Date(w.createdAt).toLocaleDateString()}</td>
                       <td>
