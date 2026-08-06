@@ -50,8 +50,8 @@ const Earnings = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         
         {/* Today */}
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-5 flex items-center gap-4">
-          <div className="bg-emerald-500/10 p-3 rounded-lg text-emerald-500 shrink-0">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-5 flex items-center gap-4 hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
+          <div className="bg-emerald-500/15 p-3 rounded-lg text-emerald-400 shadow-[0_0_12px_rgba(34,197,94,0.35)] shrink-0">
             <FiActivity size={24} />
           </div>
           <div className="flex flex-col">
@@ -63,8 +63,8 @@ const Earnings = () => {
         </div>
 
         {/* This Week */}
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-5 flex items-center gap-4">
-          <div className="bg-blue-500/10 p-3 rounded-lg text-blue-500 shrink-0">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-5 flex items-center gap-4 hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
+          <div className="bg-blue-500/15 p-3 rounded-lg text-blue-400 shadow-[0_0_12px_rgba(59,130,246,0.35)] shrink-0">
             <FiBarChart2 size={24} />
           </div>
           <div className="flex flex-col">
@@ -76,8 +76,8 @@ const Earnings = () => {
         </div>
 
         {/* This Month */}
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-5 flex items-center gap-4">
-          <div className="bg-purple-500/10 p-3 rounded-lg text-purple-500 shrink-0">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-5 flex items-center gap-4 hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
+          <div className="bg-purple-500/15 p-3 rounded-lg text-purple-400 shadow-[0_0_12px_rgba(132,94,242,0.35)] shrink-0">
             <FiPieChart size={24} />
           </div>
           <div className="flex flex-col">
@@ -89,8 +89,8 @@ const Earnings = () => {
         </div>
 
         {/* Total Earnings */}
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-5 flex items-center gap-4">
-          <div className="bg-orange-500/10 p-3 rounded-lg text-orange-500 shrink-0">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-5 flex items-center gap-4 hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
+          <div className="bg-orange-500/15 p-3 rounded-lg text-orange-400 shadow-[0_0_12px_rgba(249,115,22,0.35)] shrink-0">
             <FiTrendingUp size={24} />
           </div>
           <div className="flex flex-col">
@@ -106,10 +106,10 @@ const Earnings = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Earnings Overview (Line Chart) */}
-        <div className="lg:col-span-2 bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6">
+        <div className="lg:col-span-2 bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-6 hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-white font-semibold">Earnings Overview</h3>
-            <span className="text-xs text-slate-400 bg-[#090f1e] border border-[#1c2a4a] px-3 py-1.5 rounded-lg">
+            <span className="text-xs text-slate-400 bg-[#090f1e] border border-blue-500/30 px-3 py-1.5 rounded-lg">
               Last 7 Days
             </span>
           </div>
@@ -158,7 +158,7 @@ const Earnings = () => {
         </div>
 
         {/* Earning Breakdown (Pie Chart) */}
-        <div className="lg:col-span-1 bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 flex flex-col">
+        <div className="lg:col-span-1 bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-6 flex flex-col hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
           <h3 className="text-white font-semibold mb-2">Earning Breakdown</h3>
           
           <div className="flex-1 flex flex-col items-center justify-center pt-4 relative">

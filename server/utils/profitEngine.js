@@ -154,7 +154,6 @@ const distributeProfits = async () => {
           (1000 * 60 * 60);
 
 
-
         // ================================
         // TESTING TIME
         // 0.01 hours = around 36 seconds
@@ -167,9 +166,11 @@ const distributeProfits = async () => {
 
 
 
-          // Testing: give one day profit
+          // Credit the daily profit for every complete 24-hour bucket that
+          // has passed since the last payout, so missed days are caught up.
+          const missedDays = Math.floor(hoursSinceLastProfit / 24);
           const profitToAdd =
-            investment.dailyProfit;
+            investment.dailyProfit * missedDays;
 
 
 

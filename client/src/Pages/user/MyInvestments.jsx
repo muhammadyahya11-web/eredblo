@@ -135,7 +135,7 @@ const MyInvestments = () => {
             
             <button
               onClick={handleOpenInvestModal}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 w-full sm:w-auto justify-center"
+              className="bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/40 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 w-full sm:w-auto justify-center"
             >
               <FiPlus size={16} />
               Invest Now

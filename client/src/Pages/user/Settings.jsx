@@ -69,7 +69,7 @@ const Settings = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Platform Info */}
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 space-y-4">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-1">
             <FiInfo className="text-blue-400" size={16} />
             <h3 className="text-white font-semibold text-sm">Platform Information</h3>
@@ -91,7 +91,7 @@ const Settings = () => {
         </div>
 
         {/* Deposit & Withdrawal Limits */}
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 space-y-4">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-1">
             <FiDollarSign className="text-blue-400" size={16} />
             <h3 className="text-white font-semibold text-sm">Limits</h3>
@@ -103,7 +103,7 @@ const Settings = () => {
         </div>
 
         {/* Referral Commission Rates */}
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 space-y-4">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-1">
             <FiUsers className="text-purple-400" size={16} />
             <h3 className="text-white font-semibold text-sm">Referral Commission Rates</h3>
@@ -116,7 +116,7 @@ const Settings = () => {
               { level: 'Level 2', rate: rates?.level2 ?? 5, color: 'bg-purple-500/10 text-purple-400 border-purple-500/20', desc: "Referral's referral" },
               { level: 'Level 3', rate: rates?.level3 ?? 2, color: 'bg-pink-500/10 text-pink-400 border-pink-500/20', desc: 'Third level' },
             ].map(({ level, rate, color, desc }) => (
-              <div key={level} className="flex items-center justify-between p-3 bg-[#050810] rounded-lg border border-[#1c2a4a]">
+              <div key={level} className="flex items-center justify-between p-3 bg-[#050810] rounded-lg border border-blue-500/30 shadow-sm shadow-blue-500/10">
                 <div>
                   <p className="text-white text-sm font-medium">{level}</p>
                   <p className="text-[11px] text-slate-500">{desc}</p>
@@ -128,7 +128,7 @@ const Settings = () => {
         </div>
 
         {/* Security Info */}
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 space-y-4 lg:col-span-2">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6 space-y-4 lg:col-span-2">
           <div className="flex items-center gap-2 mb-1">
             <FiShield className="text-green-400" size={16} />
             <h3 className="text-white font-semibold text-sm">Platform Security</h3>
@@ -139,7 +139,7 @@ const Settings = () => {
               { label: 'Fund Protection', desc: 'Your funds are secured and insured against unauthorized access', color: 'text-blue-400 bg-blue-500/10' },
               { label: '24/7 Monitoring', desc: 'Our systems are monitored around the clock for safety', color: 'text-purple-400 bg-purple-500/10' },
             ].map(({ label, desc, color }) => (
-              <div key={label} className="p-4 bg-[#050810] rounded-lg border border-[#1c2a4a]">
+              <div key={label} className="p-4 bg-[#050810] rounded-lg border border-blue-500/30 shadow-sm shadow-blue-500/10">
                 <div className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${color} mb-2`}>
                   <FiShield size={11} /> {label}
                 </div>
@@ -151,7 +151,7 @@ const Settings = () => {
 
         {/* Social Links */}
         {settings?.socialLinks && Object.values(settings.socialLinks).some(Boolean) && (
-          <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 lg:col-span-2 space-y-4">
+          <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6 lg:col-span-2 space-y-4">
             <div className="flex items-center gap-2 mb-1">
               <FiGlobe className="text-blue-400" size={16} />
               <h3 className="text-white font-semibold text-sm">Follow Us</h3>
@@ -159,28 +159,28 @@ const Settings = () => {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {settings.socialLinks.facebook && (
                 <a href={settings.socialLinks.facebook} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-[#1c2a4a] hover:border-blue-500/30 transition-all group">
+                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-blue-500/30 shadow-sm shadow-blue-500/10 hover:border-blue-500/30 transition-all group">
                   <FiFacebook className="text-blue-600 group-hover:scale-110 transition-transform" size={18} />
                   <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Facebook</span>
                 </a>
               )}
               {settings.socialLinks.twitter && (
                 <a href={settings.socialLinks.twitter} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-[#1c2a4a] hover:border-blue-500/30 transition-all group">
+                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-blue-500/30 shadow-sm shadow-blue-500/10 hover:border-blue-500/30 transition-all group">
                   <FiTwitter className="text-blue-400 group-hover:scale-110 transition-transform" size={18} />
                   <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Twitter</span>
                 </a>
               )}
               {settings.socialLinks.instagram && (
                 <a href={settings.socialLinks.instagram} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-[#1c2a4a] hover:border-pink-500/30 transition-all group">
+                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-blue-500/30 shadow-sm shadow-blue-500/10 hover:border-pink-500/30 transition-all group">
                   <FiInstagram className="text-pink-500 group-hover:scale-110 transition-transform" size={18} />
                   <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Instagram</span>
                 </a>
               )}
               {settings.socialLinks.youtube && (
                 <a href={settings.socialLinks.youtube} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-[#1c2a4a] hover:border-red-500/30 transition-all group">
+                  className="flex items-center gap-3 p-3 bg-[#050810] rounded-lg border border-blue-500/30 shadow-sm shadow-blue-500/10 hover:border-red-500/30 transition-all group">
                   <FiYoutube className="text-red-500 group-hover:scale-110 transition-transform" size={18} />
                   <span className="text-sm text-slate-300 group-hover:text-white transition-colors">YouTube</span>
                 </a>

@@ -53,6 +53,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isLeader: {
+      type: Boolean,
+      default: false,
+    },
 
     totalBalance: { type: Number, default: 0 },
     totalInvestment: { type: Number, default: 0 },

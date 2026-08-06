@@ -96,10 +96,10 @@ const Notifications = () => {
         <p className="text-slate-400 text-xs mt-1">Stay updated with latest notifications</p>
       </div>
 
-      <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6">
+      <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6">
         
         {/* Tabs */}
-        <div className="flex items-center gap-3 mb-8 border-b border-[#1c2a4a] pb-6">
+        <div className="flex items-center gap-3 mb-8 border-b border-blue-500/30 shadow-sm shadow-blue-500/10 pb-6">
           {['All', 'Unread', 'Important'].map((tab) => (
             <button
               key={tab}
@@ -126,7 +126,7 @@ const Notifications = () => {
               <div 
                 key={notif._id} 
                 onClick={() => markAsRead(notif)}
-                className={`bg-[#090f1e] border rounded-xl p-4 flex items-center justify-between group hover:border-blue-500/50 transition-colors cursor-pointer ${notif.isRead ? 'border-[#1c2a4a] opacity-75' : 'border-blue-500/40'}`}
+                className={`bg-[#090f1e] border rounded-xl p-4 flex items-center justify-between group hover:border-blue-500/50 transition-colors cursor-pointer ${notif.isRead ? 'border-blue-500/30 shadow-sm shadow-blue-500/10 opacity-75' : 'border-blue-500/40'}`}
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-3 rounded-full shrink-0 ${getIconStyle(notif.type)}`}>

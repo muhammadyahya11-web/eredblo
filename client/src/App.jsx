@@ -9,6 +9,8 @@ import AdminProtectedRoute from './components/AdminProtectedRoute';
 import SuperAdminProtectedRoute from './components/SuperAdminProtectedRoute';
 import './App.css';
 import './Pages.css';
+
+// Public
 const Home = lazy(() => import('./Pages/Mainweb/Home'));
 const Login = lazy(() => import('./Pages/Auth/Login'));
 const Register = lazy(() => import('./Pages/Auth/Register'));
@@ -17,6 +19,8 @@ const ForgotPassword = lazy(() => import('./Pages/Auth/ForgotPassword'));
 const ResetPassword = lazy(() => import('./Pages/Auth/ResetPassword'));
 const About = lazy(() => import('./Pages/Mainweb/About'));
 const Contact = lazy(() => import('./Pages/Mainweb/Contact'));
+
+// User
 const Dashboard = lazy(() => import('./Pages/user/Dashboard'));
 const Deposit = lazy(() => import('./Pages/user/Deposit'));
 const Withdraw = lazy(() => import('./Pages/user/Withdraw'));
@@ -29,6 +33,8 @@ const Bonuses = lazy(() => import('./Pages/user/Bonuses'));
 const Profile = lazy(() => import('./Pages/user/Profile'));
 const Support = lazy(() => import('./Pages/user/Support'));
 const Notifications = lazy(() => import('./Pages/user/Notifications'));
+
+// Admin
 const AdminDashboard = lazy(() => import('./Pages/Admin/AdminDashboard'));
 const AdminUsers = lazy(() => import('./Pages/Admin/AdminUsers'));
 const AdminDeposits = lazy(() => import('./Pages/Admin/AdminDeposits'));
@@ -40,6 +46,8 @@ const AdminSupport = lazy(() => import('./Pages/Admin/AdminSupport'));
 const AdminNotifications = lazy(() => import('./Pages/Admin/AdminNotifications'));
 const AdminSettings = lazy(() => import('./Pages/Admin/AdminSettings'));
 const AdminGifts = lazy(() => import('./Pages/Admin/AdminGifts'));
+
+// Super Admin
 const SuperAdminDashboard = lazy(() => import('./Pages/SuperAdmin/Dashboard'));
 const SuperAdminAdmins = lazy(() => import('./Pages/SuperAdmin/Admins'));
 const SuperAdminUsers = lazy(() => import('./Pages/SuperAdmin/Users'));
@@ -51,6 +59,14 @@ const SuperAdminEarnings = lazy(() => import('./Pages/SuperAdmin/Earnings'));
 const SuperAdminSupport = lazy(() => import('./Pages/SuperAdmin/Support'));
 const SuperAdminNotifications = lazy(() => import('./Pages/SuperAdmin/Notifications'));
 const SuperAdminSettings = lazy(() => import('./Pages/SuperAdmin/Settings'));
+const SuperAdminPromoCode = lazy(() => import('./Pages/SuperAdmin/PromoCode'));
+const SuperAdminAuditLogs = lazy(() => import('./Pages/SuperAdmin/AuditLogs'));
+const SuperAdminReferralTree = lazy(() => import('./Pages/SuperAdmin/ReferralTree'));
+const SuperAdminLeaders = lazy(() => import('./Pages/SuperAdmin/Leaders'));
+const SuperAdminBonus = lazy(() => import('./Pages/SuperAdmin/BonusManagement'));
+const SuperAdminWallet = lazy(() => import('./Pages/SuperAdmin/WalletManagement'));
+const SuperAdminReports = lazy(() => import('./Pages/SuperAdmin/Reports'));
+const SuperAdminRoi = lazy(() => import('./Pages/SuperAdmin/RoiManagement'));
 
 function App() {
   return (
@@ -73,19 +89,19 @@ function App() {
       />
       <Suspense fallback={<div className="min-h-screen bg-[#050810] flex items-center justify-center text-slate-400">Loading...</div>}>
       <Routes>
-        {/* Public Home Page */}
+        {/* Public */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
 
-        {/* Public Auth Routes */}
+        {/* Auth */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-        {/* Protected Dashboard Routes */}
+        {/* User Dashboard */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Layout />}>
             <Route index element={<Dashboard />} />
@@ -103,7 +119,7 @@ function App() {
           </Route>
         </Route>
 
-        {/* Admin Routes */}
+        {/* Admin */}
         <Route element={<AdminProtectedRoute />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
@@ -120,7 +136,7 @@ function App() {
           </Route>
         </Route>
 
-        {/* Super Admin Routes */}
+        {/* Super Admin */}
         <Route element={<SuperAdminProtectedRoute />}>
           <Route path="/super-admin" element={<SuperAdminLayout />}>
             <Route index element={<SuperAdminDashboard />} />
@@ -135,10 +151,18 @@ function App() {
             <Route path="notifications" element={<SuperAdminNotifications />} />
             <Route path="gifts" element={<AdminGifts />} />
             <Route path="settings" element={<SuperAdminSettings />} />
+            <Route path="promo" element={<SuperAdminPromoCode />} />
+            <Route path="audit" element={<SuperAdminAuditLogs />} />
+            <Route path="referrals" element={<SuperAdminReferralTree />} />
+            <Route path="leaders" element={<SuperAdminLeaders />} />
+            <Route path="bonus" element={<SuperAdminBonus />} />
+            <Route path="wallet" element={<SuperAdminWallet />} />
+            <Route path="reports" element={<SuperAdminReports />} />
+            <Route path="roi" element={<SuperAdminRoi />} />
           </Route>
         </Route>
 
-        {/* Catch-all: redirect unknown routes to login */}
+        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
       </Suspense>

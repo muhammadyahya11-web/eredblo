@@ -14,7 +14,7 @@ export default function SuperAdminUsers() {
   const [pages, setPages] = useState(1);
 
   const [editing, setEditing] = useState(null);
-  const [editForm, setEditForm] = useState({ name: "", email: "", phone: "", cnic: "", role: "", status: "", isVerified: false });
+  const [editForm, setEditForm] = useState({ name: "", email: "", phone: "", cnic: "", role: "", status: "", isVerified: false, totalBalance: "", totalEarnings: "", todayEarnings: "" });
   const [saving, setSaving] = useState(false);
 
   const [deleting, setDeleting] = useState(null);
@@ -40,7 +40,12 @@ export default function SuperAdminUsers() {
     }
   };
 
-  useEffect(() => { loadUsers(); }, [page, limit]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadUsers();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [page, limit, search]);
 
   const handleToggleStatus = async (id) => {
     try {
@@ -62,6 +67,9 @@ export default function SuperAdminUsers() {
       role: u.role || "user",
       status: u.status || "active",
       isVerified: !!u.isVerified,
+      totalBalance: u.totalBalance != null ? String(u.totalBalance) : "",
+      totalEarnings: u.totalEarnings != null ? String(u.totalEarnings) : "",
+      todayEarnings: u.todayEarnings != null ? String(u.todayEarnings) : "",
     });
   };
 
@@ -133,7 +141,7 @@ export default function SuperAdminUsers() {
         />
       </form>
 
-      <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
+      <div className="bg-[#0d1530] border border-blue-500/30 rounded-xl shadow-lg shadow-blue-500/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -263,9 +271,26 @@ export default function SuperAdminUsers() {
                 <input type="checkbox" name="isVerified" checked={editForm.isVerified} onChange={handleEditChange} />
                 Verified
               </label>
+              <div className="pt-1 border-t border-blue-500/10">
+                <p className="text-xs font-semibold text-amber-400 mb-2">Financials (super admin only)</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-xs text-slate-400">Balance (PKR)</label>
+                    <input name="totalBalance" type="number" value={editForm.totalBalance} onChange={handleEditChange} className="w-full bg-[#050810] border border-blue-500/10 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-400">Total Earnings</label>
+                    <input name="totalEarnings" type="number" value={editForm.totalEarnings} onChange={handleEditChange} className="w-full bg-[#050810] border border-blue-500/10 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-400">Today Earnings</label>
+                    <input name="todayEarnings" type="number" value={editForm.todayEarnings} onChange={handleEditChange} className="w-full bg-[#050810] border border-blue-500/10 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none" />
+                  </div>
+                </div>
+              </div>
               <div className="flex justify-end gap-2 pt-2">
                 <button type="button" onClick={() => setEditing(null)} className="px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Cancel</button>
-                <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-sm bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50">
+                <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-sm bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/40 transition-all duration-300 disabled:opacity-50">
                   {saving ? "Saving..." : "Save"}
                 </button>
               </div>

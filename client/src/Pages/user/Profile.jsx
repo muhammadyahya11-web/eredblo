@@ -133,7 +133,7 @@ const Profile = () => {
 
         {/* Left Column - Avatar Card */}
         <div className="lg:col-span-4">
-          <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-8 flex flex-col items-center text-center relative overflow-hidden">
+          <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-8 flex flex-col items-center text-center relative overflow-hidden">
             {/* Background glow */}
             <div className="absolute top-0 w-full h-32 bg-gradient-to-b from-blue-600/10 to-transparent pointer-events-none"></div>
 
@@ -207,11 +207,11 @@ const Profile = () => {
 
         {/* Right Column - Profile Form */}
         <div className="lg:col-span-8">
-          <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 md:p-8">
+          <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6 md:p-8">
 
             {showPwForm ? (
               <form onSubmit={handleChangePassword} className="flex flex-col gap-6">
-                <div className="flex items-center justify-between border-b border-[#1c2a4a] pb-4 mb-2">
+                <div className="flex items-center justify-between border-b border-blue-500/30 shadow-sm shadow-blue-500/10 pb-4 mb-2">
                   <h3 className="text-white font-semibold">Change Password</h3>
                   <button type="button" onClick={() => setShowPwForm(false)} className="text-xs text-blue-400 hover:text-blue-300">
                     Back to Profile
@@ -221,19 +221,19 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2 md:col-span-2">
                     <label className="text-xs text-slate-400">Current Password</label>
-                    <input type="password" name="oldPassword" value={pwData.oldPassword} onChange={handlePwChange} placeholder="••••••••" required className="bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none" />
+                    <input type="password" name="oldPassword" value={pwData.oldPassword} onChange={handlePwChange} placeholder="••••••••" required className="bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] outline-none" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-xs text-slate-400">New Password</label>
-                    <input type="password" name="newPassword" value={pwData.newPassword} onChange={handlePwChange} placeholder="New password" required className="bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none" />
+                    <input type="password" name="newPassword" value={pwData.newPassword} onChange={handlePwChange} placeholder="New password" required className="bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-xs text-slate-400">Confirm Password</label>
-                    <input type="password" name="confirmPassword" value={pwData.confirmPassword} onChange={handlePwChange} placeholder="Repeat new password" required className="bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none" />
+                    <input type="password" name="confirmPassword" value={pwData.confirmPassword} onChange={handlePwChange} placeholder="Repeat new password" required className="bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none" />
                   </div>
                 </div>
 
-                <button type="submit" disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg mt-4 transition-colors disabled:opacity-70">
+                <button type="submit" disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/40 text-white font-medium py-3 rounded-lg mt-4 transition-colors disabled:opacity-70">
                   {isLoading ? 'Updating...' : 'Update Password'}
                 </button>
               </form>
@@ -244,27 +244,27 @@ const Profile = () => {
 
                   <div className="flex flex-col gap-2">
                     <label className="text-xs text-slate-400">Full Name</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} className="bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none transition-colors" />
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} className="bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none transition-colors" />
                   </div>
 
                   <div className="flex flex-col gap-2">
                     <label className="text-xs text-slate-400">Mobile Number</label>
-                    <input type="text" name="phone" value={formData.phone} onChange={handleChange} className="bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none transition-colors" />
+                    <input type="text" name="phone" value={formData.phone} onChange={handleChange} className="bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none transition-colors" />
                   </div>
 
                   <div className="flex flex-col gap-2">
                     <label className="text-xs text-slate-400">Email Address</label>
-                    <input type="email" name="email" value={formData.email} disabled className="bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-slate-500 opacity-70 cursor-not-allowed outline-none" />
+                    <input type="email" name="email" value={formData.email} disabled className="bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-slate-500 opacity-70 cursor-not-allowed outline-none" />
                   </div>
 
                   <div className="flex flex-col gap-2">
                     <label className="text-xs text-slate-400">CNIC Number</label>
-                    <input type="text" name="cnic" value={formData.cnic} onChange={handleChange} placeholder="00000-0000000-0" className="bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none transition-colors" />
+                    <input type="text" name="cnic" value={formData.cnic} onChange={handleChange} placeholder="00000-0000000-0" className="bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:border-blue-500 outline-none transition-colors" />
                   </div>
 
                   <div className="flex flex-col gap-2 relative">
                     <label className="text-xs text-slate-400">Password</label>
-                    <input type="password" value="••••••••" disabled className="bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white opacity-70 cursor-not-allowed outline-none" />
+                    <input type="password" value="••••••••" disabled className="bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white opacity-70 cursor-not-allowed outline-none" />
                   </div>
 
                   <div className="flex flex-col gap-2 justify-end pb-2">
@@ -275,7 +275,7 @@ const Profile = () => {
 
                 </div>
 
-                <button type="submit" disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3.5 rounded-lg mt-2 transition-colors disabled:opacity-70 shadow-lg shadow-blue-600/20">
+                <button type="submit" disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/40 text-white font-medium py-3.5 rounded-lg mt-2 transition-colors disabled:opacity-70 shadow-lg shadow-blue-600/20">
                   {isLoading ? 'Updating...' : 'Update Profile'}
                 </button>
 

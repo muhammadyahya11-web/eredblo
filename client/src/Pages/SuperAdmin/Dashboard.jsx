@@ -1,19 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Shield, Users, UserCheck, DollarSign, TrendingUp, Wallet, Activity, UserX } from "lucide-react";
-import { adminAPI, earningsAPI } from "../../services/api";
+import {
+  Users, UserCheck, UserPlus, Wallet, ArrowDownToLine, Clock,
+  CircleDollarSign, Landmark, Download, ChevronDown, CheckCircle2,
+  Edit, Trash2, Eye, Activity, Box, TrendingUp
+} from "lucide-react";
+import {
+  AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip,
+  PieChart, Pie, Cell, CartesianGrid, LineChart, Line, Legend
+} from "recharts";
+import { superAdminAPI, adminAPI, transactionAPI } from "../../services/api";
 
+/* ── Animated number ── */
 function CountUp({ end, prefix = "", suffix = "" }) {
   const [value, setValue] = useState(0);
   useEffect(() => {
-    let startTime = null;
-    let frameId;
+    let startTime = null, frameId;
     const target = Number(end) || 0;
-    const step = (timestamp) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / 1200, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
+    const step = (ts) => {
+      if (!startTime) startTime = ts;
+      const p = Math.min((ts - startTime) / 1200, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
       setValue(Math.floor(eased * target));
-      if (progress < 1) frameId = requestAnimationFrame(step);
+      if (p < 1) frameId = requestAnimationFrame(step);
       else setValue(target);
     };
     frameId = requestAnimationFrame(step);
@@ -22,118 +30,423 @@ function CountUp({ end, prefix = "", suffix = "" }) {
   return <span>{prefix}{value.toLocaleString()}{suffix}</span>;
 }
 
-const cardGlowColors = {
-  blue: { shadow: "shadow-[0_0_30px_rgba(59,130,246,0.3)]", border: "group-hover:border-blue-500/40" },
-  red: { shadow: "shadow-[0_0_30px_rgba(239,68,68,0.3)]", border: "group-hover:border-red-500/40" },
-  green: { shadow: "shadow-[0_0_30px_rgba(34,197,94,0.3)]", border: "group-hover:border-green-500/40" },
-  amber: { shadow: "shadow-[0_0_30px_rgba(245,158,11,0.3)]", border: "group-hover:border-amber-500/40" },
-  purple: { shadow: "shadow-[0_0_30px_rgba(168,85,247,0.3)]", border: "group-hover:border-purple-500/40" },
+const Card = ({ children, className = "" }) => (
+  <div className={`bg-[#0d1530] border border-blue-500/30 rounded-xl shadow-lg shadow-blue-500/15 hover:shadow-blue-500/25 hover:border-blue-500/40 transition-all duration-300 ${className}`}>
+    {children}
+  </div>
+);
+
+const KpiCard = ({ label, value, icon: Icon, tone, prefix, suffix, percent, isUp }) => {
+  const colors = {
+    blue: "text-blue-400 bg-gradient-to-br from-blue-500/20 to-blue-500/10 shadow-lg shadow-blue-500/30",
+    green: "text-emerald-400 bg-gradient-to-br from-emerald-500/20 to-emerald-500/10 shadow-lg shadow-emerald-500/30",
+    purple: "text-purple-400 bg-gradient-to-br from-purple-500/20 to-purple-500/10 shadow-lg shadow-purple-500/30",
+    orange: "text-orange-400 bg-gradient-to-br from-orange-500/20 to-orange-500/10 shadow-lg shadow-orange-500/30",
+    red: "text-rose-400 bg-gradient-to-br from-rose-500/20 to-rose-500/10 shadow-lg shadow-rose-500/30",
+  };
+  
+  return (
+    <Card className="p-5 flex flex-col justify-between">
+      <div className="flex justify-between items-start mb-2">
+        <div>
+          <p className="text-xs text-slate-400 font-medium mb-1">{label}</p>
+          <h3 className="text-2xl font-bold text-white">
+            <CountUp end={value} prefix={prefix} suffix={suffix} />
+          </h3>
+        </div>
+        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${colors[tone]}`}>
+          <Icon size={24} />
+        </div>
+      </div>
+      <div className="flex items-center gap-1.5 mt-2">
+        <span className={`text-xs font-semibold ${isUp ? 'text-emerald-400' : 'text-rose-400'}`}>
+          {isUp ? '+' : '-'}{percent}%
+        </span>
+        <span className="text-[11px] text-slate-500">from last 7 days</span>
+      </div>
+    </Card>
+  );
 };
 
 export default function SuperAdminDashboard() {
-  const [stats, setStats] = useState({
-    totalUsers: 0, totalAdmins: 0, activeUsers: 0, blockedUsers: 0,
-    totalBalance: 0, totalInvestment: 0, totalEarnings: 0, totalWithdrawals: 0,
-  });
+  const [summaryData, setSummaryData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchSummary = async () => {
       try {
-        const { data } = await adminAPI.getStats();
-        if (data.success) setStats(data.data);
+        const { data } = await superAdminAPI.getDashboardSummary();
+        if (data.success) {
+          setSummaryData(data.data);
+        }
       } catch (error) {
-        console.error('Failed to load stats:', error);
+        console.error("Failed to load dashboard summary", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchStats();
+    fetchSummary();
   }, []);
 
-  const cards = [
-    { label: "Total Users", value: stats.totalUsers, icon: Users, color: "from-blue-600 to-blue-400", glow: "blue" },
-    { label: "Total Admins", value: stats.totalAdmins, icon: UserCheck, color: "from-red-600 to-red-400", glow: "red" },
-    { label: "Total Investment", value: stats.totalInvestment, prefix: "RS ", icon: DollarSign, color: "from-green-600 to-green-400", glow: "green" },
-    { label: "Platform Earnings", value: stats.totalEarnings, prefix: "RS ", icon: Wallet, color: "from-amber-600 to-amber-400", glow: "amber" },
-  ];
+  if (loading || !summaryData) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <Activity className="animate-spin text-blue-500" size={30} />
+      </div>
+    );
+  }
+
+  const {
+    kpis: stats,
+    chartData,
+    topInvestors,
+    depositMethods,
+    recentTransactions,
+    recentUsers,
+  } = summaryData;
+
+  // Use recentTransactions as recent activities for now, map to expected format
+  const recentActivities = recentTransactions.map((tx) => ({
+    text: `${tx.type} ${tx.status.toLowerCase()}`,
+    sub: `User: ${tx.user?.name || 'Unknown'}`,
+    amount: tx.amount,
+    time: new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    icon: tx.type === 'Deposit' ? Download : tx.type === 'Withdrawal' ? ArrowDownToLine : tx.type === 'Profit' ? CircleDollarSign : Activity,
+    color: tx.type === 'Deposit' ? 'text-emerald-500' : tx.type === 'Withdrawal' ? 'text-rose-500' : 'text-purple-500',
+    bg: tx.type === 'Deposit' ? 'bg-emerald-500/10' : tx.type === 'Withdrawal' ? 'bg-rose-500/10' : 'bg-purple-500/10',
+  }));
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-[#0a0f1e] min-h-full">
-      <div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">Super Admin Dashboard</h1>
-        <p className="text-slate-400 text-sm mt-1">Complete platform control and oversight</p>
+    <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-[1600px] mx-auto text-white">
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-sm text-slate-400 mt-1">Welcome back, Super Admin! Here's what's happening with your platform today.</p>
+        </div>
+        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50">
+          <Download size={16} /> Download Report
+        </button>
       </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <div className="flex items-center gap-3 text-slate-400">
-            <Activity className="animate-spin" size={20} />
-            <span>Loading dashboard...</span>
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+        <KpiCard label="Total Users" value={stats.totalUsers} icon={Users} tone="blue" percent={12.5} isUp={true} />
+        <KpiCard label="Active Users" value={stats.activeUsers} icon={UserCheck} tone="green" percent={8.4} isUp={true} />
+        <KpiCard label="New Registrations" value={stats.newRegistrations} icon={UserPlus} tone="purple" percent={15.2} isUp={true} />
+        <KpiCard label="Total Deposits" value={stats.totalDeposits} icon={Wallet} tone="orange" prefix="PKR " percent={18.6} isUp={true} />
+        
+        <KpiCard label="Total Withdrawals" value={stats.totalWithdrawals} icon={Box} tone="red" prefix="PKR " percent={10.3} isUp={true} />
+        <KpiCard label="Pending Withdrawals" value={stats.pendingWithdrawals} icon={Clock} tone="orange" prefix="PKR " percent={2.4} isUp={false} />
+        <KpiCard label="Today's Profit Given" value={stats.todaysProfit} icon={CircleDollarSign} tone="green" prefix="PKR " percent={11.7} isUp={true} />
+        <KpiCard label="Company Balance" value={stats.companyBalance} icon={Landmark} tone="blue" prefix="PKR " percent={9.8} isUp={true} />
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-semibold text-lg">Deposit vs Withdrawal</h2>
+            <button className="flex items-center gap-2 text-sm text-slate-400 hover:text-white border border-white/10 rounded-lg px-3 py-1.5">
+              This Week <ChevronDown size={14} />
+            </button>
           </div>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-            {cards.map((s, i) => (
-              <div key={i} className={`group relative bg-[#0d1530] border border-blue-500/10 rounded-xl p-5 flex items-center gap-4 hover:-translate-y-1 hover:${cardGlowColors[s.glow]?.border} ${cardGlowColors[s.glow]?.shadow} transition-all duration-300 cursor-pointer overflow-hidden`}>
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                <div className={`bg-gradient-to-br ${s.color} w-[52px] h-[52px] rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-all duration-300`}>
-                  <s.icon size={24} className="text-white" />
+          <div className="h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff10" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} tickFormatter={(val) => val >= 1000000 ? `${(val / 1000000).toFixed(1)}M` : val >= 1000 ? `${(val / 1000).toFixed(1)}K` : val} dx={-10} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px' }}
+                  itemStyle={{ color: '#e2e8f0' }}
+                />
+                <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px', paddingBottom: '10px' }} />
+                <Line type="monotone" name="Deposits" dataKey="deposit" stroke="#3b82f6" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
+                <Line type="monotone" name="Withdrawals" dataKey="withdrawal" stroke="#ef4444" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-semibold text-lg">Registration Overview</h2>
+            <button className="flex items-center gap-2 text-sm text-slate-400 hover:text-white border border-white/10 rounded-lg px-3 py-1.5">
+              This Week <ChevronDown size={14} />
+            </button>
+          </div>
+          <div className="h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff10" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dx={-10} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px' }}
+                />
+                <Area type="monotone" dataKey="users" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" dot={{r: 4, fill: '#8b5cf6', strokeWidth: 2, stroke: '#0f172a'}} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+      </div>
+
+      {/* Middle Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        
+        <Card className="p-5 lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold text-lg">Top Investors</h2>
+            <a href="#" className="text-sm text-blue-500 hover:text-blue-400 font-medium">View All</a>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="text-xs text-slate-400 border-b border-white/5">
+                  <th className="pb-3 font-medium">#</th>
+                  <th className="pb-3 font-medium">Username</th>
+                  <th className="pb-3 font-medium">Total Investment</th>
+                  <th className="pb-3 font-medium">Total ROI</th>
+                  <th className="pb-3 font-medium">Total Withdrawal</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm divide-y divide-white/5">
+                {topInvestors.map((investor) => (
+                  <tr key={investor.id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-4 text-slate-400">{investor.id}</td>
+                    <td className="py-4 font-medium text-slate-200">{investor.username}</td>
+                    <td className="py-4 font-semibold text-emerald-400">PKR {investor.invest.toLocaleString()}</td>
+                    <td className="py-4 font-semibold text-blue-400">PKR {investor.roi.toLocaleString()}</td>
+                    <td className="py-4 font-semibold text-orange-400">PKR {investor.withdrawal.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="font-semibold text-lg">Deposit Methods</h2>
+            <button className="flex items-center gap-2 text-sm text-slate-400 hover:text-white border border-white/10 rounded-lg px-2 py-1">
+              This Week <ChevronDown size={14} />
+            </button>
+          </div>
+          <div className="h-[200px] flex items-center justify-center relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={depositMethods} cx="50%" cy="50%" innerRadius={60} outerRadius={85} paddingAngle={2} dataKey="value" stroke="none">
+                  {depositMethods.map((entry, index) => {
+                    const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
+                    return <Cell key={`cell-${index}`} fill={entry.color || PIE_COLORS[index % PIE_COLORS.length]} />;
+                  })}
+                </Pie>
+                <Tooltip 
+                  formatter={(value) => `${value}%`}
+                  contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="space-y-3 mt-2">
+            {depositMethods.map((method, idx) => {
+              const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
+              return (
+              <div key={idx} className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: method.color || PIE_COLORS[idx % PIE_COLORS.length] }}></div>
+                  <span className="text-slate-300">{method.name}</span>
                 </div>
-                <div className="relative z-10">
-                  <p className="text-xs text-slate-400 font-medium mb-1">{s.label}</p>
-                  <p className="text-xl font-bold text-white leading-tight"><CountUp end={s.value} prefix={s.prefix} /></p>
+                <div className="text-right">
+                  <span className="font-semibold text-emerald-400 block">{method.value}%</span>
+                  <span className="text-[10px] text-slate-500">PKR {method.amount?.toLocaleString()}</span>
+                </div>
+              </div>
+            )})}
+          </div>
+        </Card>
+
+      </div>
+
+      {/* Lower Row - Lists */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        
+        <Card className="p-5">
+          <h2 className="font-semibold text-lg mb-4">System Overview</h2>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <div className="flex items-center gap-3">
+                <Users size={16} className="text-blue-500" />
+                <span className="text-sm text-slate-300">Online Users</span>
+              </div>
+              <span className="font-bold text-white">{stats.activeUsers}</span>
+            </div>
+            <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 size={16} className="text-emerald-500" />
+                <span className="text-sm text-slate-300">System Status</span>
+              </div>
+              <span className="text-xs font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">Healthy</span>
+            </div>
+            <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <div className="flex items-center gap-3">
+                <Activity size={16} className="text-blue-500" />
+                <span className="text-sm text-slate-300">Server Load</span>
+              </div>
+              <span className="font-bold text-white">Normal</span>
+            </div>
+            <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <div className="flex items-center gap-3">
+                <Landmark size={16} className="text-purple-500" />
+                <span className="text-sm text-slate-300">Total Revenue</span>
+              </div>
+              <span className="font-bold text-white">PKR {stats.totalRevenue?.toLocaleString() || 0}</span>
+            </div>
+            <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <div className="flex items-center gap-3">
+                <TrendingUp size={16} className="text-orange-500" />
+                <span className="text-sm text-slate-300">Total Profit</span>
+              </div>
+              <span className="font-bold text-white">PKR {stats.totalProfit?.toLocaleString() || 0}</span>
+            </div>
+            <div className="flex items-center justify-between py-2">
+              <div className="flex items-center gap-3">
+                <CircleDollarSign size={16} className="text-rose-500" />
+                <span className="text-sm text-slate-300">Total ROI Paid</span>
+              </div>
+              <span className="font-bold text-white">PKR {stats.totalROIPaid?.toLocaleString() || 0}</span>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold text-lg">Recent Transactions</h2>
+            <a href="#" className="text-sm text-blue-500 hover:text-blue-400 font-medium">View All</a>
+          </div>
+          <div className="space-y-3">
+            {recentTransactions.map((tx, idx) => {
+              const Icon = tx.type === 'Deposit' ? Download : tx.type === 'Withdrawal' ? ArrowDownToLine : tx.type === 'Profit' ? CircleDollarSign : Activity;
+              const colorClass = tx.type === 'Deposit' ? 'text-emerald-500' : tx.type === 'Withdrawal' ? 'text-rose-500' : 'text-purple-500';
+              return (
+              <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg bg-white/5 ${colorClass}`}>
+                    <Icon size={16} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-200">{tx.type}</p>
+                    <p className="text-[11px] text-slate-400">{tx.user?.name || 'Unknown'}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-white">PKR {tx.amount?.toLocaleString()}</p>
+                  <div className="flex items-center justify-end gap-2 mt-1">
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+                      tx.status === 'Approved' || tx.status === 'Success' ? 'text-emerald-500 bg-emerald-500/10' : 'text-orange-500 bg-orange-500/10'
+                    }`}>
+                      {tx.status}
+                    </span>
+                    <span className="text-[10px] text-slate-500">{new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                </div>
+              </div>
+            )})}
+          </div>
+        </Card>
+
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold text-lg">Recent Activities</h2>
+            <a href="#" className="text-sm text-blue-500 hover:text-blue-400 font-medium">View All</a>
+          </div>
+          <div className="space-y-3">
+            {recentActivities.map((act, idx) => (
+              <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                <div className={`p-2 rounded-lg ${act.bg} ${act.color}`}>
+                  <act.icon size={16} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-slate-200">{act.text}</p>
+                  <p className="text-[11px] text-slate-400">{act.sub}</p>
+                </div>
+                <div className="text-right">
+                  {act.amount && <p className="text-xs font-semibold text-emerald-400">PKR {act.amount.toLocaleString()}</p>}
+                  <span className="text-[10px] text-slate-500">{act.time}</span>
                 </div>
               </div>
             ))}
           </div>
+        </Card>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-            <div className="col-span-1 lg:col-span-7 bg-[#0d1530] border border-blue-500/10 rounded-xl p-5">
-              <h2 className="font-semibold text-white text-base tracking-tight mb-5">Account Overview</h2>
-              <div className="space-y-4">
-                {[
-                  { label: "Active Accounts", value: stats.activeUsers, icon: Activity, tone: "text-green-400", bg: "bg-green-500/10", glow: "green" },
-                  { label: "Blocked Accounts", value: stats.blockedUsers, icon: UserX, tone: "text-red-400", bg: "bg-red-500/10", glow: "red" },
-                  { label: "Total Admins", value: stats.totalAdmins, icon: Shield, tone: "text-amber-400", bg: "bg-amber-500/10", glow: "amber" },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 bg-[#050810] border border-blue-500/10 rounded-xl hover:border-blue-500/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.1)]">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full ${item.bg} flex items-center justify-center`}>
-                        <item.icon size={18} className={item.tone} />
-                      </div>
-                      <p className="text-sm font-medium text-white">{item.label}</p>
-                    </div>
-                    <span className="text-lg font-bold text-white">{Number(item.value).toLocaleString()}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+      </div>
 
-            <div className="col-span-1 lg:col-span-5 bg-[#0d1530] border border-blue-500/10 rounded-xl p-5 flex flex-col gap-5">
-              <h2 className="font-semibold text-white text-base tracking-tight">Financial Summary</h2>
-              <div className="space-y-4">
-                {[
-                  { label: "Total Balance", value: stats.totalBalance, icon: Wallet },
-                  { label: "Total Investment", value: stats.totalInvestment, icon: TrendingUp },
-                  { label: "Total Withdrawals", value: stats.totalWithdrawals, icon: DollarSign },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 bg-[#050810] border border-blue-500/10 rounded-xl hover:border-blue-500/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.1)]">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                        <item.icon size={18} className="text-blue-400" />
-                      </div>
-                      <p className="text-sm font-medium text-white">{item.label}</p>
+      {/* Bottom Row - Users Table */}
+      <Card className="p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-semibold text-lg">Last 10 Registered Users</h2>
+          <a href="#" className="text-sm text-blue-500 hover:text-blue-400 font-medium">View All</a>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[800px]">
+            <thead>
+              <tr className="text-xs text-slate-400 border-b border-white/5 bg-white/[0.02]">
+                <th className="p-3 font-medium rounded-tl-lg">Name</th>
+                <th className="p-3 font-medium">Email</th>
+                <th className="p-3 font-medium">Phone</th>
+                <th className="p-3 font-medium">Joined Date</th>
+                <th className="p-3 font-medium">Status</th>
+                <th className="p-3 font-medium text-center rounded-tr-lg">Action</th>
+              </tr>
+            </thead>
+            <tbody className="text-sm divide-y divide-white/5">
+              {recentUsers.map((user) => (
+                <tr key={user._id} className="hover:bg-white/[0.02] transition-colors">
+                  <td className="p-3 text-slate-400">{user.name}</td>
+                  <td className="p-3 font-medium text-slate-200">{user.email}</td>
+                  <td className="p-3 text-slate-400">{user.phone}</td>
+                  <td className="p-3 text-slate-400">{new Date(user.createdAt).toLocaleDateString()}</td>
+                  <td className="p-3">
+                    <span className={`text-[11px] font-semibold px-2 py-1 rounded ${user.status === 'active' ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10'}`}>
+                      {user.status}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <div className="flex items-center justify-center gap-2">
+                      <button className="p-1.5 rounded-md bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-colors" title="View">
+                        <Eye size={14} />
+                      </button>
+                      <button className="p-1.5 rounded-md bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-colors" title="Edit">
+                        <Edit size={14} />
+                      </button>
+                      <button className="p-1.5 rounded-md bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors" title="Block/Delete">
+                        <Trash2 size={14} />
+                      </button>
                     </div>
-                    <span className="text-sm font-semibold text-green-400">RS {Number(item.value).toLocaleString()}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-6 border-t border-white/5 text-xs text-slate-500">
+        <p>© 2024 ERED BLOO. All rights reserved.</p>
+        <p>Super Admin Panel v2.0.0</p>
+      </div>
+
     </div>
   );
 }

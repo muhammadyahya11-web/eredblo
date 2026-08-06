@@ -26,6 +26,13 @@ const cardGlowColors = {
   blue: { shadow: "shadow-[0_0_30px_rgba(59,130,246,0.3)]", border: "group-hover:border-blue-500/40" },
 };
 
+const statusStyles = {
+  pending: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  approved: "bg-green-500/10 text-green-400 border-green-500/20",
+  success: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  rejected: "bg-red-500/10 text-red-400 border-red-500/20",
+};
+
 export default function SuperAdminEarnings() {
   const [earnings, setEarnings] = useState(null);
   const [loading, setLoading] = useState(true);

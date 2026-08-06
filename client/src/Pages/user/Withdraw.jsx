@@ -89,7 +89,7 @@ const Withdraw = () => {
       
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        <div className="flex flex-col border-r border-[#1c2a4a] pr-4">
+        <div className="flex flex-col border-r border-blue-500/30 shadow-sm shadow-blue-500/10 pr-4">
           <div className="flex items-center gap-3 mb-2">
             <div className="bg-blue-600/20 p-2 rounded-lg text-blue-500">
               <FiLock size={18} />
@@ -101,7 +101,7 @@ const Withdraw = () => {
           </span>
         </div>
 
-        <div className="flex flex-col border-r border-[#1c2a4a] pl-2 pr-4 justify-center">
+        <div className="flex flex-col border-r border-blue-500/30 shadow-sm shadow-blue-500/10 pl-2 pr-4 justify-center">
           <span className="text-slate-400 text-xs font-medium mb-2">Minimum Withdrawal</span>
           <span className="text-white font-bold text-lg">
             PKR {settings?.minimumWithdrawal?.toLocaleString() || '300'}
@@ -124,7 +124,7 @@ const Withdraw = () => {
         
         {/* Left Side: Form */}
         <div className="lg:col-span-8">
-          <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6">
+          <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6">
             <h3 className="text-white font-semibold mb-6">Withdrawal Information</h3>
             
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -137,7 +137,7 @@ const Withdraw = () => {
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="Enter amount"
-                    className="w-full bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] transition-colors"
                     required
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400">PKR</span>
@@ -156,7 +156,7 @@ const Withdraw = () => {
                 <select
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                  className="w-full bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors appearance-none"
                   required
                 >
                   <option value="" disabled>Select payment method</option>
@@ -173,7 +173,7 @@ const Withdraw = () => {
                   value={accountTitle}
                   onChange={(e) => setAccountTitle(e.target.value)}
                   placeholder="Enter account title"
-                  className="w-full bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                  className="w-full bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
                   required
                 />
               </div>
@@ -185,7 +185,7 @@ const Withdraw = () => {
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value)}
                   placeholder="Enter account number"
-                  className="w-full bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                  className="w-full bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
                   required
                 />
               </div>
@@ -193,7 +193,7 @@ const Withdraw = () => {
               <button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg mt-2 transition-colors disabled:opacity-70"
+                className="w-full bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/40 text-white font-medium py-3 rounded-lg mt-2 transition-colors disabled:opacity-70"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Withdrawal'}
               </button>
@@ -205,7 +205,7 @@ const Withdraw = () => {
         {/* Right Side: Important Note */}
         <div className="lg:col-span-4">
           <div className="flex flex-col gap-4 pt-2">
-            <h4 className="text-[#f59e0b] text-sm font-semibold mb-2 border-b border-[#1c2a4a] pb-2 inline-block self-start">
+            <h4 className="text-[#f59e0b] text-sm font-semibold mb-2 border-b border-blue-500/30 shadow-sm shadow-blue-500/10 pb-2 inline-block self-start">
               Important Note:
             </h4>
             <ul className="flex flex-col gap-4 text-xs text-slate-400 list-disc pl-4">

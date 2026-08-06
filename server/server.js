@@ -21,6 +21,9 @@ import supportRoutes from './routes/supportRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
 import earningsRoutes from './routes/earningsRoutes.js';
 import giftRoutes from './routes/giftRoutes.js';
+import promoRoutes from './routes/promoRoutes.js';
+import auditRoutes from './routes/auditRoutes.js';
+import bonusRoutes from './routes/bonusRoutes.js';
 import cronRoutes from './routes/cronRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import maintenanceMode from './middlewares/maintenanceMode.js';
@@ -171,6 +174,9 @@ app.use('/api/support', supportRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/earnings', earningsRoutes);
 app.use('/api/gifts', giftRoutes);
+app.use('/api/promos', promoRoutes);
+app.use('/api/audit', auditRoutes);
+app.use('/api/bonus', bonusRoutes);
 app.use('/api/cron', cronRoutes);
 
 app.get('/', (req, res) => {

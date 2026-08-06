@@ -89,7 +89,7 @@ const Support = () => {
         </div>
         <button 
           onClick={() => setViewMode(viewMode === 'list' ? 'new' : 'list')}
-          className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-lg shadow-blue-500/20"
+          className="text-xs bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/40 text-white px-4 py-2 rounded-lg transition-colors shadow-lg shadow-blue-500/20"
         >
           {viewMode === 'list' ? '+ New Ticket' : 'View My Tickets'}
         </button>
@@ -102,7 +102,7 @@ const Support = () => {
           <div className="lg:col-span-4 flex flex-col gap-4">
             <h3 className="text-white font-semibold mb-2">Contact Us</h3>
             
-            <a href="#" className="bg-[#0d152a] border border-[#1c2a4a] hover:border-blue-500/50 rounded-xl p-4 flex items-center gap-4 transition-all group">
+            <a href="#" className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 hover:border-blue-500/50 rounded-xl p-4 flex items-center gap-4 transition-all group">
               <div className="bg-emerald-500/10 text-emerald-500 p-3 rounded-full group-hover:scale-110 transition-transform">
                 <FiMessageSquare size={20} />
               </div>
@@ -112,7 +112,7 @@ const Support = () => {
               </div>
             </a>
 
-            <a href="https://wa.me/923001234567" target="_blank" rel="noreferrer" className="bg-[#0d152a] border border-[#1c2a4a] hover:border-blue-500/50 rounded-xl p-4 flex items-center gap-4 transition-all group">
+            <a href="https://wa.me/923001234567" target="_blank" rel="noreferrer" className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 hover:border-blue-500/50 rounded-xl p-4 flex items-center gap-4 transition-all group">
               <div className="bg-green-500/10 text-[#25D366] p-3 rounded-full group-hover:scale-110 transition-transform">
                 <FaWhatsapp size={20} />
               </div>
@@ -132,7 +132,7 @@ const Support = () => {
               </div>
             </div>
 
-            <a href="/#faqs" className="bg-[#0d152a] border border-[#1c2a4a] hover:border-blue-500/50 rounded-xl p-4 flex items-center gap-4 transition-all group">
+            <a href="/#faqs" className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 hover:border-blue-500/50 rounded-xl p-4 flex items-center gap-4 transition-all group">
               <div className="bg-purple-500/10 text-purple-400 p-3 rounded-full group-hover:scale-110 transition-transform">
                 <FiHelpCircle size={20} />
               </div>
@@ -145,7 +145,7 @@ const Support = () => {
 
           {/* Right Column - Submit Ticket Form */}
           <div className="lg:col-span-8">
-            <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 md:p-8">
+            <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6 md:p-8">
               <h3 className="text-white font-semibold mb-6">Submit Ticket</h3>
               
               <form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -157,7 +157,7 @@ const Support = () => {
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     placeholder="Enter subject"
-                    className="w-full bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] focus:shadow-[0_0_12px_rgba(59,130,246,0.3)] transition-colors"
                     required
                   />
                 </div>
@@ -167,7 +167,7 @@ const Support = () => {
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                    className="w-full bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors appearance-none"
                     required
                   >
                     <option value="General">General</option>
@@ -185,7 +185,7 @@ const Support = () => {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Type your message here..."
-                    className="w-full bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors resize-none"
+                    className="w-full bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors resize-none"
                     required
                   />
                 </div>
@@ -193,7 +193,7 @@ const Support = () => {
                 <button 
                   type="submit" 
                   disabled={submitting}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3.5 rounded-lg mt-2 transition-colors disabled:opacity-70 shadow-lg shadow-blue-500/20"
+                  className="w-full bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/40 text-white font-medium py-3.5 rounded-lg mt-2 transition-colors disabled:opacity-70 shadow-lg shadow-blue-500/20"
                 >
                   {submitting ? 'Submitting...' : 'Submit Ticket'}
                 </button>
@@ -205,7 +205,7 @@ const Support = () => {
       )}
 
       {viewMode === 'list' && (
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6">
           <h3 className="text-white font-semibold mb-6">My Tickets</h3>
           {loading ? (
             <p className="text-slate-400 text-sm py-8 text-center">Loading tickets...</p>
@@ -217,7 +217,7 @@ const Support = () => {
                 <div 
                   key={ticket._id} 
                   onClick={() => { setSelectedTicket(ticket); setViewMode('detail'); }}
-                  className="bg-[#090f1e] border border-[#1c2a4a] hover:border-blue-500/50 rounded-xl p-5 cursor-pointer transition-colors flex items-start justify-between"
+                  className="bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 hover:border-blue-500/50 rounded-xl p-5 cursor-pointer transition-colors flex items-start justify-between"
                 >
                   <div className="flex flex-col gap-2">
                     <h4 className="text-white font-medium text-sm">{ticket.subject}</h4>
@@ -234,9 +234,9 @@ const Support = () => {
       )}
 
       {viewMode === 'detail' && selectedTicket && (
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6">
           
-          <div className="flex items-center justify-between border-b border-[#1c2a4a] pb-4 mb-6">
+          <div className="flex items-center justify-between border-b border-blue-500/30 shadow-sm shadow-blue-500/10 pb-4 mb-6">
             <div className="flex flex-col gap-2">
               <button 
                 onClick={() => setViewMode('list')}
@@ -274,13 +274,13 @@ const Support = () => {
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 placeholder="Type your reply..."
-                className="flex-1 bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                className="flex-1 bg-[#090f1e] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
                 required
               />
               <button 
                 type="submit" 
                 disabled={submitting}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 rounded-lg transition-colors disabled:opacity-70"
+                className="bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/40 text-white font-medium px-6 rounded-lg transition-colors disabled:opacity-70"
               >
                 Send
               </button>

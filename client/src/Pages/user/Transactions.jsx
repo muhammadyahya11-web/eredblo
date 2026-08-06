@@ -61,10 +61,10 @@ const Transactions = () => {
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto">
       
-      <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6">
+      <div className="bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6">
         
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3 mb-8 border-b border-[#1c2a4a] pb-6">
+        <div className="flex flex-wrap items-center gap-3 mb-8 border-b border-blue-500/30 shadow-sm shadow-blue-500/10 pb-6">
           {filterOptions.map((f) => (
             <button
               key={f}
@@ -72,7 +72,7 @@ const Transactions = () => {
               className={`px-6 py-2 rounded-lg text-xs font-medium transition-all ${
                 filter === f 
                   ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' 
-                  : 'bg-transparent border border-[#1c2a4a] text-slate-400 hover:border-blue-500/50 hover:text-white'
+                  : 'bg-transparent border border-blue-500/30 shadow-sm shadow-blue-500/10 text-slate-400 hover:border-blue-500/50 hover:text-white'
               }`}
             >
               {f}
@@ -84,7 +84,7 @@ const Transactions = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#1c2a4a]">
+              <tr className="border-b border-blue-500/30 shadow-sm shadow-blue-500/10">
                 <th className="py-4 px-4 text-xs font-medium text-slate-400">ID</th>
                 <th className="py-4 px-4 text-xs font-medium text-slate-400">Type</th>
                 <th className="py-4 px-4 text-xs font-medium text-slate-400">Amount</th>
@@ -99,7 +99,7 @@ const Transactions = () => {
                 <tr><td colSpan="5" className="py-8 text-center text-slate-400 text-sm">No transactions found</td></tr>
               ) : (
                 displayData.map((tx, idx) => (
-                  <tr key={tx._id} className="border-b border-[#1c2a4a]/50 hover:bg-[#1a2c5b]/10 transition-colors">
+                  <tr key={tx._id} className="border-b border-blue-500/30 shadow-sm shadow-blue-500/10 hover:bg-[#1a2c5b]/10 transition-colors">
                     <td className="py-4 px-4 text-xs text-slate-400">#{tx._id.substring(0, 8).toUpperCase()}</td>
                     <td className="py-4 px-4 text-sm text-white font-medium">{tx.type}</td>
                     <td className={`py-4 px-4 text-sm font-semibold ${tx.isPositive || tx.type === 'Deposit' || tx.type === 'Profit' ? 'text-emerald-400' : 'text-red-400'}`}>
@@ -123,7 +123,7 @@ const Transactions = () => {
           <button 
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-4 py-2 text-xs font-medium text-slate-400 bg-transparent border border-[#1c2a4a] rounded-lg hover:border-blue-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-xs font-medium text-slate-400 bg-transparent border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg hover:border-blue-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
           </button>
@@ -147,7 +147,7 @@ const Transactions = () => {
           <button 
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-4 py-2 text-xs font-medium text-slate-400 bg-transparent border border-[#1c2a4a] rounded-lg hover:border-blue-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-xs font-medium text-slate-400 bg-transparent border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-lg hover:border-blue-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
           </button>

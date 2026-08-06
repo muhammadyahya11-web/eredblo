@@ -49,11 +49,6 @@ api.interceptors.response.use(
   }
 );
 
-export const earningsAPI = {
-  getMyEarnings: () => api.get('/earnings/my-earnings'),
-  getPlatformEarnings: () => api.get('/earnings/platform'),
-};
-
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
@@ -75,6 +70,7 @@ export const userAPI = {
 
 export const adminAPI = {
   getStats: () => api.get('/admin/stats'),
+  getDashboardSummary: () => api.get('/admin/dashboard-summary'),
   getUsers: (params) => api.get('/admin/users', { params }),
   updateUserStatus: (id, status) => api.put(`/admin/users/${id}/status`, { status }),
   updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
@@ -86,6 +82,7 @@ export const adminAPI = {
 
 export const superAdminAPI = {
   getStats: () => api.get('/admin/stats'),
+  getDashboardSummary: () => api.get('/admin/dashboard-summary'),
   getUsers: (params) => api.get('/admin/users', { params }),
   updateUserStatus: (id, status) => api.put(`/admin/users/${id}/status`, { status }),
   updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
@@ -102,6 +99,11 @@ export const planAPI = {
   createPlan: (data) => api.post('/plans', data),
   updatePlan: (id, data) => api.put(`/plans/${id}`, data),
   deletePlan: (id) => api.delete(`/plans/${id}`),
+};
+
+export const earningsAPI = {
+  getMyEarnings: () => api.get('/earnings/my-earnings'),
+  getPlatformEarnings: () => api.get('/earnings/platform'),
 };
 
 export const depositAPI = {
@@ -125,6 +127,7 @@ export const investmentAPI = {
   getById: (id) => api.get(`/investments/${id}`),
   cancel: (id) => api.delete(`/investments/${id}`),
   distributeProfit: () => api.post('/investments/distribute-profit'),
+  updateInvestment: (id, data) => api.put(`/investments/${id}`, data),
 };
 
 export const transactionAPI = {
@@ -155,6 +158,44 @@ export const settingsAPI = {
   getPublic: () => api.get('/settings/public'),
   get: () => api.get('/settings'),
   update: (data) => api.put('/settings', data),
+};
+
+export const promoAPI = {
+  getAll: () => api.get('/promos'),
+  create: (data) => api.post('/promos', data),
+  update: (id, data) => api.put(`/promos/${id}`, data),
+  delete: (id) => api.delete(`/promos/${id}`),
+};
+
+export const auditAPI = {
+  getAll: (params) => api.get('/audit', { params }),
+  delete: (id) => api.delete(`/audit/${id}`),
+  clearAll: () => api.delete('/audit/clear-all'),
+};
+
+export const bonusAPI = {
+  searchUsers: (search) => api.get('/bonus/users', { params: { search } }),
+  issueBonus: (data) => api.post('/bonus/issue', data),
+  getHistory: (params) => api.get('/bonus/history', { params }),
+};
+
+export const leaderAPI = {
+  getAll: () => api.get('/admin/leaders'),
+  promote: (id) => api.put(`/admin/leaders/${id}/promote`),
+  demote: (id) => api.put(`/admin/leaders/${id}/demote`),
+};
+
+export const walletAPI = {
+  getOverview: () => api.get('/admin/wallet-overview'),
+};
+
+export const reportsAPI = {
+  getData: (params) => api.get('/admin/reports', { params }),
+};
+
+export const referralAPI = {
+  getTree: (userId) => api.get(`/admin/referral-tree/${userId}`),
+  searchUser: (search) => api.get('/admin/users', { params: { search, limit: 10 } }),
 };
 
 export const giftAPI = {

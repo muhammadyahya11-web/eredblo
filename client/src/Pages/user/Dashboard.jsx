@@ -420,7 +420,7 @@ export default function Dashboard() {
         </div>
 
         {/* Center: Welcome text + stats */}
-        <div className="db-welcome-center db-slideup" style={{ animationDelay: "150ms" }}>
+        <div className="db-welcome-center  db-slideup" style={{ animationDelay: "150ms" }}>
           <p className="db-welcome-sub">Welcome Back,</p>
           <h2 className="db-welcome-name">
             Mr {firstName} <span className="db-wave">👋</span>
@@ -745,7 +745,7 @@ export default function Dashboard() {
         .db-welcome-card {
           position: relative;
           background: linear-gradient(135deg, #0d1530 0%, #0b1225 60%, #0a1020 100%);
-          border: 1px solid #1e2d4a;
+          border: 3px solid #1e2d4a;
           border-radius: 18px;
           padding: 22px 28px;
           display: flex;
@@ -926,8 +926,8 @@ export default function Dashboard() {
         }
         .db-stat-card:hover {
           transform: translateY(-3px);
-          border-color: #2d4a7a;
-          box-shadow: 0 8px 30px rgba(30,60,120,0.25);
+          border-color: #3b82f6;
+          box-shadow: 0 8px 30px rgba(59,130,246,0.3);
         }
         .db-stat-card:hover::before { opacity: 1; }
         .db-stat-icon {
@@ -938,6 +938,15 @@ export default function Dashboard() {
           transition: transform 0.3s, box-shadow 0.3s;
         }
         .db-stat-card:hover .db-stat-icon { transform: scale(1.1); }
+        @keyframes dbIconPulse {
+          0%,100% { filter: drop-shadow(0 0 6px currentColor); }
+          50%     { filter: drop-shadow(0 0 14px #fff); }
+        }
+        .db-stat-icon { animation: dbIconPulse 3s ease-in-out infinite; }
+        .bg-blue-600  { background: linear-gradient(135deg,#3b82f6,#2563eb); box-shadow: 0 0 18px rgba(59,130,246,0.45); }
+        .bg-green-500{ background: linear-gradient(135deg,#22c55e,#16a34a); box-shadow: 0 0 18px rgba(34,197,94,0.45); }
+        .bg-purple-600{ background: linear-gradient(135deg,#a855f7,#7c3aed); box-shadow: 0 0 18px rgba(124,58,237,0.45); }
+        .bg-orange-500{ background: linear-gradient(135deg,#f97316,#ea580c); box-shadow: 0 0 18px rgba(249,115,22,0.45); }
         .db-stat-label { font-size: 11px; color: #64748b; margin-bottom: 4px; font-weight: 500; }
         .db-stat-value { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 4px; }
         .db-stat-change { font-size: 11px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
@@ -961,11 +970,12 @@ export default function Dashboard() {
           border: 1px solid #1e2d4a;
           border-radius: 14px;
           padding: 20px;
-          transition: border-color 0.3s, box-shadow 0.3s;
+          transition: border-color 0.3s, box-shadow 0.3s, transform 0.25s;
         }
         .db-card:hover {
-          border-color: #2d4a7a;
-          box-shadow: 0 0 24px rgba(30,60,120,0.15);
+          border-color: #3b82f6;
+          box-shadow: 0 0 24px rgba(59,130,246,0.2);
+          transform: translateY(-2px);
         }
         .db-card-header {
           display: flex;
@@ -1037,8 +1047,8 @@ export default function Dashboard() {
         }
         .db-qa-btn:hover {
           transform: translateY(-3px);
-          border-color: #2d4a7a;
-          box-shadow: 0 6px 20px rgba(30,60,120,0.2);
+          border-color: #3b82f6;
+          box-shadow: 0 6px 24px rgba(59,130,246,0.3);
         }
         .db-qa-icon {
           width: 48px; height: 48px;

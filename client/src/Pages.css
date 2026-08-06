@@ -1,9 +1,16 @@
-﻿/* GENERAL COMPONENTS */
+/* GENERAL COMPONENTS */
 .section-card {
   background-color: #0B1320;
-  border: 1px solid #1c2333;
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2), inset 0 0 10px rgba(59, 130, 246, 0.1);
   border-radius: 16px;
   padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.section-card:hover {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.4), inset 0 0 15px rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.8);
 }
 
 .section-title {
@@ -29,19 +36,21 @@
 .form-group textarea {
   width: 100%;
   background-color: #050810;
-  border: 1px solid #1c2333;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.05);
   border-radius: 8px;
   padding: 12px 16px;
   color: #fff;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .form-group input:focus, 
 .form-group select:focus, 
 .form-group textarea:focus {
   border-color: #2563eb;
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
 }
 
 .input-with-suffix {
@@ -65,17 +74,20 @@
 .btn-primary {
   background-color: #2563eb;
   color: white;
-  border: none;
+  border: 1px solid #3b82f6;
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
   padding: 14px 24px;
   border-radius: 8px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
   background-color: #1d4ed8;
+  box-shadow: 0 0 25px rgba(37, 99, 235, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.1);
+  border-color: #60a5fa;
 }
 
 .w-full {
@@ -236,11 +248,12 @@
 
 .method-card {
   background-color: #050810;
-  border: 1px solid #1c2333;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.1);
   border-radius: 12px;
   padding: 24px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -250,12 +263,13 @@
 .method-card:hover {
   border-color: #3b82f6;
   background-color: rgba(37,99,235,0.05);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
 }
 
 .method-card.active {
   border-color: #2563eb;
   background-color: rgba(37,99,235,0.1);
-  box-shadow: 0 0 15px rgba(37,99,235,0.2);
+  box-shadow: 0 0 25px rgba(37,99,235,0.5), inset 0 0 10px rgba(37,99,235,0.2);
 }
 
 .method-logo {
@@ -352,7 +366,8 @@
 }
 
 .upload-box {
-  border: 2px dashed #1c2333;
+  border: 2px dashed rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
   border-radius: 12px;
   padding: 40px;
   display: flex;
@@ -362,13 +377,14 @@
   text-align: center;
   margin-bottom: 24px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   background-color: #050810;
 }
 
 .upload-box:hover {
   border-color: #3b82f6;
   background-color: rgba(37,99,235,0.02);
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.3);
 }
 
 .upload-icon {
@@ -576,12 +592,19 @@
 
 .level-card {
   background-color: #050810;
-  border: 1px solid #1c2333;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: all 0.3s ease;
+}
+
+.level-card:hover {
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.6);
 }
 
 .level-info h4 {
@@ -663,18 +686,20 @@
 
 .contact-card {
   background-color: #050810;
-  border: 1px solid #1c2333;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
   border-radius: 12px;
   padding: 20px;
   display: flex;
   align-items: center;
   gap: 16px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .contact-card:hover {
   border-color: #3b82f6;
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.3);
 }
 
 .contact-icon {
@@ -748,13 +773,21 @@
   gap: 16px;
   padding: 16px;
   background-color: #050810;
-  border: 1px solid #1c2333;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.1);
   border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.notification-item:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
 }
 
 .notification-item.unread {
   background-color: rgba(37,99,235,0.05);
-  border-color: rgba(37,99,235,0.2);
+  border-color: rgba(37,99,235,0.5);
+  box-shadow: 0 0 20px rgba(37,99,235,0.3);
 }
 
 .notif-icon {

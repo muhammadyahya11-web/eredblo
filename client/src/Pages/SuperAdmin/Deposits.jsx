@@ -19,6 +19,9 @@ export default function SuperAdminDeposits() {
   const [total, setTotal] = useState(0);
   const [pages, setPages] = useState(1);
 
+  const [rejectId, setRejectId] = useState(null);
+  const [rejectReason, setRejectReason] = useState("");
+
   const fetchDeposits = async () => {
     try {
       const params = { page, limit };
@@ -46,13 +49,19 @@ export default function SuperAdminDeposits() {
     } catch (error) { toast.error('Failed to approve'); }
   };
 
-  const handleReject = async (id) => {
-    const reason = prompt('Rejection reason (optional):');
+  const handleReject = (id) => {
+    setRejectId(id);
+    setRejectReason("");
+  };
+
+  const submitReject = async () => {
+    if (!rejectId) return;
     try {
-      const { data } = await depositAPI.updateStatus(id, { status: 'Rejected', adminMessage: reason || '' });
+      const { data } = await depositAPI.updateStatus(rejectId, { status: 'Rejected', adminMessage: rejectReason });
       if (data.success) { toast.success('Deposit rejected'); fetchDeposits(); }
       else toast.error(data.message);
     } catch (error) { toast.error('Failed to reject'); }
+    finally { setRejectId(null); }
   };
 
   return (
@@ -72,7 +81,7 @@ export default function SuperAdminDeposits() {
           </button>
         ))}
       </div>
-      <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
+      <div className="bg-[#0d1530] border border-blue-500/30 rounded-xl shadow-lg shadow-blue-500/10 overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-slate-400">Loading deposits...</div>
         ) : (
@@ -138,6 +147,39 @@ export default function SuperAdminDeposits() {
         onPageChange={setPage}
         onLimitChange={(l) => { setLimit(l); setPage(1); }}
       />
+
+      {/* Reject Modal */}
+      {rejectId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-[#0d1530] border border-blue-500/20 rounded-xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between p-4 border-b border-blue-500/10">
+              <h3 className="text-lg font-semibold text-white">Reject Deposit</h3>
+              <button onClick={() => setRejectId(null)} className="text-slate-400 hover:text-white transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Rejection Reason (Optional)</label>
+                <textarea
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  placeholder="Enter reason for rejection..."
+                  className="w-full bg-[#060a14] border border-blue-500/20 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 min-h-[100px]"
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-3 p-4 border-t border-blue-500/10 bg-[#060a14]/50">
+              <button onClick={() => setRejectId(null)} className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">
+                Cancel
+              </button>
+              <button onClick={submitReject} className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-red-500/20">
+                Reject Deposit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

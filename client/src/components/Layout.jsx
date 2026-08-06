@@ -88,34 +88,34 @@ const Layout = () => {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar">
-          <NavLink to="/dashboard" end className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_4px_20px_rgba(37,99,235,0.3)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard" end className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)] shadow-[0_4px_20px_rgba(37,99,235,0.3)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiGrid size={18} /> Dashboard
           </NavLink>
-          <NavLink to="/dashboard/my-investments" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard/my-investments" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiTrendingUp size={18} /> My Investments
           </NavLink>
-          <NavLink to="/dashboard/deposit" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard/deposit" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiDownload size={18} /> Deposit
           </NavLink>
-          <NavLink to="/dashboard/withdraw" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard/withdraw" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiUpload size={18} /> Withdraw
           </NavLink>
-          <NavLink to="/dashboard/transactions" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard/transactions" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiList size={18} /> Transactions
           </NavLink>
-          <NavLink to="/dashboard/my-team" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard/my-team" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiUsers size={18} /> My Team
           </NavLink>
-          <NavLink to="/dashboard/earnings" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard/earnings" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiClock size={18} /> Earning History
           </NavLink>
-          <NavLink to="/dashboard/bonuses" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard/bonuses" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiGift size={18} /> Bonuses
           </NavLink>
-          <NavLink to="/dashboard/support" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard/support" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiHelpCircle size={18} /> Support
           </NavLink>
-          <NavLink to="/dashboard/notifications" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all relative ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard/notifications" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all relative ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiBell size={18} /> Notifications
             {unreadCount > 0 && (
               <span className="absolute right-3 top-3 min-w-[18px] h-[18px] bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full px-1">
@@ -123,7 +123,7 @@ const Layout = () => {
               </span>
             )}
           </NavLink>
-          <NavLink to="/dashboard/profile" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
+          <NavLink to="/dashboard/profile" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${isActive ? 'bg-blue-600 text-white font-medium shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-400 hover:bg-white/5 hover:text-white'}`} onClick={closeSidebar}>
             <FiSettings size={18} /> Profile Settings
           </NavLink>
           

@@ -63,8 +63,8 @@ const MyTeam = () => {
     <div className="p-6 md:p-8 max-w-7xl mx-auto">
       {/* Top Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-5 flex items-center gap-4">
-          <div className="bg-blue-500/10 p-3 rounded-lg text-blue-500 shrink-0">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-5 flex items-center gap-4 hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
+          <div className="bg-blue-500/15 p-3 rounded-lg text-blue-400 shadow-[0_0_12px_rgba(59,130,246,0.35)] shrink-0">
             <FiUsers size={24} />
           </div>
           <div className="flex flex-col">
@@ -73,8 +73,8 @@ const MyTeam = () => {
           </div>
         </div>
 
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-5 flex items-center gap-4">
-          <div className="bg-emerald-500/10 p-3 rounded-lg text-emerald-500 shrink-0">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-5 flex items-center gap-4 hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
+          <div className="bg-emerald-500/15 p-3 rounded-lg text-emerald-400 shadow-[0_0_12px_rgba(34,197,94,0.35)] shrink-0">
             <FiUserCheck size={24} />
           </div>
           <div className="flex flex-col">
@@ -83,8 +83,8 @@ const MyTeam = () => {
           </div>
         </div>
 
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-5 flex items-center gap-4">
-          <div className="bg-purple-500/10 p-3 rounded-lg text-purple-500 shrink-0">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-5 flex items-center gap-4 hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
+          <div className="bg-purple-500/15 p-3 rounded-lg text-purple-400 shadow-[0_0_12px_rgba(132,94,242,0.35)] shrink-0">
             <FiDollarSign size={24} />
           </div>
           <div className="flex flex-col">
@@ -93,18 +93,18 @@ const MyTeam = () => {
           </div>
         </div>
 
-        <div className="bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-5 flex flex-col justify-center">
+        <div className="bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-5 flex flex-col justify-center hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
           <span className="text-slate-400 text-xs font-medium mb-2">Referral Link</span>
           <div className="flex items-center gap-2">
             <input
               type="text"
               value={referralLink}
               readOnly
-              className="w-full bg-[#090f1e] border border-[#1c2a4a] rounded-lg px-3 py-2 text-xs text-blue-400 focus:outline-none"
+              className="w-full bg-[#090f1e] border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.15)] rounded-lg px-3 py-2 text-xs text-blue-400 focus:outline-none focus:border-blue-400"
             />
             <button
               onClick={copyReferralLink}
-              className="bg-[#f59e0b] hover:bg-[#d97706] text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors shrink-0"
+              className="bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-black text-xs font-bold px-4 py-2 rounded-lg transition-all shadow-[0_0_14px_rgba(245,179,8,0.45)] shrink-0"
             >
               Copy
             </button>
@@ -114,13 +114,13 @@ const MyTeam = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Team Members Table */}
-        <div className="lg:col-span-2 bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6">
+        <div className="lg:col-span-2 bg-[#0d152a] border border-blue-500/30 shadow-lg shadow-blue-500/15 rounded-xl p-6 hover:border-blue-500/40 hover:shadow-blue-500/25 transition-all">
           <h3 className="text-white font-semibold mb-6">Team Members</h3>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[#1c2a4a]">
+                <tr className="border-b border-blue-500/30 shadow-sm shadow-blue-500/10">
                    <th className="py-4 px-4 text-xs font-medium text-slate-400">Level</th>
                    <th className="py-4 px-4 text-xs font-medium text-slate-400">Name</th>
                   <th className="py-4 px-4 text-xs font-medium text-slate-400">Email</th>
@@ -135,7 +135,7 @@ const MyTeam = () => {
                    <tr><td colSpan="5" className="py-8 text-center text-slate-400 text-sm">No team members yet</td></tr>
                 ) : (
                   teamMembers.map((member) => (
-                     <tr key={member._id} className="border-b border-[#1c2a4a]/50 hover:bg-[#1a2c5b]/10 transition-colors">
+                     <tr key={member._id} className="border-b border-blue-500/30 shadow-sm shadow-blue-500/10 hover:bg-[#1a2c5b]/10 transition-colors">
                        <td className="py-4 px-4 text-sm text-blue-400">Level {member.level || 1}</td>
                       <td className="py-4 px-4 text-sm text-white">{member.name}</td>
                       <td className="py-4 px-4 text-sm text-slate-300">{member.email}</td>
@@ -152,25 +152,25 @@ const MyTeam = () => {
         </div>
 
         {/* Team Level Stats */}
-        <div className="lg:col-span-1 bg-[#0d152a] border border-[#1c2a4a] rounded-xl p-6 flex flex-col">
+        <div className="lg:col-span-1 bg-[#0d152a] border border-blue-500/30 shadow-sm shadow-blue-500/10 rounded-xl p-6 flex flex-col">
           <h3 className="text-white font-semibold mb-6">Team Level</h3>
 
           <div className="flex flex-col gap-4 flex-1">
-            <div className="flex items-center justify-between border-b border-[#1c2a4a] pb-4">
+            <div className="flex items-center justify-between border-b border-blue-500/30 shadow-sm shadow-blue-500/10 pb-4">
               <div className="flex flex-col gap-1">
                 <span className="text-white text-sm font-medium">Level 1 ({commissionRates.level1}%)</span>
               </div>
               <span className="text-white font-semibold">PKR {Number(stats.level1Earn).toLocaleString()}</span>
             </div>
 
-            <div className="flex items-center justify-between border-b border-[#1c2a4a] pb-4">
+            <div className="flex items-center justify-between border-b border-blue-500/30 shadow-sm shadow-blue-500/10 pb-4">
               <div className="flex flex-col gap-1">
                 <span className="text-white text-sm font-medium">Level 2 ({commissionRates.level2}%)</span>
               </div>
               <span className="text-white font-semibold">PKR {Number(stats.level2Earn).toLocaleString()}</span>
             </div>
 
-            <div className="flex items-center justify-between border-b border-[#1c2a4a] pb-4">
+            <div className="flex items-center justify-between border-b border-blue-500/30 shadow-sm shadow-blue-500/10 pb-4">
               <div className="flex flex-col gap-1">
                 <span className="text-white text-sm font-medium">Level 3 ({commissionRates.level3}%)</span>
               </div>
@@ -178,7 +178,7 @@ const MyTeam = () => {
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-[#1c2a4a] flex items-center justify-between">
+          <div className="mt-6 pt-4 border-t border-blue-500/30 shadow-sm shadow-blue-500/10 flex items-center justify-between">
             <span className="text-slate-400 text-sm">Total Earnings</span>
             <span className="text-emerald-400 font-bold text-lg">PKR {Number(stats.earnings).toLocaleString()}</span>
           </div>
