@@ -98,7 +98,7 @@ export default function SuperAdminSettings() {
               </div>
              <div>
                <label className="block text-xs text-slate-400 mb-1.5 font-medium">Withdrawal Fee (%)</label>
-               <input type="number" min="0" max="100" step="0.01" value={settings.withdrawalFeePercentage} onChange={(e) => setSettings({ ...settings, withdrawalFeePercentage: parseFloat(e.target.value) || 0 })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-colors" />
+               <input type="number" min="0" max="100" step="0.01" value={settings.withdrawalFeePercentage} onChange={(e) => setSettings({ ...settings, withdrawalFeePercentage: parseFloat(e.target.value) || 0 })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] focus:outline-none transition-colors" />
              </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -180,7 +180,7 @@ export default function SuperAdminSettings() {
         </div>
       </div>
 
-      <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white text-sm font-medium rounded-xl px-6 py-3 transition-all duration-300 shadow-[0_4px_20px_rgba(220,38,38,0.3)] hover:shadow-[0_4px_30px_rgba(220,38,38,0.4)] disabled:opacity-50">
+      <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-xl px-6 py-3 transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.6)] hover:shadow-[0_0_30px_rgba(220,38,38,0.8)] border border-red-500/50 hover:shadow-[0_4px_30px_rgba(220,38,38,0.4)] disabled:opacity-50">
         <Save size={16} /> {saving ? 'Saving...' : 'Save Changes'}
       </button>
     </div>

@@ -141,7 +141,7 @@ export default function SuperAdminUsers() {
         />
       </form>
 
-      <div className="bg-[#0d1530] border border-blue-500/30 rounded-xl shadow-lg shadow-blue-500/10 overflow-hidden">
+      <div className="glow-panel overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

@@ -89,7 +89,7 @@ export default function SuperAdminEarnings() {
             ))}
           </div>
 
-          <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
+          <div className="glow-panel overflow-hidden">
             <div className="p-5 border-b border-blue-500/10">
               <h2 className="font-semibold text-white text-base">Recent Profit Transactions</h2>
             </div>

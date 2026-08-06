@@ -64,7 +64,7 @@ export default function SuperAdminTransactions() {
           </button>
         ))}
       </div>
-      <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
+      <div className="glow-panel overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-slate-400">Loading transactions...</div>
         ) : (

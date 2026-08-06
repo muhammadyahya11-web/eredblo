@@ -108,7 +108,7 @@ export default function SuperAdminAdmins() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white text-sm font-medium rounded-xl px-4 py-3 transition-all duration-300 shadow-[0_4px_20px_rgba(220,38,38,0.3)] hover:shadow-[0_4px_30px_rgba(220,38,38,0.4)]"
+          className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-xl px-4 py-3 transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.6)] hover:shadow-[0_0_30px_rgba(220,38,38,0.8)] border border-red-500/50"
         >
           <UserPlus size={16} /> Add Admin
         </button>
@@ -125,7 +125,7 @@ export default function SuperAdminAdmins() {
         />
       </form>
 
-      <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
+      <div className="glow-panel overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -206,7 +206,7 @@ export default function SuperAdminAdmins() {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => !saving && setShowModal(false)}>
           <div
-            className="w-full max-w-md bg-[#0d1530] border border-blue-500/20 rounded-2xl p-6 relative shadow-[0_0_40px_rgba(59,130,246,0.15)]"
+            className="w-full max-w-md glow-panel p-6 relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -250,7 +250,7 @@ export default function SuperAdminAdmins() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white text-sm font-medium rounded-xl py-3 transition-all duration-300 shadow-[0_4px_20px_rgba(220,38,38,0.3)] disabled:opacity-60"
+                  className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-xl py-3 transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.6)] border border-red-500/50 disabled:opacity-60"
                 >
                   {saving ? (<><Loader2 className="animate-spin" size={16} /> Creating...</>) : (<><UserPlus size={16} /> Create Admin</>)}
                 </button>

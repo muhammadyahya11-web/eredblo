@@ -121,7 +121,7 @@ export default function SuperAdminSupport() {
               placeholder="Type your reply..." 
               className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-colors resize-none"
             />
-            <button onClick={handleReply} className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-sm font-medium rounded-xl py-3 transition-all duration-300 shadow-[0_4px_20px_rgba(59,130,246,0.3)]">
+            <button onClick={handleReply} className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl py-3 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.6)] hover:shadow-[0_0_30px_rgba(59,130,246,0.8)] border border-blue-500/50">
               <MessageCircle size={16} /> Send Reply
             </button>
           </div>
@@ -139,7 +139,7 @@ export default function SuperAdminSupport() {
               </button>
             ))}
           </div>
-          <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
+          <div className="glow-panel overflow-hidden">
             {loading ? (
               <div className="p-8 text-center text-slate-400">Loading tickets...</div>
             ) : (

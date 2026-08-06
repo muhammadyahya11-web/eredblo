@@ -351,7 +351,7 @@ export default function RoiManagement() {
       </div>
 
       {/* ── Trigger Manual ROI Distribution ── */}
-      <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
+      <div className="glow-panel overflow-hidden">
         <div className="p-5 border-b border-blue-500/10">
           <h2 className="font-semibold text-white text-base">
             Trigger Manual ROI Distribution
@@ -394,7 +394,7 @@ export default function RoiManagement() {
       </div>
 
       {/* ── ROI Chart (last 14 days) ── */}
-      <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
+      <div className="glow-panel overflow-hidden">
         <div className="p-5 border-b border-blue-500/10">
           <h2 className="font-semibold text-white text-base">
             ROI Distributed — Last 14 Days
@@ -472,7 +472,7 @@ export default function RoiManagement() {
       </div>
 
       {/* ── Recent ROI Transactions Table ── */}
-      <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
+      <div className="glow-panel overflow-hidden">
         <div className="p-5 border-b border-blue-500/10 flex items-center justify-between">
           <h2 className="font-semibold text-white text-base">
             Recent ROI Transactions

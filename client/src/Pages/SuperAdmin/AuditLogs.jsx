@@ -209,7 +209,7 @@ export default function AuditLogs() {
           <select
             value={category}
             onChange={handleCategoryChange}
-            className="appearance-none pl-9 pr-8 py-2.5 rounded-xl text-sm bg-[#0d1530] border border-blue-500/10 text-slate-300 focus:border-blue-500/40 focus:outline-none transition-colors capitalize cursor-pointer"
+            className="appearance-none pl-9 pr-8 py-2.5 rounded-xl text-sm bg-[#0d1530] border border-blue-500/10 text-slate-300 focus:border-blue-500/50 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] focus:outline-none transition-colors capitalize cursor-pointer"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c} className="capitalize bg-[#0d1530]">
@@ -227,7 +227,7 @@ export default function AuditLogs() {
             placeholder="Search action, user, details…"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full bg-[#0d1530] border border-blue-500/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/40 focus:outline-none transition-colors"
+            className="w-full bg-[#0d1530] border border-blue-500/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] focus:outline-none transition-colors"
           />
         </form>
 
@@ -235,7 +235,7 @@ export default function AuditLogs() {
         <select
           value={limit}
           onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
-          className="px-3 py-2.5 rounded-xl text-sm bg-[#0d1530] border border-blue-500/10 text-slate-300 focus:border-blue-500/40 focus:outline-none transition-colors cursor-pointer"
+          className="px-3 py-2.5 rounded-xl text-sm bg-[#0d1530] border border-blue-500/10 text-slate-300 focus:border-blue-500/50 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] focus:outline-none transition-colors cursor-pointer"
         >
           {LIMITS.map((l) => (
             <option key={l} value={l} className="bg-[#0d1530]">{l} / page</option>
@@ -244,7 +244,7 @@ export default function AuditLogs() {
       </div>
 
       {/* ── Table ──────────────────────────────────────────────────────────── */}
-      <div className="bg-[#0d1530] border border-blue-500/20 rounded-xl shadow-lg shadow-blue-500/5 overflow-hidden">
+      <div className="glow-panel overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -412,7 +412,7 @@ export default function AuditLogs() {
           onClick={() => !clearing && setShowConfirm(false)}
         >
           <div
-            className="w-full max-w-sm bg-[#0d1530] border border-red-500/20 rounded-2xl p-6 space-y-4 shadow-2xl shadow-red-500/10"
+            className="w-full max-w-sm glow-panel !border-red-500/50 !shadow-[0_0_20px_rgba(239,68,68,0.3)] rounded-2xl p-6 space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3">

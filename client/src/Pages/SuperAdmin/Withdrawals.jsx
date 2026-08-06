@@ -85,7 +85,7 @@ export default function SuperAdminWithdrawals() {
           </button>
         ))}
       </div>
-      <div className="bg-[#0d1530] border border-blue-500/30 rounded-xl shadow-lg shadow-blue-500/10 overflow-hidden">
+      <div className="glow-panel overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-slate-400">Loading withdrawals...</div>
         ) : (

@@ -94,7 +94,7 @@ export default function SuperAdminNotifications() {
             </div>
             <div>
               <label className="block text-xs text-slate-400 mb-1.5 font-medium">Type</label>
-              <select value={type} onChange={(e) => setType(e.target.value)} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-colors">
+              <select value={type} onChange={(e) => setType(e.target.value)} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] focus:outline-none transition-colors">
                 <option value="System">System</option>
                 <option value="Deposit">Deposit</option>
                 <option value="Withdrawal">Withdrawal</option>
@@ -106,7 +106,7 @@ export default function SuperAdminNotifications() {
               <label className="block text-xs text-slate-400 mb-1.5 font-medium">Target User ID (optional, leave empty for broadcast)</label>
               <input value={userId} onChange={(e) => setUserId(e.target.value)} placeholder="Leave empty to send to all users" className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-colors focus:shadow-[0_0_15px_rgba(59,130,246,0.2)]" />
             </div>
-            <button type="submit" disabled={sending} className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white text-sm font-medium rounded-xl py-3 transition-all duration-300 shadow-[0_4px_20px_rgba(220,38,38,0.3)] disabled:opacity-50">
+            <button type="submit" disabled={sending} className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-xl py-3 transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.6)] hover:shadow-[0_0_30px_rgba(220,38,38,0.8)] border border-red-500/50 disabled:opacity-50">
               <Send size={16} /> {sending ? 'Sending...' : 'Send Notification'}
             </button>
           </form>

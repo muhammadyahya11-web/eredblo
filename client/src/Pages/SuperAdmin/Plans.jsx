@@ -100,12 +100,12 @@ export default function SuperAdminPlans() {
           <h1 className="text-2xl font-bold text-white tracking-tight">Investment Plans</h1>
           <p className="text-slate-400 text-sm mt-1">Manage all investment plans</p>
         </div>
-        <button onClick={openCreateModal} className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white text-sm font-medium rounded-xl px-4 py-3 transition-all duration-300 shadow-[0_4px_20px_rgba(220,38,38,0.3)] hover:shadow-[0_4px_30px_rgba(220,38,38,0.4)]">
+        <button onClick={openCreateModal} className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-xl px-4 py-3 transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.6)] hover:shadow-[0_0_30px_rgba(220,38,38,0.8)] border border-red-500/50 hover:shadow-[0_4px_30px_rgba(220,38,38,0.4)]">
           <Plus size={16} /> Add Plan
         </button>
       </div>
 
-      <div className="bg-[#0d1530] border border-blue-500/30 rounded-xl shadow-lg shadow-blue-500/10 overflow-hidden">
+      <div className="glow-panel overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-slate-400">Loading plans...</div>
         ) : (
@@ -164,7 +164,7 @@ export default function SuperAdminPlans() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#0d1530] border border-blue-500/20 rounded-2xl p-6 w-full max-w-md shadow-[0_0_40px_rgba(59,130,246,0.15)]">
+          <div className="glow-panel p-6 w-full max-w-md ">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-white">{editingPlan ? 'Edit Plan' : 'Add New Plan'}</h2>
               <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white transition-colors"><X size={20} /></button>
@@ -196,13 +196,13 @@ export default function SuperAdminPlans() {
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1.5 font-medium">Status</label>
-                <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-colors">
+                <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="w-full bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] focus:outline-none transition-colors">
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
               <div className="flex gap-3 mt-6">
-                <button type="submit" disabled={saving} className="flex-1 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white py-3 rounded-xl font-semibold transition-all duration-300 shadow-[0_4px_20px_rgba(220,38,38,0.3)] disabled:opacity-50 flex items-center justify-center gap-2">
+                <button type="submit" disabled={saving} className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-semibold transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.6)] hover:shadow-[0_0_30px_rgba(220,38,38,0.8)] border border-red-500/50 disabled:opacity-50 flex items-center justify-center gap-2">
                   {saving ? (<><Loader2 className="animate-spin" size={16} /> Saving...</>) : (editingPlan ? 'Update Plan' : 'Create Plan')}
                 </button>
                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-[#050810] border border-blue-500/10 text-slate-400 hover:text-white py-3 rounded-xl font-semibold transition-all duration-300">Cancel</button>

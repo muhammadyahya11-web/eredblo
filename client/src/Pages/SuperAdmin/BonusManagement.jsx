@@ -192,8 +192,7 @@ function IssueBonusCard({ onBonusIssued }) {
 
   return (
     <div
-      className="rounded-2xl border border-white/10 p-6 flex flex-col gap-6"
-      style={{ background: '#0d1530' }}
+      className="glow-panel p-6 flex flex-col gap-6"
     >
       {/* Header */}
       <div className="flex items-center gap-3">
@@ -227,8 +226,7 @@ function IssueBonusCard({ onBonusIssued }) {
                 onChange={handleQueryChange}
                 placeholder="Name or email…"
                 autoComplete="off"
-                className="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm text-white placeholder-gray-500 border border-white/10 focus:border-blue-500/50 focus:outline-none transition-colors"
-                style={{ background: '#060a14' }}
+                className="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm text-white placeholder-gray-500 border border-blue-500/20 focus:border-blue-500/50 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] focus:outline-none transition-colors bg-[#050810]"
               />
             </div>
             <UserSearchDropdown
@@ -266,8 +264,7 @@ function IssueBonusCard({ onBonusIssued }) {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0"
-              className="w-full pl-12 pr-4 py-2.5 rounded-lg text-sm text-white placeholder-gray-500 border border-white/10 focus:border-blue-500/50 focus:outline-none transition-colors"
-              style={{ background: '#060a14' }}
+              className="w-full pl-12 pr-4 py-2.5 rounded-lg text-sm text-white placeholder-gray-500 border border-blue-500/20 focus:border-blue-500/50 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] focus:outline-none transition-colors bg-[#050810]"
             />
           </div>
         </div>
@@ -282,8 +279,7 @@ function IssueBonusCard({ onBonusIssued }) {
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="e.g. Referral reward, promotional credit…"
-            className="w-full px-4 py-2.5 rounded-lg text-sm text-white placeholder-gray-500 border border-white/10 focus:border-blue-500/50 focus:outline-none transition-colors"
-            style={{ background: '#060a14' }}
+            className="w-full px-4 py-2.5 rounded-lg text-sm text-white placeholder-gray-500 border border-blue-500/20 focus:border-blue-500/50 focus:shadow-[0_0_15px_rgba(59,130,246,0.2)] focus:outline-none transition-colors bg-[#050810]"
           />
         </div>
 
@@ -353,8 +349,7 @@ function BonusHistoryCard({ refreshSignal }) {
 
   return (
     <div
-      className="rounded-2xl border border-white/10 p-6 flex flex-col gap-4"
-      style={{ background: '#0d1530' }}
+      className="glow-panel p-6 flex flex-col gap-4"
     >
       {/* Header */}
       <div className="flex items-center gap-3">
