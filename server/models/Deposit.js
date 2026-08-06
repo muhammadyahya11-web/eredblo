@@ -43,5 +43,8 @@ const depositSchema = new mongoose.Schema(
   }
 );
 
+depositSchema.index({ user: 1, status: 1, createdAt: -1 });
+depositSchema.index({ status: 1, createdAt: -1 });
+
 const Deposit = mongoose.model('Deposit', depositSchema);
 export default Deposit;

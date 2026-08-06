@@ -16,7 +16,8 @@ const getPlans = async (req, res, next) => {
     const filter = {};
     if (status) filter.status = status;
 
-    const plans = await Plan.find(filter).sort({ createdAt: -1 });
+    const plans = await Plan.find(filter).sort({ createdAt: -1 }).lean();
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
     res.json({ success: true, data: plans });
   } catch (error) {
     next(error);
@@ -25,10 +26,11 @@ const getPlans = async (req, res, next) => {
 
 const getPlanById = async (req, res, next) => {
   try {
-    const plan = await Plan.findById(req.params.id);
+    const plan = await Plan.findById(req.params.id).lean();
     if (!plan) {
       return res.status(404).json({ success: false, message: 'Plan not found' });
     }
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
     res.json({ success: true, data: plan });
   } catch (error) {
     next(error);

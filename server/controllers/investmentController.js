@@ -48,7 +48,7 @@ const createInvestment = async (req, res, next) => {
         startDate,
         endDate,
         status: 'active',
-        profitEarned: 0,
+        profitEarned: plan.dailyProfit,
         lastProfitAddedAt: startDate,
       });
     } catch (err) {
@@ -70,17 +70,43 @@ const createInvestment = async (req, res, next) => {
       referenceId: investment._id,
     });
 
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id: req.user._id },
+      { $inc: { totalBalance: plan.dailyProfit, totalEarnings: plan.dailyProfit, todayEarnings: plan.dailyProfit } },
+      { returnDocument: 'after' }
+    );
+
+    await Transaction.create({
+      user: req.user._id,
+      type: 'Profit',
+      amount: plan.dailyProfit,
+      isPositive: true,
+      status: 'Approved',
+      description: `First daily profit - ${plan.name}`,
+      referenceId: investment._id,
+    });
+
     await Notification.create({
       user: req.user._id,
       title: 'Investment Created',
-      message: `Your investment of PKR ${amount} in ${plan.name} has been created successfully.`,
+      message: `Your investment of PKR ${amount} in ${plan.name} is active. PKR ${plan.dailyProfit.toLocaleString()} daily profit was added to your balance.`,
       type: 'System',
       isImportant: true,
     });
 
     // Multi-level referral commission on first plan investment only
     await distributeReferralCommission(req.user._id, amount, 'investment', investment._id);
-    res.status(201).json({ success: true, data: investment, message: 'Investment created successfully' });
+    res.status(201).json({
+      success: true,
+      data: investment,
+      user: {
+        totalBalance: updatedUser.totalBalance,
+        totalInvestment: updatedUser.totalInvestment,
+        totalEarnings: updatedUser.totalEarnings,
+        todayEarnings: updatedUser.todayEarnings,
+      },
+      message: `Investment created and PKR ${plan.dailyProfit.toLocaleString()} daily profit added to balance`,
+    });
   } catch (error) {
     next(error);
   }
@@ -92,13 +118,15 @@ const getUserInvestments = async (req, res, next) => {
     const filter = { user: req.user._id };
     if (status) filter.status = status;
 
-    const investments = await Investment.find(filter)
-      .populate('plan', 'name duration dailyProfit totalReturn')
-      .sort({ createdAt: -1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-
-    const total = await Investment.countDocuments(filter);
+    const [investments, total] = await Promise.all([
+      Investment.find(filter)
+        .populate('plan', 'name duration dailyProfit totalReturn')
+        .sort({ createdAt: -1 })
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .lean(),
+      Investment.countDocuments(filter),
+    ]);
 
     res.json({ success: true, data: investments, total, page: parseInt(page), pages: Math.ceil(total / limit) });
   } catch (error) {
@@ -113,14 +141,16 @@ const getAllInvestments = async (req, res, next) => {
     if (status) filter.status = status;
     if (req.query.userId) filter.user = req.query.userId;
 
-    const investments = await Investment.find(filter)
-      .populate('user', 'name email')
-      .populate('plan', 'name')
-      .sort({ createdAt: -1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-
-    const total = await Investment.countDocuments(filter);
+    const [investments, total] = await Promise.all([
+      Investment.find(filter)
+        .populate('user', 'name email')
+        .populate('plan', 'name')
+        .sort({ createdAt: -1 })
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .lean(),
+      Investment.countDocuments(filter),
+    ]);
 
     res.json({ success: true, data: investments, total, page: parseInt(page), pages: Math.ceil(total / limit) });
   } catch (error) {

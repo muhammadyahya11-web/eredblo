@@ -41,5 +41,8 @@ const withdrawalSchema = new mongoose.Schema(
   }
 );
 
+withdrawalSchema.index({ user: 1, status: 1, createdAt: -1 });
+withdrawalSchema.index({ status: 1, createdAt: -1 });
+
 const Withdrawal = mongoose.model('Withdrawal', withdrawalSchema);
 export default Withdrawal;

@@ -46,6 +46,7 @@ const getPublicSettings = async (req, res, next) => {
       settings = await Settings.create({});
     }
 
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
     res.json({
       success: true,
       data: {

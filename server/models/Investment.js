@@ -51,5 +51,9 @@ const investmentSchema = new mongoose.Schema(
   }
 );
 
+investmentSchema.index({ user: 1, status: 1, createdAt: -1 });
+investmentSchema.index({ status: 1, endDate: 1 });
+investmentSchema.index({ user: 1, createdAt: 1 });
+
 const Investment = mongoose.model('Investment', investmentSchema);
 export default Investment;

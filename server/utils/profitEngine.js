@@ -21,16 +21,17 @@ const distributeProfits = async () => {
 
           const user = await User.findById(investment.user._id);
           if (user) {
-            const profit = investment.totalReturn - investment.amount;
-            user.totalBalance = (user.totalBalance || 0) + investment.totalReturn;
-            user.totalEarnings = (user.totalEarnings || 0) + profit;
-            user.todayEarnings = (user.todayEarnings || 0) + profit;
+            const remainingProfit = Math.max(0, investment.totalReturn - investment.amount - (investment.profitEarned || 0));
+            const maturityPayout = investment.amount + remainingProfit;
+            user.totalBalance = (user.totalBalance || 0) + maturityPayout;
+            user.totalEarnings = (user.totalEarnings || 0) + remainingProfit;
+            user.todayEarnings = (user.todayEarnings || 0) + remainingProfit;
             await user.save();
 
             await Transaction.create({
               user: user._id,
               type: 'Profit',
-              amount: profit,
+              amount: remainingProfit,
               isPositive: true,
               status: 'Approved',
               description: `Investment matured - ${investment.plan?.name || 'Plan'}`,
@@ -40,7 +41,7 @@ const distributeProfits = async () => {
             await Notification.create({
               user: user._id,
               title: 'Investment Matured',
-              message: `Your investment of ${investment.amount} has matured. You earned PKR ${profit.toLocaleString()} profit.`,
+              message: `Your investment of ${investment.amount} has matured. PKR ${maturityPayout.toLocaleString()} was added to your balance, including PKR ${remainingProfit.toLocaleString()} remaining profit.`,
               type: 'Profit',
               isImportant: true,
             });

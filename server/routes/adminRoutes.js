@@ -2,6 +2,8 @@ import express from 'express';
 import {
   getStats,
   getAllUsers,
+  updateUser,
+  deleteUser,
   updateUserStatus,
   getAdmins,
   createAdmin,
@@ -16,6 +18,8 @@ const router = express.Router();
 router.get('/stats', protect, admin, getStats);
 router.get('/users', protect, admin, getAllUsers);
 router.put('/users/:id/status', protect, admin, updateUserStatus);
+router.put('/users/:id', protect, superAdmin, updateUser);
+router.delete('/users/:id', protect, superAdmin, deleteUser);
 
 router.get('/admins', protect, superAdmin, getAdmins);
 router.post('/admins', protect, superAdmin, validateCreateAdmin, createAdmin);

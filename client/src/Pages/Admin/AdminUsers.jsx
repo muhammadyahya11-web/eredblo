@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, Shield, ShieldOff, Mail, UserX } from "lucide-react";
+import { Search, Shield, ShieldOff, Mail, UserX, Pencil, Trash2 } from "lucide-react";
 import { adminAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 
@@ -9,6 +9,12 @@ export default function AdminUsers() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+
+  const [editing, setEditing] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', email: '', phone: '', cnic: '', role: '', status: '', isVerified: false });
+  const [saving, setSaving] = useState(false);
+
+  const [deleting, setDeleting] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -41,6 +47,59 @@ export default function AdminUsers() {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update status');
+    }
+  };
+
+  const openEdit = (u) => {
+    setEditing(u);
+    setEditForm({
+      name: u.name || '',
+      email: u.email || '',
+      phone: u.phone || '',
+      cnic: u.cnic || '',
+      role: u.role || 'user',
+      status: u.status || 'active',
+      isVerified: !!u.isVerified,
+    });
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const { data } = await adminAPI.updateUser(editing._id, editForm);
+      if (data.success) {
+        setUsers((prev) => prev.map((u) => u._id === data.data._id ? data.data : u));
+        toast.success(data.message);
+        setEditing(null);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update user');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const confirmDelete = async () => {
+    try {
+      const { data } = await adminAPI.deleteUser(deleting._id);
+      if (data.success) {
+        setUsers((prev) => prev.filter((u) => u._id !== deleting._id));
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete user');
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -132,6 +191,20 @@ export default function AdminUsers() {
                           >
                             {u.status === 'blocked' ? <Shield size={16} /> : <ShieldOff size={16} />}
                           </button>
+                          <button
+                            onClick={() => openEdit(u)}
+                            className="p-2 rounded-lg hover:bg-blue-500/10 text-slate-400 hover:text-yellow-400 transition-all"
+                            title="Edit user"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button
+                            onClick={() => setDeleting(u)}
+                            className="p-2 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-all"
+                            title="Delete user"
+                          >
+                            <Trash2 size={16} />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -142,6 +215,73 @@ export default function AdminUsers() {
           </div>
         )}
       </div>
+
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setEditing(null)}>
+          <div className="w-full max-w-md bg-[#0d1530] border border-blue-500/20 rounded-2xl p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-bold text-white">Edit User</h2>
+            <form onSubmit={handleEditSubmit} className="space-y-3">
+              <div>
+                <label className="text-xs text-slate-400">Name</label>
+                <input name="name" value={editForm.name} onChange={handleEditChange} className="w-full bg-[#050810] border border-blue-500/10 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+              <div>
+                <label className="text-xs text-slate-400">Email</label>
+                <input name="email" type="email" value={editForm.email} onChange={handleEditChange} className="w-full bg-[#050810] border border-blue-500/10 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+              <div>
+                <label className="text-xs text-slate-400">Phone</label>
+                <input name="phone" value={editForm.phone} onChange={handleEditChange} className="w-full bg-[#050810] border border-blue-500/10 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+              <div>
+                <label className="text-xs text-slate-400">CNIC</label>
+                <input name="cnic" value={editForm.cnic} onChange={handleEditChange} placeholder="00000-0000000-0" className="w-full bg-[#050810] border border-blue-500/10 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none" />
+              </div>
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="text-xs text-slate-400">Role</label>
+                  <select name="role" value={editForm.role} onChange={handleEditChange} className="w-full bg-[#050810] border border-blue-500/10 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <label className="text-xs text-slate-400">Status</label>
+                  <select name="status" value={editForm.status} onChange={handleEditChange} className="w-full bg-[#050810] border border-blue-500/10 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none">
+                    <option value="active">Active</option>
+                    <option value="blocked">Blocked</option>
+                  </select>
+                </div>
+              </div>
+              <label className="flex items-center gap-2 text-sm text-slate-300">
+                <input type="checkbox" name="isVerified" checked={editForm.isVerified} onChange={handleEditChange} />
+                Verified
+              </label>
+              <div className="flex justify-end gap-2 pt-2">
+                <button type="button" onClick={() => setEditing(null)} className="px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Cancel</button>
+                <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-sm bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50">
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {deleting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setDeleting(null)}>
+          <div className="w-full max-w-sm bg-[#0d1530] border border-red-500/20 rounded-2xl p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-bold text-white">Delete User</h2>
+            <p className="text-sm text-slate-300">
+              Are you sure you want to delete <span className="font-semibold text-white">{deleting.name}</span>? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setDeleting(null)} className="px-4 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">Cancel</button>
+              <button onClick={confirmDelete} className="px-4 py-2 rounded-lg text-sm bg-red-600 hover:bg-red-500 text-white">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -27,6 +27,17 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    const invalidateSession = (event) => {
+      setToken(null);
+      setUser(null);
+      setIsAuthenticated(false);
+      toast.error(event.detail || 'Your session is no longer authorized.');
+    };
+    window.addEventListener('auth:session-invalid', invalidateSession);
+    return () => window.removeEventListener('auth:session-invalid', invalidateSession);
+  }, []);
+
   const login = async (email, password) => {
     try {
       setIsLoading(true);

@@ -34,5 +34,7 @@ const planSchema = new mongoose.Schema(
   }
 );
 
+planSchema.index({ status: 1, createdAt: -1 });
+
 const Plan = mongoose.model('Plan', planSchema);
 export default Plan;

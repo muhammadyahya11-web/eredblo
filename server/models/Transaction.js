@@ -10,7 +10,7 @@ const transactionSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ['Deposit', 'Withdrawal', 'Investment', 'Profit', 'Referral Commission'],
+      enum: ['Deposit', 'Withdrawal', 'Investment', 'Profit', 'Referral Commission', 'Gift Reward'],
     },
     amount: {
       type: Number,
@@ -43,5 +43,7 @@ transactionSchema.index(
   { user: 1, type: 1, referenceId: 1, description: 1 },
   { unique: true, partialFilterExpression: { referenceId: { $type: 'objectId' }, type: 'Referral Commission' } }
 );
+transactionSchema.index({ user: 1, createdAt: -1 });
+transactionSchema.index({ user: 1, type: 1, status: 1, createdAt: -1 });
 const Transaction = mongoose.model('Transaction', transactionSchema);
 export default Transaction;

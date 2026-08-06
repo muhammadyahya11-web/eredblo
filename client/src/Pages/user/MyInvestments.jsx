@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { FiTrendingUp, FiCalendar, FiClock, FiCheckCircle, FiXCircle, FiRefreshCw, FiPlus, FiX } from 'react-icons/fi';
 
 const MyInvestments = () => {
-  const { user } = useContext(AuthContext);
+  const { user, updateUser } = useContext(AuthContext);
   const [investments, setInvestments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -63,7 +63,8 @@ const MyInvestments = () => {
     try {
       const { data } = await investmentAPI.create({ planId: selectedPlanId });
       if (data.success) {
-        toast.success('Investment created successfully!');
+        if (data.user) updateUser(data.user);
+        toast.success(data.message || 'Investment created successfully!');
         setShowInvestModal(false);
         setSelectedPlanId('');
         fetchInvestments();
@@ -106,7 +107,9 @@ const MyInvestments = () => {
   if (loading) {
     return (
       <div className="myinvestments-page">
-        <div className="loading-state">Loading investments...</div>
+        <div className="loading-state flex  text-sm justify-center items-center  w-full h-screen">
+          <h1>Loading investments...</h1>
+        </div>
       </div>
     );
   }
@@ -117,8 +120,8 @@ const MyInvestments = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h2 className="section-title">My Investments</h2>
           
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <div className="table-filters w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
+          <div className="flex flex-col sm:flex-row items-center gap-4 ">
+            <div className="table-filters w-full  sm:w-auto overflow-x-auto pb-2 sm:pb-0">
               {['All', 'Active', 'Completed'].map((f) => (
                 <button
                   key={f}

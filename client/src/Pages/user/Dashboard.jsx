@@ -223,6 +223,7 @@ export default function Dashboard() {
   const [chartPoints, setChartPoints] = useState([]);
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const userName = user?.name || "User";
   const firstName = userName.split(" ")[0];
@@ -234,6 +235,10 @@ export default function Dashboard() {
     const t = setTimeout(() => setMounted(true), 100);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [user?.profilePicture]);
 
   useEffect(() => {
     const fetchData = async () => {

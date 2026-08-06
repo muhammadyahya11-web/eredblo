@@ -35,6 +35,16 @@ api.interceptors.response.use(
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     }
+    if (error.response && error.response.status === 403) {
+      const message = error.response.data?.message || 'Your account is not allowed to access this resource.';
+      error.message = message;
+      const accountDenied = /account (has been blocked|locked)/i.test(message);
+      if (accountDenied) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.dispatchEvent(new CustomEvent('auth:session-invalid', { detail: message }));
+      }
+    }
     return Promise.reject(error);
   }
 );
@@ -67,6 +77,8 @@ export const adminAPI = {
   getStats: () => api.get('/admin/stats'),
   getUsers: (params) => api.get('/admin/users', { params }),
   updateUserStatus: (id, status) => api.put(`/admin/users/${id}/status`, { status }),
+  updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
   getAdmins: () => api.get('/admin/admins'),
   createAdmin: (data) => api.post('/admin/admins', data),
   deleteAdmin: (id) => api.delete(`/admin/admins/${id}`),
@@ -76,6 +88,8 @@ export const superAdminAPI = {
   getStats: () => api.get('/admin/stats'),
   getUsers: (params) => api.get('/admin/users', { params }),
   updateUserStatus: (id, status) => api.put(`/admin/users/${id}/status`, { status }),
+  updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
   getAdmins: () => api.get('/admin/admins'),
   createAdmin: (data) => api.post('/admin/admins', data),
   deleteAdmin: (id) => api.delete(`/admin/admins/${id}`),

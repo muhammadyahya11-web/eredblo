@@ -48,6 +48,73 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
+const updateUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (user.role === 'super-admin') {
+      return res.status(403).json({ success: false, message: 'A super admin account cannot be edited' });
+    }
+
+    if (user.role === 'admin' && req.user.role !== 'super-admin') {
+      return res.status(403).json({ success: false, message: 'Only a super admin can edit admin accounts' });
+    }
+
+    const { name, email, phone, cnic, role, status, isVerified } = req.body;
+
+    if (name !== undefined) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+    if (cnic !== undefined) user.cnic = cnic;
+    if (isVerified !== undefined) user.isVerified = isVerified;
+    if (status !== undefined && ['active', 'blocked'].includes(status)) user.status = status;
+    if (role !== undefined && ['user', 'admin'].includes(role)) {
+      user.role = role;
+    }
+
+    if (email !== undefined && email.toLowerCase() !== user.email) {
+      const exists = await User.findOne({ email: email.toLowerCase() });
+      if (exists) {
+        return res.status(400).json({ success: false, message: 'A user already exists with this email' });
+      }
+      user.email = email.toLowerCase();
+    }
+
+    await user.save();
+
+    const updated = user.toObject();
+    delete updated.password;
+
+    res.json({ success: true, message: 'User updated successfully', data: updated });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (user.role === 'super-admin') {
+      return res.status(403).json({ success: false, message: 'A super admin account cannot be deleted' });
+    }
+
+    if (user.role === 'admin' && req.user.role !== 'super-admin') {
+      return res.status(403).json({ success: false, message: 'Only a super admin can delete admin accounts' });
+    }
+
+    await user.deleteOne();
+    res.json({ success: true, message: 'User deleted successfully', data: { _id: req.params.id } });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const updateUserStatus = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
@@ -137,4 +204,4 @@ const deleteAdmin = async (req, res, next) => {
   }
 };
 
-export { getStats, getAllUsers, updateUserStatus, getAdmins, createAdmin, deleteAdmin };
+export { getStats, getAllUsers, updateUser, deleteUser, updateUserStatus, getAdmins, createAdmin, deleteAdmin };

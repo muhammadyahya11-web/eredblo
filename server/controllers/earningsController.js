@@ -17,67 +17,39 @@ const getEarningsOverview = async (req, res, next) => {
       .populate('plan', 'name');
 
     // Aggregate today, weekly, and monthly earnings
-    const [todayAgg, weekAgg, monthAgg, typeBreakdownAgg] = await Promise.all([
-      Transaction.aggregate([
-        {
-          $match: {
-            user: user._id,
-            isPositive: true,
-            type: { $in: ['Profit', 'Referral Commission'] },
-            status: { $in: ['Success', 'Approved'] },
-            createdAt: { $gte: todayStart },
-          },
+    const earningsMatch = {
+      user: user._id,
+      isPositive: true,
+      type: { $in: ['Profit', 'Referral Commission'] },
+      status: { $in: ['Success', 'Approved'] },
+    };
+    const [earningsAgg] = await Transaction.aggregate([
+      { $match: earningsMatch },
+      {
+        $facet: {
+          today: [{ $match: { createdAt: { $gte: todayStart } } }, { $group: { _id: null, total: { $sum: '$amount' } } }],
+          week: [{ $match: { createdAt: { $gte: weekStart } } }, { $group: { _id: null, total: { $sum: '$amount' } } }],
+          month: [{ $match: { createdAt: { $gte: monthStart } } }, { $group: { _id: null, total: { $sum: '$amount' } } }],
+          breakdown: [{ $group: { _id: '$type', total: { $sum: '$amount' } } }],
+          chart: [
+            { $match: { createdAt: { $gte: weekStart } } },
+            { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, total: { $sum: '$amount' } } },
+          ],
         },
-        { $group: { _id: null, total: { $sum: '$amount' } } },
-      ]),
-      Transaction.aggregate([
-        {
-          $match: {
-            user: user._id,
-            isPositive: true,
-            type: { $in: ['Profit', 'Referral Commission'] },
-            status: { $in: ['Success', 'Approved'] },
-            createdAt: { $gte: weekStart },
-          },
-        },
-        { $group: { _id: null, total: { $sum: '$amount' } } },
-      ]),
-      Transaction.aggregate([
-        {
-          $match: {
-            user: user._id,
-            isPositive: true,
-            type: { $in: ['Profit', 'Referral Commission'] },
-            status: { $in: ['Success', 'Approved'] },
-            createdAt: { $gte: monthStart },
-          },
-        },
-        { $group: { _id: null, total: { $sum: '$amount' } } },
-      ]),
-      Transaction.aggregate([
-        {
-          $match: {
-            user: user._id,
-            isPositive: true,
-            type: { $in: ['Profit', 'Referral Commission'] },
-            status: { $in: ['Success', 'Approved'] },
-          },
-        },
-        { $group: { _id: '$type', total: { $sum: '$amount' } } },
-      ]),
+      },
     ]);
 
     const totalEarnings = user.totalEarnings || 0;
-    const todayEarnings = todayAgg[0]?.total || 0;
-    const weeklyEarnings = weekAgg[0]?.total || 0;
-    const monthlyEarnings = monthAgg[0]?.total || 0;
+    const todayEarnings = earningsAgg?.today[0]?.total || 0;
+    const weeklyEarnings = earningsAgg?.week[0]?.total || 0;
+    const monthlyEarnings = earningsAgg?.month[0]?.total || 0;
     const referralEarnings = user.referralEarnings || 0;
 
     // Build breakdown array
     let dailyProfitEarned = 0;
     let referralCommissionEarned = 0;
 
-    typeBreakdownAgg.forEach((item) => {
+    (earningsAgg?.breakdown || []).forEach((item) => {
       if (item._id === 'Profit') dailyProfitEarned = item.total;
       if (item._id === 'Referral Commission') referralCommissionEarned = item.total;
     });
@@ -92,25 +64,12 @@ const getEarningsOverview = async (req, res, next) => {
     for (let i = 6; i >= 0; i--) {
       const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
       const dayName = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-      const dayEnd = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
-
-      const dayAgg = await Transaction.aggregate([
-        {
-          $match: {
-            user: user._id,
-            isPositive: true,
-            type: { $in: ['Profit', 'Referral Commission'] },
-            status: { $in: ['Success', 'Approved'] },
-            createdAt: { $gte: dayStart, $lte: dayEnd },
-          },
-        },
-        { $group: { _id: null, total: { $sum: '$amount' } } },
-      ]);
+      const dayKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const dayTotal = earningsAgg?.chart.find((item) => item._id === dayKey)?.total || 0;
 
       weeklyChart.push({
         name: dayName,
-        value: dayAgg[0]?.total || 0,
+        value: dayTotal,
       });
     }
 

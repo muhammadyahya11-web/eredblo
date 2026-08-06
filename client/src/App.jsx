@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/Layout';
@@ -7,50 +7,50 @@ import SuperAdminLayout from './components/SuperAdminLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
 import SuperAdminProtectedRoute from './components/SuperAdminProtectedRoute';
-import Dashboard from './Pages/user/Dashboard';
-import AdminDashboard from './Pages/Admin/AdminDashboard';
-import AdminUsers from './Pages/Admin/AdminUsers';
-import AdminDeposits from './Pages/Admin/AdminDeposits';
-import AdminWithdrawals from './Pages/Admin/AdminWithdrawals';
-import AdminTransactions from './Pages/Admin/AdminTransactions';
-import AdminPlans from './Pages/Admin/AdminPlans';
-import AdminEarnings from './Pages/Admin/AdminEarnings';
-import AdminSupport from './Pages/Admin/AdminSupport';
-import AdminNotifications from './Pages/Admin/AdminNotifications';
-import AdminSettings from './Pages/Admin/AdminSettings';
-import AdminGifts from './Pages/Admin/AdminGifts';
-import SuperAdminDashboard from './Pages/SuperAdmin/Dashboard';
-import SuperAdminAdmins from './Pages/SuperAdmin/Admins';
-import SuperAdminUsers from './Pages/SuperAdmin/Users';
-import SuperAdminDeposits from './Pages/SuperAdmin/Deposits';
-import SuperAdminWithdrawals from './Pages/SuperAdmin/Withdrawals';
-import SuperAdminTransactions from './Pages/SuperAdmin/Transactions';
-import SuperAdminPlans from './Pages/SuperAdmin/Plans';
-import SuperAdminEarnings from './Pages/SuperAdmin/Earnings';
-import SuperAdminSupport from './Pages/SuperAdmin/Support';
-import SuperAdminNotifications from './Pages/SuperAdmin/Notifications';
-import SuperAdminSettings from './Pages/SuperAdmin/Settings';
-import Deposit from './Pages/user/Deposit';
-import Withdraw from './Pages/user/Withdraw';
-import Transactions from './Pages/user/Transactions';
-import Earnings from './Pages/user/Earnings';
-import MyTeam from './Pages/user/MyTeam';
-import MyInvestments from './Pages/user/MyInvestments';
-import Settings from './Pages/user/Settings';
-import Bonuses from './Pages/user/Bonuses';
-import Profile from './Pages/user/Profile';
-import Support from './Pages/user/Support';
-import Notifications from './Pages/user/Notifications';
-import Login from './Pages/Auth/Login';
-import Register from './Pages/Auth/Register';
-import VerifyOTP from './Pages/Auth/VerifyOTP';
-import ForgotPassword from './Pages/Auth/ForgotPassword';
-import ResetPassword from './Pages/Auth/ResetPassword';
 import './App.css';
 import './Pages.css';
-import Home from './Pages/Mainweb/Home';
-import About from './Pages/Mainweb/About';
-import Contact from './Pages/Mainweb/Contact';
+const Home = lazy(() => import('./Pages/Mainweb/Home'));
+const Login = lazy(() => import('./Pages/Auth/Login'));
+const Register = lazy(() => import('./Pages/Auth/Register'));
+const VerifyOTP = lazy(() => import('./Pages/Auth/VerifyOTP'));
+const ForgotPassword = lazy(() => import('./Pages/Auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('./Pages/Auth/ResetPassword'));
+const About = lazy(() => import('./Pages/Mainweb/About'));
+const Contact = lazy(() => import('./Pages/Mainweb/Contact'));
+const Dashboard = lazy(() => import('./Pages/user/Dashboard'));
+const Deposit = lazy(() => import('./Pages/user/Deposit'));
+const Withdraw = lazy(() => import('./Pages/user/Withdraw'));
+const Transactions = lazy(() => import('./Pages/user/Transactions'));
+const Earnings = lazy(() => import('./Pages/user/Earnings'));
+const MyTeam = lazy(() => import('./Pages/user/MyTeam'));
+const MyInvestments = lazy(() => import('./Pages/user/MyInvestments'));
+const Settings = lazy(() => import('./Pages/user/Settings'));
+const Bonuses = lazy(() => import('./Pages/user/Bonuses'));
+const Profile = lazy(() => import('./Pages/user/Profile'));
+const Support = lazy(() => import('./Pages/user/Support'));
+const Notifications = lazy(() => import('./Pages/user/Notifications'));
+const AdminDashboard = lazy(() => import('./Pages/Admin/AdminDashboard'));
+const AdminUsers = lazy(() => import('./Pages/Admin/AdminUsers'));
+const AdminDeposits = lazy(() => import('./Pages/Admin/AdminDeposits'));
+const AdminWithdrawals = lazy(() => import('./Pages/Admin/AdminWithdrawals'));
+const AdminTransactions = lazy(() => import('./Pages/Admin/AdminTransactions'));
+const AdminPlans = lazy(() => import('./Pages/Admin/AdminPlans'));
+const AdminEarnings = lazy(() => import('./Pages/Admin/AdminEarnings'));
+const AdminSupport = lazy(() => import('./Pages/Admin/AdminSupport'));
+const AdminNotifications = lazy(() => import('./Pages/Admin/AdminNotifications'));
+const AdminSettings = lazy(() => import('./Pages/Admin/AdminSettings'));
+const AdminGifts = lazy(() => import('./Pages/Admin/AdminGifts'));
+const SuperAdminDashboard = lazy(() => import('./Pages/SuperAdmin/Dashboard'));
+const SuperAdminAdmins = lazy(() => import('./Pages/SuperAdmin/Admins'));
+const SuperAdminUsers = lazy(() => import('./Pages/SuperAdmin/Users'));
+const SuperAdminDeposits = lazy(() => import('./Pages/SuperAdmin/Deposits'));
+const SuperAdminWithdrawals = lazy(() => import('./Pages/SuperAdmin/Withdrawals'));
+const SuperAdminTransactions = lazy(() => import('./Pages/SuperAdmin/Transactions'));
+const SuperAdminPlans = lazy(() => import('./Pages/SuperAdmin/Plans'));
+const SuperAdminEarnings = lazy(() => import('./Pages/SuperAdmin/Earnings'));
+const SuperAdminSupport = lazy(() => import('./Pages/SuperAdmin/Support'));
+const SuperAdminNotifications = lazy(() => import('./Pages/SuperAdmin/Notifications'));
+const SuperAdminSettings = lazy(() => import('./Pages/SuperAdmin/Settings'));
 
 function App() {
   return (
@@ -71,6 +71,7 @@ function App() {
           },
         }}
       />
+      <Suspense fallback={<div className="min-h-screen bg-[#050810] flex items-center justify-center text-slate-400">Loading...</div>}>
       <Routes>
         {/* Public Home Page */}
         <Route path="/" element={<Home />} />
@@ -140,6 +141,7 @@ function App() {
         {/* Catch-all: redirect unknown routes to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+      </Suspense>
     </>
   );
 }
