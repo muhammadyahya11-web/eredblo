@@ -12,13 +12,17 @@ const createPlan = async (req, res, next) => {
 
 const getPlans = async (req, res, next) => {
   try {
-    const { status } = req.query;
+    const { status, page = 1, limit = 20 } = req.query;
     const filter = {};
     if (status) filter.status = status;
 
-    const plans = await Plan.find(filter).sort({ createdAt: -1 }).lean();
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const [plans, total] = await Promise.all([
+      Plan.find(filter).sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)).lean(),
+      Plan.countDocuments(filter),
+    ]);
     res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
-    res.json({ success: true, data: plans });
+    res.json({ success: true, data: plans, total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) });
   } catch (error) {
     next(error);
   }

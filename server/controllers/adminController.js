@@ -31,18 +31,23 @@ const getStats = async (req, res, next) => {
 
 const getAllUsers = async (req, res, next) => {
   try {
+    const { page = 1, limit = 20, search } = req.query;
     const filter = {};
     if (req.query.role) filter.role = req.query.role;
     if (req.query.status) filter.status = req.query.status;
-    if (req.query.search) {
+    if (search) {
       filter.$or = [
-        { name: { $regex: req.query.search, $options: 'i' } },
-        { email: { $regex: req.query.search, $options: 'i' } },
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
       ];
     }
 
-    const users = await User.find(filter).sort({ createdAt: -1 }).select('-password');
-    res.json({ success: true, data: users });
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const [users, total] = await Promise.all([
+      User.find(filter).sort({ createdAt: -1 }).select('-password').skip(skip).limit(parseInt(limit)),
+      User.countDocuments(filter),
+    ]);
+    res.json({ success: true, data: users, total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) });
   } catch (error) {
     next(error);
   }
@@ -142,8 +147,20 @@ const updateUserStatus = async (req, res, next) => {
 
 const getAdmins = async (req, res, next) => {
   try {
-    const admins = await User.find({ role: 'admin' }).sort({ createdAt: -1 }).select('-password');
-    res.json({ success: true, data: admins });
+    const { page = 1, limit = 20, search } = req.query;
+    const filter = { role: 'admin' };
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const [admins, total] = await Promise.all([
+      User.find(filter).sort({ createdAt: -1 }).select('-password').skip(skip).limit(parseInt(limit)),
+      User.countDocuments(filter),
+    ]);
+    res.json({ success: true, data: admins, total, page: parseInt(page), pages: Math.ceil(total / parseInt(limit)) });
   } catch (error) {
     next(error);
   }

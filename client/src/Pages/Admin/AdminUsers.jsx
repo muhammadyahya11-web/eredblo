@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, Shield, ShieldOff, Mail, UserX, Pencil, Trash2 } from "lucide-react";
 import { adminAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 
 export default function AdminUsers() {
@@ -9,6 +10,10 @@ export default function AdminUsers() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const [editing, setEditing] = useState(null);
   const [editForm, setEditForm] = useState({ name: '', email: '', phone: '', cnic: '', role: '', status: '', isVerified: false });
@@ -18,12 +23,16 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const params = {};
+      const params = { page, limit };
       if (roleFilter) params.role = roleFilter;
       if (statusFilter) params.status = statusFilter;
       if (search) params.search = search;
       const { data } = await adminAPI.getUsers(params);
-      if (data.success) setUsers(data.data);
+      if (data.success) {
+        setUsers(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (error) {
       toast.error('Failed to load users');
     } finally {
@@ -33,7 +42,7 @@ export default function AdminUsers() {
 
   useEffect(() => {
     fetchUsers();
-  }, [roleFilter, statusFilter]);
+  }, [roleFilter, statusFilter, page, limit]);
 
   const handleToggleStatus = async (id, currentStatus) => {
     try {
@@ -126,13 +135,13 @@ export default function AdminUsers() {
             type="text"
             placeholder="Search users..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setLoading(true); }}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); setLoading(true); }}
             className="w-full bg-[#050810] border border-blue-500/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-colors"
           />
         </div>
         <select
           value={roleFilter}
-          onChange={(e) => { setRoleFilter(e.target.value); setLoading(true); }}
+          onChange={(e) => { setRoleFilter(e.target.value); setPage(1); setLoading(true); }}
           className="bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none"
         >
           <option value="">All Roles</option>
@@ -141,7 +150,7 @@ export default function AdminUsers() {
         </select>
         <select
           value={statusFilter}
-          onChange={(e) => { setStatusFilter(e.target.value); setLoading(true); }}
+          onChange={(e) => { setStatusFilter(e.target.value); setPage(1); setLoading(true); }}
           className="bg-[#050810] border border-blue-500/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none"
         >
           <option value="">All Status</option>
@@ -215,6 +224,15 @@ export default function AdminUsers() {
           </div>
         )}
       </div>
+
+      <Pagination
+        page={page}
+        pages={pages}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+      />
 
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setEditing(null)}>

@@ -5,6 +5,7 @@ import {
   TrendingUp, DollarSign, Filter
 } from "lucide-react";
 import { depositAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 
 /* ─── Status Badge ──────────────────────────────────────────────── */
@@ -299,6 +300,10 @@ export default function AdminDeposits() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
   const [viewDeposit, setViewDeposit] = useState(null);   // image modal
   const [actionModal, setActionModal] = useState(null);   // { deposit, action }
   const [mounted, setMounted] = useState(false);
@@ -308,16 +313,20 @@ export default function AdminDeposits() {
   const fetchDeposits = useCallback(async () => {
     setLoading(true);
     try {
-      const params = {};
+      const params = { page, limit };
       if (filter !== 'All') params.status = filter;
       const { data } = await depositAPI.getAll(params);
-      if (data.success) setDeposits(data.data || []);
+      if (data.success) {
+        setDeposits(data.data || []);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch {
       toast.error('Failed to load deposits');
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, [filter, page, limit]);
 
   useEffect(() => { fetchDeposits(); }, [fetchDeposits]);
 
@@ -421,7 +430,7 @@ export default function AdminDeposits() {
           {['All', 'Pending', 'Approved', 'Rejected'].map(f => (
             <button
               key={f}
-              onClick={() => setFilter(f)}
+              onClick={() => { setFilter(f); setPage(1); }}
               style={{
                 padding: '6px 16px', borderRadius: 20,
                 border: filter === f ? '1px solid rgba(59,130,246,0.5)' : '1px solid #1e2d4a',
@@ -448,7 +457,7 @@ export default function AdminDeposits() {
           <input
             type="text"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+             onChange={e => { setSearch(e.target.value); setPage(1); }}
             placeholder="Search user, TxID, method..."
             style={{
               width: '100%', background: '#050810', border: '1px solid #1e2d4a',
@@ -643,7 +652,7 @@ export default function AdminDeposits() {
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             fontSize: 12, color: '#4a5568',
           }}>
-            <span>Showing {filtered.length} of {deposits.length} deposits</span>
+            <span>Showing {filtered.length} of {total} deposits</span>
             {pendingCount > 0 && (
               <span style={{ color: '#f59e0b', fontWeight: 600 }}>
                 ⚠ {pendingCount} deposit{pendingCount > 1 ? 's' : ''} awaiting review
@@ -652,6 +661,15 @@ export default function AdminDeposits() {
           </div>
         )}
       </div>
+
+      <Pagination
+        page={page}
+        pages={pages}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+      />
 
       {/* ── Modals ── */}
       {viewDeposit && (

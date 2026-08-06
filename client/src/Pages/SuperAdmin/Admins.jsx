@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Search, UserPlus, Trash2, Shield, ShieldOff, X, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { adminAPI } from "../../services/api";
+import Pagination from "../../components/Pagination";
 
 export default function SuperAdminAdmins() {
   const [admins, setAdmins] = useState([]);
@@ -10,12 +11,20 @@ export default function SuperAdminAdmins() {
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const loadAdmins = async () => {
     try {
       setLoading(true);
-      const { data } = await adminAPI.getAdmins();
-      if (data.success) setAdmins(data.data);
+      const { data } = await adminAPI.getAdmins({ page, limit, search });
+      if (data.success) {
+        setAdmins(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to load admins");
     } finally {
@@ -23,7 +32,13 @@ export default function SuperAdminAdmins() {
     }
   };
 
-  useEffect(() => { loadAdmins(); }, []);
+  useEffect(() => { loadAdmins(); }, [page, limit]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(1);
+    loadAdmins();
+  };
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -54,8 +69,12 @@ export default function SuperAdminAdmins() {
     try {
       const { data } = await adminAPI.deleteAdmin(id);
       if (data.success) {
+        if (admins.length === 1 && page > 1) {
+          setPage(page - 1);
+        } else {
+          loadAdmins();
+        }
         toast.success("Admin removed");
-        setAdmins((prev) => prev.filter((a) => a._id !== id));
       } else {
         toast.error(data.message);
       }
@@ -80,12 +99,6 @@ export default function SuperAdminAdmins() {
     }
   };
 
-  const filtered = admins.filter(
-    (a) =>
-      a.name?.toLowerCase().includes(search.toLowerCase()) ||
-      a.email?.toLowerCase().includes(search.toLowerCase())
-  );
-
   return (
     <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-[#0a0f1e] min-h-full">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -101,7 +114,7 @@ export default function SuperAdminAdmins() {
         </button>
       </div>
 
-      <div className="relative">
+      <form className="relative" onSubmit={handleSearch}>
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
         <input
           type="text"
@@ -110,7 +123,7 @@ export default function SuperAdminAdmins() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-[#050810] border border-blue-500/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-colors focus:shadow-[0_0_15px_rgba(59,130,246,0.2)]"
         />
-      </div>
+      </form>
 
       <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
@@ -131,12 +144,12 @@ export default function SuperAdminAdmins() {
                     <Loader2 className="animate-spin inline mr-2" size={18} /> Loading admins...
                   </td>
                 </tr>
-              ) : filtered.length === 0 ? (
+              ) : admins.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="text-center py-10 text-slate-400">No admins found. Add your first admin.</td>
                 </tr>
               ) : (
-                filtered.map((a, idx) => (
+                admins.map((a, idx) => (
                   <tr key={a._id} className={`hover:bg-blue-500/5 transition-all duration-300 border-b border-white/5 last:border-0 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`}>
                     <td className="px-5 py-4">
                       <div>
@@ -180,6 +193,15 @@ export default function SuperAdminAdmins() {
           </table>
         </div>
       </div>
+
+      <Pagination
+        page={page}
+        pages={pages}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+      />
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => !saving && setShowModal(false)}>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Bell, Send, Users } from "lucide-react";
 import { notificationAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 
 export default function AdminNotifications() {
@@ -8,12 +9,20 @@ export default function AdminNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
   const [form, setForm] = useState({ title: "", message: "", type: "System", userId: "" });
 
   const fetchNotifications = async () => {
     try {
-      const { data } = await notificationAPI.getAll({ limit: 20 });
-      if (data.success) setNotifications(data.data);
+      const { data } = await notificationAPI.getAll({ page, limit });
+      if (data.success) {
+        setNotifications(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (error) {
       console.error('Failed to load notifications:', error);
     } finally {
@@ -21,7 +30,7 @@ export default function AdminNotifications() {
     }
   };
 
-  useEffect(() => { fetchNotifications(); }, []);
+  useEffect(() => { fetchNotifications(); }, [page, limit]);
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -51,7 +60,7 @@ export default function AdminNotifications() {
   };
 
   const stats = {
-    total: notifications.length,
+    total: total,
     thisMonth: notifications.filter(n => {
       const d = new Date(n.createdAt);
       const now = new Date();
@@ -163,6 +172,15 @@ export default function AdminNotifications() {
           </div>
         )}
       </div>
+
+      <Pagination
+        page={page}
+        pages={pages}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+      />
     </div>
   );
 }

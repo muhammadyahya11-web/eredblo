@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Send, Bell, X } from "lucide-react";
 import { notificationAPI, settingsAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 
 const typeStyles = {
@@ -19,11 +20,19 @@ export default function SuperAdminNotifications() {
   const [sending, setSending] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const fetchNotifications = async () => {
     try {
-      const { data } = await notificationAPI.getAll({ limit: 20 });
-      if (data.success) setNotifications(data.data);
+      const { data } = await notificationAPI.getAll({ page, limit });
+      if (data.success) {
+        setNotifications(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (error) {
       console.error('Failed to load notifications:', error);
     } finally {
@@ -31,7 +40,7 @@ export default function SuperAdminNotifications() {
     }
   };
 
-  useEffect(() => { fetchNotifications(); }, []);
+  useEffect(() => { fetchNotifications(); }, [page, limit]);
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -128,6 +137,14 @@ export default function SuperAdminNotifications() {
               )}
             </div>
           )}
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={(l) => { setLimit(l); setPage(1); }}
+          />
         </div>
       </div>
     </div>

@@ -2,11 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Search, Shield, ShieldOff, Loader2, Pencil, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { adminAPI } from "../../services/api";
+import Pagination from "../../components/Pagination";
 
 export default function SuperAdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const [editing, setEditing] = useState(null);
   const [editForm, setEditForm] = useState({ name: "", email: "", phone: "", cnic: "", role: "", status: "", isVerified: false });
@@ -17,11 +22,13 @@ export default function SuperAdminUsers() {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const { data } = await adminAPI.getUsers?.({ role: "user" }) || [];
+      const { data } = await adminAPI.getUsers?.({ role: "user", page, limit, search }) || [];
       if (Array.isArray(data)) {
         setUsers(data);
       } else if (data?.data) {
         setUsers(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
       } else {
         setUsers([]);
       }
@@ -33,7 +40,7 @@ export default function SuperAdminUsers() {
     }
   };
 
-  useEffect(() => { loadUsers(); }, []);
+  useEffect(() => { loadUsers(); }, [page, limit]);
 
   const handleToggleStatus = async (id) => {
     try {
@@ -86,7 +93,11 @@ export default function SuperAdminUsers() {
     try {
       const { data } = await adminAPI.deleteUser(deleting._id);
       if (data.success) {
-        setUsers((prev) => prev.filter((u) => u._id !== deleting._id));
+        if (users.length === 1 && page > 1) {
+          setPage(page - 1);
+        } else {
+          loadUsers();
+        }
         toast.success(data.message);
       } else {
         toast.error(data.message);
@@ -98,11 +109,11 @@ export default function SuperAdminUsers() {
     }
   };
 
-  const filtered = users.filter(
-    (u) =>
-      u.name?.toLowerCase().includes(search.toLowerCase()) ||
-      u.email?.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(1);
+    loadUsers();
+  };
 
   return (
     <div className="p-4 md:p-6 space-y-4 md:space-y-6 bg-[#0a0f1e] min-h-full">
@@ -111,7 +122,7 @@ export default function SuperAdminUsers() {
         <p className="text-slate-400 text-sm mt-1">Manage and monitor all registered users</p>
       </div>
 
-      <div className="relative">
+      <form className="relative" onSubmit={handleSearch}>
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
         <input
           type="text"
@@ -120,7 +131,7 @@ export default function SuperAdminUsers() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-[#050810] border border-blue-500/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none transition-colors focus:shadow-[0_0_15px_rgba(59,130,246,0.2)]"
         />
-      </div>
+      </form>
 
       <div className="bg-[#0d1530] border border-blue-500/10 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
@@ -143,12 +154,12 @@ export default function SuperAdminUsers() {
                     <Loader2 className="animate-spin inline mr-2" size={18} /> Loading users...
                   </td>
                 </tr>
-              ) : filtered.length === 0 ? (
+              ) : users.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="text-center py-10 text-slate-400">No users found.</td>
                 </tr>
               ) : (
-                filtered.map((u, idx) => (
+                users.map((u, idx) => (
                   <tr key={u._id} className={`hover:bg-blue-500/5 transition-all duration-300 border-b border-white/5 last:border-0 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`}>
                     <td className="px-5 py-4">
                       <div>
@@ -201,6 +212,15 @@ export default function SuperAdminUsers() {
           </table>
         </div>
       </div>
+
+      <Pagination
+        page={page}
+        pages={pages}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+      />
 
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setEditing(null)}>

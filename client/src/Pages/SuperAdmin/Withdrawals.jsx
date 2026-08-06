@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, Check, X } from "lucide-react";
 import { withdrawalAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 
 const statusStyles = {
@@ -13,13 +14,21 @@ export default function SuperAdminWithdrawals() {
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const fetchWithdrawals = async () => {
     try {
-      const params = {};
+      const params = { page, limit };
       if (filter !== 'All') params.status = filter;
       const { data } = await withdrawalAPI.getAll(params);
-      if (data.success) setWithdrawals(data.data);
+      if (data.success) {
+        setWithdrawals(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (error) {
       toast.error('Failed to load withdrawals');
     } finally {
@@ -27,7 +36,7 @@ export default function SuperAdminWithdrawals() {
     }
   };
 
-  useEffect(() => { fetchWithdrawals(); }, [filter]);
+  useEffect(() => { fetchWithdrawals(); }, [filter, page, limit]);
 
   const handleApprove = async (id) => {
     try {
@@ -46,7 +55,6 @@ export default function SuperAdminWithdrawals() {
     } catch (error) { toast.error('Failed to reject'); }
   };
 
-  const filtered = filter === "All" ? withdrawals : withdrawals.filter(w => w.status === filter);
   const payoutAmount = (withdrawal) => withdrawal.netAmount ?? Math.round(
     withdrawal.amount * (1 - (withdrawal.feePercentage ?? 3) / 100) * 100
   ) / 100;
@@ -59,7 +67,7 @@ export default function SuperAdminWithdrawals() {
       </div>
       <div className="flex items-center gap-2 flex-wrap">
         {["All", "Pending", "Approved", "Rejected"].map(f => (
-          <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border ${
+          <button key={f} onClick={() => { setFilter(f); setPage(1); }} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border ${
             filter === f 
               ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)]" 
               : "bg-[#0d1530] text-slate-400 border-blue-500/10 hover:border-blue-500/30 hover:text-white"
@@ -86,10 +94,10 @@ export default function SuperAdminWithdrawals() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.length === 0 ? (
+                {withdrawals.length === 0 ? (
                   <tr><td colSpan="7" className="text-center py-8 text-slate-400">No withdrawals found</td></tr>
                 ) : (
-                  filtered.map((w, idx) => (
+                  withdrawals.map((w, idx) => (
                     <tr key={w._id} className={`hover:bg-blue-500/5 transition-all duration-300 border-b border-white/5 last:border-0 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`}>
                       <td className="px-5 py-4">
                         <div>
@@ -124,6 +132,15 @@ export default function SuperAdminWithdrawals() {
           </div>
         )}
       </div>
+
+      <Pagination
+        page={page}
+        pages={pages}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+      />
     </div>
   );
 }

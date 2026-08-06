@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { transactionAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 
 const statusStyles = {
   pending: "bg-amber-500/10 text-amber-400 border-amber-500/20",
@@ -12,13 +13,21 @@ export default function SuperAdminTransactions() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const fetchTransactions = async () => {
     try {
-      const params = { limit: 50 };
+      const params = { page, limit };
       if (filter !== 'All') params.type = filter;
       const { data } = await transactionAPI.getAll(params);
-      if (data.success) setTransactions(data.data);
+      if (data.success) {
+        setTransactions(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (error) {
       console.error('Failed to load transactions:', error);
     } finally {
@@ -26,9 +35,7 @@ export default function SuperAdminTransactions() {
     }
   };
 
-  useEffect(() => { fetchTransactions(); }, [filter]);
-
-  const filtered = filter === "All" ? transactions : transactions.filter(t => t.type === filter);
+  useEffect(() => { fetchTransactions(); }, [filter, page, limit]);
 
   const typeColor = (type) => {
     switch(type?.toLowerCase()) {
@@ -48,7 +55,7 @@ export default function SuperAdminTransactions() {
       </div>
       <div className="flex items-center gap-2 flex-wrap">
         {["All", "Deposit", "Withdrawal", "Investment", "Profit"].map(f => (
-          <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border ${
+          <button key={f} onClick={() => { setFilter(f); setPage(1); }} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border ${
             filter === f 
               ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)]" 
               : "bg-[#0d1530] text-slate-400 border-blue-500/10 hover:border-blue-500/30 hover:text-white"
@@ -73,10 +80,10 @@ export default function SuperAdminTransactions() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.length === 0 ? (
+                {transactions.length === 0 ? (
                   <tr><td colSpan="5" className="text-center py-8 text-slate-400">No transactions found</td></tr>
                 ) : (
-                  filtered.map((t, idx) => (
+                  transactions.map((t, idx) => (
                     <tr key={t._id} className={`hover:bg-blue-500/5 transition-all duration-300 border-b border-white/5 last:border-0 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`}>
                       <td className={`font-medium px-5 py-4 ${typeColor(t.type)}`}>{t.type}</td>
                       <td className="text-slate-300 px-5 py-4">{t.user?.name || 'Unknown'}</td>
@@ -97,6 +104,15 @@ export default function SuperAdminTransactions() {
           </div>
         )}
       </div>
+
+      <Pagination
+        page={page}
+        pages={pages}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+      />
     </div>
   );
 }

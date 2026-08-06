@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, MessageCircle, CheckCircle, X, ChevronLeft } from "lucide-react";
 import { supportAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 
 const statusStyles = {
@@ -15,13 +16,21 @@ export default function SuperAdminSupport() {
   const [filter, setFilter] = useState("All");
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [replyText, setReplyText] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const fetchTickets = async () => {
     try {
-      const params = {};
+      const params = { page, limit };
       if (filter !== 'All') params.status = filter;
       const { data } = await supportAPI.getAll(params);
-      if (data.success) setTickets(data.data);
+      if (data.success) {
+        setTickets(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (error) {
       toast.error('Failed to load tickets');
     } finally {
@@ -29,7 +38,7 @@ export default function SuperAdminSupport() {
     }
   };
 
-  useEffect(() => { fetchTickets(); }, [filter]);
+  useEffect(() => { fetchTickets(); }, [filter, page, limit]);
 
   const handleReply = async () => {
     if (!replyText.trim()) return;
@@ -121,7 +130,7 @@ export default function SuperAdminSupport() {
         <>
           <div className="flex items-center gap-2 flex-wrap">
             {["All", "Open", "In Progress", "Closed"].map(f => (
-              <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border ${
+              <button key={f} onClick={() => { setFilter(f); setPage(1); }} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border ${
                 filter === f 
                   ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)]" 
                   : "bg-[#0d1530] text-slate-400 border-blue-500/10 hover:border-blue-500/30 hover:text-white"
@@ -177,6 +186,14 @@ export default function SuperAdminSupport() {
               </div>
             )}
           </div>
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={(l) => { setLimit(l); setPage(1); }}
+          />
         </>
       )}
     </div>

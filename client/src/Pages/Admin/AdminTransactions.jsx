@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { Search, ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { transactionAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 
 export default function AdminTransactions() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const fetchTransactions = async () => {
     try {
-      const params = { limit: 50 };
+      const params = { page, limit };
       if (filter !== 'All') params.type = filter;
       const { data } = await transactionAPI.getAll(params);
-      if (data.success) setTransactions(data.data);
+      if (data.success) {
+        setTransactions(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (error) {
       console.error('Failed to load transactions:', error);
     } finally {
@@ -22,7 +31,7 @@ export default function AdminTransactions() {
 
   useEffect(() => {
     fetchTransactions();
-  }, [filter]);
+  }, [filter, page, limit]);
 
   const filtered = filter === "All" ? transactions : transactions.filter(t => t.type === filter);
 
@@ -35,7 +44,7 @@ export default function AdminTransactions() {
 
       <div className="table-filters">
         {["All", "Deposit", "Withdrawal", "Investment", "Profit"].map(f => (
-          <button key={f} onClick={() => setFilter(f)} className={`filter-btn ${filter === f ? "active" : ""}`}>{f}</button>
+          <button key={f} onClick={() => { setFilter(f); setPage(1); }} className={`filter-btn ${filter === f ? "active" : ""}`}>{f}</button>
         ))}
       </div>
 
@@ -80,6 +89,15 @@ export default function AdminTransactions() {
           </div>
         )}
       </div>
+
+      <Pagination
+        page={page}
+        pages={pages}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+      />
     </div>
   );
 }

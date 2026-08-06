@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, MessageSquare, Eye, XCircle, CheckCircle } from "lucide-react";
 import { supportAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 
 export default function AdminSupport() {
@@ -10,14 +11,22 @@ export default function AdminSupport() {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const fetchTickets = async () => {
     try {
-      const params = {};
+      const params = { page, limit };
       if (filter !== 'All') params.status = filter;
       if (statusFilter) params.status = statusFilter;
       const { data } = await supportAPI.getAll(params);
-      if (data.success) setTickets(data.data);
+      if (data.success) {
+        setTickets(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (error) {
       toast.error('Failed to load tickets');
     } finally {
@@ -27,7 +36,7 @@ export default function AdminSupport() {
 
   useEffect(() => {
     fetchTickets();
-  }, [filter, statusFilter]);
+  }, [filter, statusFilter, page, limit]);
 
   const handleReply = async () => {
     if (!replyText.trim()) return;
@@ -108,7 +117,7 @@ export default function AdminSupport() {
         <>
           <div className="table-filters">
             {["All", "Open", "In Progress", "Closed"].map(f => (
-              <button key={f} onClick={() => setFilter(f)} className={`filter-btn ${filter === f ? "active" : ""}`}>{f}</button>
+              <button key={f} onClick={() => { setFilter(f); setPage(1); }} className={`filter-btn ${filter === f ? "active" : ""}`}>{f}</button>
             ))}
           </div>
 
@@ -155,6 +164,14 @@ export default function AdminSupport() {
               </div>
             )}
           </div>
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={(l) => { setLimit(l); setPage(1); }}
+          />
         </>
       )}
     </div>

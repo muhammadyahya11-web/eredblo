@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2, TrendingUp, X } from "lucide-react";
 import { planAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 
 export default function AdminPlans() {
@@ -8,12 +9,20 @@ export default function AdminPlans() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingPlan, setEditingPlan] = useState(null);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
   const [formData, setFormData] = useState({ name: '', depositAmount: '', dailyProfit: '', duration: '', totalReturn: '', status: 'active' });
 
   const fetchPlans = async () => {
     try {
-      const { data } = await planAPI.getPlans();
-      if (data.success) setPlans(data.data);
+      const { data } = await planAPI.getPlans({ page, limit });
+      if (data.success) {
+        setPlans(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (error) {
       toast.error('Failed to load plans');
     } finally {
@@ -23,7 +32,7 @@ export default function AdminPlans() {
 
   useEffect(() => {
     fetchPlans();
-  }, []);
+  }, [page, limit]);
 
   const openCreateModal = () => {
     setEditingPlan(null);
@@ -153,6 +162,15 @@ export default function AdminPlans() {
           </div>
         )}
       </div>
+
+      <Pagination
+        page={page}
+        pages={pages}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+      />
 
       {showModal && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">

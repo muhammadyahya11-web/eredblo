@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { FiGift, FiSend, FiTrash2, FiUser, FiClock, FiCheckCircle, FiLock, FiPlus } from 'react-icons/fi';
 import { giftAPI, adminAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 
 const AdminGifts = () => {
   const [gifts, setGifts] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   // Form state
   const [selectedUser, setSelectedUser] = useState('all');
@@ -26,11 +31,15 @@ const AdminGifts = () => {
     try {
       setLoading(true);
       const [giftsRes, usersRes] = await Promise.all([
-        giftAPI.adminGetAllGifts(),
+        giftAPI.adminGetAllGifts({ page, limit }),
         adminAPI.getUsers({ limit: 100 }),
       ]);
 
-      if (giftsRes.data.success) setGifts(giftsRes.data.data || []);
+      if (giftsRes.data.success) {
+        setGifts(giftsRes.data.data || []);
+        setTotal(giftsRes.data.total || 0);
+        setPages(giftsRes.data.pages || 1);
+      }
       if (usersRes.data.success) setUsers(usersRes.data.data || []);
     } catch (err) {
       toast.error('Failed to load gifts or users data');
@@ -75,7 +84,11 @@ const AdminGifts = () => {
       const { data } = await giftAPI.adminDeleteGift(id);
       if (data.success) {
         toast.success('Gift box deleted');
-        setGifts(gifts.filter((g) => g._id !== id));
+        if (gifts.length === 1 && page > 1) {
+          setPage(page - 1);
+        } else {
+          fetchData();
+        }
       }
     } catch {
       toast.error('Failed to delete gift box');
@@ -240,7 +253,7 @@ const AdminGifts = () => {
         <div className="lg:col-span-7 bg-[#0d152a] border border-[#1c2a4a] rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-[#1c2a4a] pb-3">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <FiGift className="text-amber-400" /> Sent Gift Boxes ({gifts.length})
+              <FiGift className="text-amber-400" /> Sent Gift Boxes ({total})
             </h3>
             <button onClick={fetchData} className="text-xs text-amber-400 hover:underline">
               Refresh
@@ -305,6 +318,15 @@ const AdminGifts = () => {
               })}
             </div>
           )}
+
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={(l) => { setLimit(l); setPage(1); }}
+          />
         </div>
       </div>
     </div>

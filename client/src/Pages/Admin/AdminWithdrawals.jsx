@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Search, CheckCircle, XCircle, Clock } from "lucide-react";
 import { withdrawalAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 import toast from 'react-hot-toast';
 
 export default function AdminWithdrawals() {
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const fetchWithdrawals = async () => {
     try {
-      const params = {};
+      const params = { page, limit };
       if (filter !== 'All') params.status = filter;
       const { data } = await withdrawalAPI.getAll(params);
-      if (data.success) setWithdrawals(data.data);
+      if (data.success) {
+        setWithdrawals(data.data);
+        setTotal(data.total || 0);
+        setPages(data.pages || 1);
+      }
     } catch (error) {
       toast.error('Failed to load withdrawals');
     } finally {
@@ -23,7 +32,7 @@ export default function AdminWithdrawals() {
 
   useEffect(() => {
     fetchWithdrawals();
-  }, [filter]);
+  }, [filter, page, limit]);
 
   const handleApprove = async (id) => {
     try {
@@ -101,7 +110,7 @@ export default function AdminWithdrawals() {
 
       <div className="table-filters">
         {["All", "Pending", "Approved", "Rejected"].map(f => (
-          <button key={f} onClick={() => setFilter(f)} className={`filter-btn ${filter === f ? "active" : ""}`}>{f}</button>
+          <button key={f} onClick={() => { setFilter(f); setPage(1); }} className={`filter-btn ${filter === f ? "active" : ""}`}>{f}</button>
         ))}
       </div>
 
@@ -123,10 +132,10 @@ export default function AdminWithdrawals() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.length === 0 ? (
+                {withdrawals.length === 0 ? (
                   <tr><td colSpan="7" className="text-center py-8 text-slate-400">No withdrawals found</td></tr>
                 ) : (
-                  filtered.map((w) => (
+                  withdrawals.map((w) => (
                     <tr key={w._id} className="hover:bg-blue-500/5 rounded-lg transition-all duration-300">
                       <td>
                         <div>
@@ -157,6 +166,15 @@ export default function AdminWithdrawals() {
           </div>
         )}
       </div>
+
+      <Pagination
+        page={page}
+        pages={pages}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+      />
     </div>
   );
 }
