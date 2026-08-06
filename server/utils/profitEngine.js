@@ -163,7 +163,7 @@ const distributeProfits = async () => {
         // change 0.01 to 24
         // ================================
 
-        if (hoursSinceLastProfit >= 0.01) {
+        if (hoursSinceLastProfit >= 24) {
 
 
 
@@ -360,18 +360,12 @@ const startProfitScheduler = () => {
 
 
 
-  // TESTING:
-  // Every 10 seconds
+  
   schedulerInterval =
-    setInterval(
-      distributeProfits,
-      10000
-    );
+    setInterval(  distributeProfits, 60 * 60 * 1000);
 
 
 
-  // Production:
-  // setInterval(distributeProfits, 60 * 60 * 1000)
 
 };
 

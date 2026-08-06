@@ -4,6 +4,7 @@ import {
   getUserInvestments,
   getAllInvestments,
   getInvestmentById,
+  updateInvestment,
   addProfitToInvestments,
   cancelInvestment,
 } from '../controllers/investmentController.js';
@@ -21,6 +22,7 @@ router.post('/distribute-profit', protect, superAdmin, addProfitToInvestments);
 
 // Keep the parameterized route last so it does not shadow the literal routes above
 router.get('/:id', protect, getInvestmentById);
+router.put('/:id', protect, superAdmin, updateInvestment);
 router.delete('/:id', protect, cancelInvestment);
 
 export default router;

@@ -68,7 +68,7 @@ const updateUser = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Only a super admin can edit admin accounts' });
     }
 
-    const { name, email, phone, cnic, role, status, isVerified } = req.body;
+    const { name, email, phone, cnic, role, status, isVerified, totalBalance, totalEarnings, todayEarnings } = req.body;
 
     if (name !== undefined) user.name = name;
     if (phone !== undefined) user.phone = phone;
@@ -77,6 +77,19 @@ const updateUser = async (req, res, next) => {
     if (status !== undefined && ['active', 'blocked'].includes(status)) user.status = status;
     if (role !== undefined && ['user', 'admin'].includes(role)) {
       user.role = role;
+    }
+
+    // Financial fields are restricted to super admins only
+    if (req.user.role === 'super-admin') {
+      if (totalBalance !== undefined && !isNaN(Number(totalBalance))) {
+        user.totalBalance = Number(totalBalance);
+      }
+      if (totalEarnings !== undefined && !isNaN(Number(totalEarnings))) {
+        user.totalEarnings = Number(totalEarnings);
+      }
+      if (todayEarnings !== undefined && !isNaN(Number(todayEarnings))) {
+        user.todayEarnings = Number(todayEarnings);
+      }
     }
 
     if (email !== undefined && email.toLowerCase() !== user.email) {

@@ -179,6 +179,39 @@ const getInvestmentById = async (req, res, next) => {
   }
 };
 
+const updateInvestment = async (req, res, next) => {
+  try {
+    const investment = await Investment.findById(req.params.id);
+    if (!investment) {
+      return res.status(404).json({ success: false, message: 'Investment not found' });
+    }
+
+    const { dailyProfit, amount, duration, totalReturn, status } = req.body;
+
+    if (dailyProfit !== undefined && !isNaN(Number(dailyProfit))) {
+      investment.dailyProfit = Number(dailyProfit);
+    }
+    if (amount !== undefined && !isNaN(Number(amount))) {
+      investment.amount = Number(amount);
+    }
+    if (duration !== undefined && !isNaN(Number(duration))) {
+      investment.duration = Number(duration);
+    }
+    if (totalReturn !== undefined && !isNaN(Number(totalReturn))) {
+      investment.totalReturn = Number(totalReturn);
+    }
+    if (status !== undefined && ['active', 'completed', 'cancelled'].includes(status)) {
+      investment.status = status;
+    }
+
+    await investment.save();
+
+    res.json({ success: true, message: 'Investment updated successfully', data: investment });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const addProfitToInvestments = async (req, res, next) => {
   try {
     const result = await distributeProfits();
@@ -234,6 +267,7 @@ export {
   getUserInvestments,
   getAllInvestments,
   getInvestmentById,
+  updateInvestment,
   addProfitToInvestments,
   cancelInvestment,
 };
