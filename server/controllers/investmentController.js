@@ -60,13 +60,6 @@ const createInvestment = async (req, res, next) => {
       throw err;
     }
 
-<<<<<<< HEAD
-    const updatedUser = await User.findByIdAndUpdate(
-      { _id: req.user._id },
-      { $inc: { totalBalance: plan.dailyProfit, totalEarnings: plan.dailyProfit, todayEarnings: plan.dailyProfit } },
-      { returnDocument: 'after' }
-    );
-=======
     await Transaction.create({
       user: req.user._id,
       type: 'Investment',
@@ -77,8 +70,7 @@ const createInvestment = async (req, res, next) => {
       referenceId: investment._id,
     });
 
-const updatedUser = await User.findById(req.user._id);
->>>>>>> e20cd8f93727076f3478af22a0528105bd24eb7e
+   const updatedUser = await User.findById(req.user._id);
 
 res.status(201).json({
   success: true,
@@ -88,40 +80,6 @@ res.status(201).json({
     totalInvestment: updatedUser.totalInvestment,
     totalEarnings: updatedUser.totalEarnings,
     todayEarnings: updatedUser.todayEarnings,
-  },
-  message: 'Investment created successfully',
-});
-
-<<<<<<< HEAD
-    await Transaction.create({
-      user: req.user._id,
-      type: 'Investment',
-      amount,
-      isPositive: false,
-      status: 'Success',
-      description: `Investment in ${plan.name}`,
-      referenceId: investment._id,
-    });
-=======
-   await Notification.create({
-  user: req.user._id,
-  title: 'Investment Created',
-  message: `Your investment of PKR ${amount} in ${plan.name} is now active.`,
-  type: 'System',
-  isImportant: true,
-});
->>>>>>> e20cd8f93727076f3478af22a0528105bd24eb7e
-
-   const finalUser = await User.findById(req.user._id);
-
- res.status(201).json({
-  success: true,
-  data: investment,
-  user: {
-    totalBalance: finalUser.totalBalance,
-    totalInvestment: finalUser.totalInvestment,
-    totalEarnings: finalUser.totalEarnings,
-    todayEarnings: finalUser.todayEarnings,
   },
   message: 'Investment created successfully',
 });
