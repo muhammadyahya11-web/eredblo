@@ -60,16 +60,6 @@ const createInvestment = async (req, res, next) => {
       throw err;
     }
 
-    await Transaction.create({
-      user: req.user._id,
-      type: 'Investment',
-      amount,
-      isPositive: false,
-      status: 'Success',
-      description: `Investment in ${plan.name}`,
-      referenceId: investment._id,
-    });
-
     const updatedUser = await User.findByIdAndUpdate(
       { _id: req.user._id },
       { $inc: { totalBalance: plan.dailyProfit, totalEarnings: plan.dailyProfit, todayEarnings: plan.dailyProfit } },
@@ -86,14 +76,38 @@ const createInvestment = async (req, res, next) => {
       referenceId: investment._id,
     });
 
-    await Notification.create({
+    await Transaction.create({
       user: req.user._id,
-      title: 'Investment Created',
-      message: `Your investment of PKR ${amount} in ${plan.name} is active. PKR ${plan.dailyProfit.toLocaleString()} daily profit was added to your balance.`,
-      type: 'System',
-      isImportant: true,
+      type: 'Investment',
+      amount,
+      isPositive: false,
+      status: 'Success',
+      description: `Investment in ${plan.name}`,
+      referenceId: investment._id,
     });
 
+   const finalUser = await User.findById(req.user._id);
+
+ res.status(201).json({
+  success: true,
+  data: investment,
+  user: {
+    totalBalance: finalUser.totalBalance,
+    totalInvestment: finalUser.totalInvestment,
+    totalEarnings: finalUser.totalEarnings,
+    todayEarnings: finalUser.todayEarnings,
+  },
+  message: 'Investment created successfully',
+});
+
+
+   await Notification.create({
+  user: req.user._id,
+  title: 'Investment Created',
+  message: `Your investment of PKR ${amount} in ${plan.name} is now active.`,
+  type: 'System',
+  isImportant: true,
+});
     // Multi-level referral commission on first plan investment only
     await distributeReferralCommission(req.user._id, amount, 'investment', investment._id);
     res.status(201).json({
