@@ -166,7 +166,7 @@ const distributeProfits = async () => {
 
 
 
-        if(minutesSinceLastProfit >= 1){
+        if(minutesSinceLastProfit >= 24){
 
 
 
