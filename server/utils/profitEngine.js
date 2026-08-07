@@ -6,40 +6,33 @@ import Notification from '../models/Notification.js';
 let schedulerInterval = null;
 
 
-// =====================================
+// ===============================
 // Distribute Investment Profits
-// TEST MODE: 1 MINUTE PROFIT
-// =====================================
-
+// ===============================
 const distributeProfits = async () => {
 
   try {
 
-    const activeInvestments =
-      await Investment.find({
-        status: 'active'
-      })
+    // Get all active investments
+    const activeInvestments = await Investment.find({ status: 'active' })
       .populate('plan', 'name');
 
 
     const now = new Date();
-
     let updatedCount = 0;
-
 
 
     for (const investment of activeInvestments) {
 
-
       try {
-
 
         const userId = investment.user;
 
 
+        // If investment has no user
         if (!userId) {
           console.warn(
-            `[ProfitEngine] Missing user ${investment._id}`
+            `[ProfitEngine] Missing user for investment ${investment._id}`
           );
           continue;
         }
@@ -47,13 +40,151 @@ const distributeProfits = async () => {
 
 
         // =====================================
-        // MATURITY CHECK
+        // Investment Maturity Check
         // =====================================
 
         if (now >= investment.endDate) {
 
 
           investment.status = 'completed';
+
+
+          const user = await User.findById(userId);
+
+
+          if (user) {
+
+
+            // Remaining profit calculation
+            // Daily paid profit is excluded
+            const remainingProfit = Math.max(
+              0,
+              investment.totalReturn -
+              investment.amount -
+              (investment.profitEarned || 0)
+            );
+
+
+            const maturityPayout =
+              investment.amount + remainingProfit;
+
+
+
+            // Add remaining amount to user balance
+            user.totalBalance =
+              (user.totalBalance || 0) + maturityPayout;
+
+
+            user.totalEarnings =
+              (user.totalEarnings || 0) + remainingProfit;
+
+
+            user.todayEarnings =
+              (user.todayEarnings || 0) + remainingProfit;
+
+
+
+            await user.save();
+
+
+
+            // Save maturity transaction
+            await Transaction.create({
+
+              user: user._id,
+              type: 'Profit',
+              amount: remainingProfit,
+              isPositive: true,
+              status: 'Approved',
+
+              description:
+                `Investment matured - ${investment.plan?.name || 'Plan'}`,
+
+              referenceId: investment._id
+
+            });
+
+
+
+            // Notification
+            await Notification.create({
+
+              user: user._id,
+
+              title: 'Investment Matured',
+
+              message:
+                `Your investment matured. PKR ${maturityPayout.toLocaleString()} added to your balance.`,
+
+              type: 'Profit',
+
+              isImportant: true
+
+            });
+
+          }
+
+
+
+          await investment.save();
+
+          updatedCount++;
+
+          continue;
+
+        }
+
+
+
+
+        // =====================================
+        // Daily Profit Calculation
+        // =====================================
+
+
+        const lastAdded =
+          investment.lastProfitAddedAt ||
+          investment.startDate;
+
+
+
+        // Convert milliseconds into hours
+        const hoursSinceLastProfit =
+          (now - new Date(lastAdded)) /
+          (1000 * 60 * 60);
+
+
+        // ================================
+        // TESTING TIME
+        // 0.01 hours = around 36 seconds
+        //
+        // Production:
+        // change 0.01 to 24
+        // ================================
+
+        if (hoursSinceLastProfit >= 24) {
+
+
+
+          // Credit the daily profit for every complete 24-hour bucket that
+          // has passed since the last payout, so missed days are caught up.
+          const missedDays = Math.floor(hoursSinceLastProfit / 24);
+          const profitToAdd =
+            investment.dailyProfit * missedDays;
+
+
+
+          // Save profit history
+          investment.profitEarned =
+            (investment.profitEarned || 0)
+            + profitToAdd;
+
+
+
+          // Update last profit time
+          investment.lastProfitAddedAt =
+            new Date();
+
 
 
           const user =
@@ -64,171 +195,21 @@ const distributeProfits = async () => {
           if (user) {
 
 
-            const remainingProfit = Math.max(
-              0,
-              investment.totalReturn -
-              investment.amount -
-              (investment.profitEarned || 0)
-            );
 
-
-
-            const maturityAmount =
-              investment.amount +
-              remainingProfit;
-
-
-
-            user.totalBalance =
-              (user.totalBalance || 0)
-              + maturityAmount;
-
-
-
-            user.totalEarnings =
-              (user.totalEarnings || 0)
-              + remainingProfit;
-
-
-
-            await user.save();
-
-
-
-
-            await Transaction.create({
-
-              user:user._id,
-
-              type:'Profit',
-
-              amount:maturityAmount,
-
-              isPositive:true,
-
-              status:'Approved',
-
-              description:
-              `Investment matured - ${investment.plan?.name || 'Plan'}`,
-
-              referenceId:investment._id
-
-            });
-
-
-
-
-            await Notification.create({
-
-              user:user._id,
-
-              title:'Investment Matured',
-
-              message:
-              `Investment completed. PKR ${maturityAmount.toLocaleString()} added.`,
-
-              type:'Profit',
-
-              isImportant:true
-
-            });
-
-
-          }
-
-
-          await investment.save();
-
-          updatedCount++;
-
-          continue;
-
-        }
-
-
-
-
-        // =====================================
-        // TEST PROFIT EVERY 1 MINUTE
-        // =====================================
-
-
-        const lastAdded =
-          investment.lastProfitAddedAt ||
-          investment.startDate;
-
-
-
-        const minutesSinceLastProfit =
-          (now - new Date(lastAdded))
-          /
-          (1000 * 60);
-
-
-
-        if(minutesSinceLastProfit >= 1){
-
-
-
-          const missedMinutes =
-            Math.floor(minutesSinceLastProfit);
-
-
-
-          const profitToAdd =
-            investment.dailyProfit *
-            missedMinutes;
-
-
-
-
-          investment.profitEarned =
-            (investment.profitEarned || 0)
-            +
-            profitToAdd;
-
-
-
-
-          // exact minute update
-          investment.lastProfitAddedAt =
-            new Date(
-              new Date(lastAdded).getTime()
-              +
-              missedMinutes * 60 * 1000
-            );
-
-
-
-
-
-          const user =
-            await User.findById(userId);
-
-
-
-          if(user){
-
-
-
-            user.totalBalance =
-              (user.totalBalance || 0)
-              +
-              profitToAdd;
-
-
-
-            user.totalEarnings =
-              (user.totalEarnings || 0)
-              +
-              profitToAdd;
-
-
-
+            // Add profit to wallet
             user.todayEarnings =
               (user.todayEarnings || 0)
-              +
-              profitToAdd;
+              + profitToAdd;
+
+
+            user.totalEarnings =
+              (user.totalEarnings || 0)
+              + profitToAdd;
+
+
+            user.totalBalance =
+              (user.totalBalance || 0)
+              + profitToAdd;
 
 
 
@@ -237,26 +218,26 @@ const distributeProfits = async () => {
 
 
 
-
+            // Create transaction
             await Transaction.create({
 
-              user:user._id,
+              user: user._id,
 
-              type:'Profit',
+              type: 'Profit',
 
-              amount:profitToAdd,
+              amount: profitToAdd,
 
-              isPositive:true,
+              isPositive: true,
 
-              status:'Approved',
+              status: 'Approved',
 
 
               description:
-              `Testing profit - ${investment.plan?.name || 'Investment'}`,
+                `Daily profit - ${investment.plan?.name || 'Investment'}`,
 
 
               referenceId:
-              investment._id
+                investment._id
 
             });
 
@@ -264,29 +245,27 @@ const distributeProfits = async () => {
 
 
 
-
+            // Notification
             await Notification.create({
 
-              user:user._id,
+              user: user._id,
 
-              title:'Profit Added',
+              title: 'Daily Profit Added',
 
               message:
-              `PKR ${profitToAdd.toLocaleString()} profit added.`,
+                `You received PKR ${profitToAdd.toLocaleString()} as daily profit.`,
 
-              type:'Profit',
+              type: 'Profit',
 
-              isImportant:false
+              isImportant: false
 
             });
-
 
 
 
             console.log(
-              `[ProfitEngine] ${profitToAdd} profit added to ${user._id}`
+              `[ProfitEngine] Profit ${profitToAdd} added to user ${user._id}`
             );
-
 
           }
 
@@ -303,26 +282,25 @@ const distributeProfits = async () => {
 
 
 
-      }
-      catch(error){
+      } catch (investmentError) {
+
 
         console.error(
-          `Investment Error ${investment._id}:`,
-          error.message
+          `Error processing investment ${investment._id}:`,
+          investmentError.message
         );
 
-      }
 
+      }
 
     }
 
 
 
-
-    if(updatedCount > 0){
+    if (updatedCount > 0) {
 
       console.log(
-        `[ProfitEngine] Updated ${updatedCount} investments`
+        `[ProfitEngine] Updated ${updatedCount} investments at ${now.toISOString()}`
       );
 
     }
@@ -333,75 +311,61 @@ const distributeProfits = async () => {
 
       updatedCount,
 
-      processedAt:now.toISOString()
+      processedAt: now.toISOString()
 
     };
 
 
 
-  }
-  catch(error){
+  } catch (error) {
 
 
     console.error(
-      '[ProfitEngine Error]',
+      '[ProfitEngine] Error:',
       error.message
     );
 
 
     return {
 
-      updatedCount:0,
+      updatedCount: 0,
 
-      error:error.message
+      error: error.message
 
     };
 
 
   }
 
-
 };
 
 
 
 
 
-// =====================================
-// START TEST SCHEDULER
-// =====================================
+// =================================
+// Start Scheduler
+// =================================
 
 const startProfitScheduler = () => {
 
 
-  if(schedulerInterval){
-
-    console.log(
-      '[ProfitEngine] Already running'
-    );
-
-    return;
-
-  }
-
-
-
   console.log(
-    '[ProfitEngine] Test Scheduler Started'
+    '[ProfitEngine] Scheduler started'
   );
 
 
 
+  // Run immediately
   distributeProfits();
 
 
 
-  // every 10 seconds check
+  
   schedulerInterval =
-    setInterval(
-      distributeProfits,
-      10 * 1000
-    );
+    setInterval(  distributeProfits, 60 * 60 * 1000);
+
+
 
 
 };
@@ -410,23 +374,20 @@ const startProfitScheduler = () => {
 
 
 
-// =====================================
-// STOP SCHEDULER
-// =====================================
+// =================================
+// Stop Scheduler
+// =================================
 
 const stopProfitScheduler = () => {
 
 
-  if(schedulerInterval){
+  if (schedulerInterval) {
 
 
-    clearInterval(
-      schedulerInterval
-    );
+    clearInterval(schedulerInterval);
 
 
-    schedulerInterval=null;
-
+    schedulerInterval = null;
 
 
     console.log(
@@ -436,30 +397,29 @@ const stopProfitScheduler = () => {
 
   }
 
-
 };
 
 
 
 
 
-process.on(
-  'SIGINT',
-  ()=>{
-    stopProfitScheduler();
-    process.exit(0);
-  }
-);
+process.on('SIGINT', () => {
+
+  stopProfitScheduler();
+
+  process.exit(0);
+
+});
 
 
 
-process.on(
-  'SIGTERM',
-  ()=>{
-    stopProfitScheduler();
-    process.exit(0);
-  }
-);
+process.on('SIGTERM', () => {
+
+  stopProfitScheduler();
+
+  process.exit(0);
+
+});
 
 
 
