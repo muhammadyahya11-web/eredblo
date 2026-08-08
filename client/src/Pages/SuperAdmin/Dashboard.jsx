@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   Users, UserCheck, UserPlus, Wallet, ArrowDownToLine, Clock,
-  CircleDollarSign, Landmark, Download, ChevronDown, CheckCircle2,
-  Edit, Trash2, Eye, Activity, Box, TrendingUp
+  CircleDollarSign, Landmark, Download, Activity, Box, TrendingUp, CheckCircle2,
+  Eye, Edit, Trash2
 } from "lucide-react";
 import {
   AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip,
   PieChart, Pie, Cell, CartesianGrid, LineChart, Line, Legend
 } from "recharts";
-import { superAdminAPI, adminAPI, transactionAPI } from "../../services/api";
+import { superAdminAPI } from "../../services/api";
 
 /* ── Animated number ── */
 function CountUp({ end, prefix = "", suffix = "" }) {
@@ -36,7 +37,7 @@ const Card = ({ children, className = "" }) => (
   </div>
 );
 
-const KpiCard = ({ label, value, icon: Icon, tone, prefix, suffix, percent, isUp }) => {
+const KpiCard = ({ label, value, icon: Icon, tone, prefix, suffix }) => {
   const colors = {
     blue: "text-blue-400 bg-gradient-to-br from-blue-500/20 to-blue-500/10 shadow-lg shadow-blue-500/30",
     green: "text-emerald-400 bg-gradient-to-br from-emerald-500/20 to-emerald-500/10 shadow-lg shadow-emerald-500/30",
@@ -57,12 +58,6 @@ const KpiCard = ({ label, value, icon: Icon, tone, prefix, suffix, percent, isUp
         <div className={`w-12 h-12 rounded-full flex items-center justify-center ${colors[tone]}`}>
           <Icon size={24} />
         </div>
-      </div>
-      <div className="flex items-center gap-1.5 mt-2">
-        <span className={`text-xs font-semibold ${isUp ? 'text-emerald-400' : 'text-rose-400'}`}>
-          {isUp ? '+' : '-'}{percent}%
-        </span>
-        <span className="text-[11px] text-slate-500">from last 7 days</span>
       </div>
     </Card>
   );
@@ -105,15 +100,14 @@ export default function SuperAdminDashboard() {
     recentUsers,
   } = summaryData;
 
-  // Use recentTransactions as recent activities for now, map to expected format
-  const recentActivities = recentTransactions.map((tx) => ({
-    text: `${tx.type} ${tx.status.toLowerCase()}`,
-    sub: `User: ${tx.user?.name || 'Unknown'}`,
+  const recentActivities = (recentTransactions || []).map((tx) => ({
+    icon: CircleDollarSign,
+    bg: "bg-emerald-500/15",
+    color: "text-emerald-400",
+    text: `${tx.type}${tx.user?.name ? ` — ${tx.user.name}` : ""}`,
+    sub: tx.status || "Completed",
     amount: tx.amount,
     time: new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    icon: tx.type === 'Deposit' ? Download : tx.type === 'Withdrawal' ? ArrowDownToLine : tx.type === 'Profit' ? CircleDollarSign : Activity,
-    color: tx.type === 'Deposit' ? 'text-emerald-500' : tx.type === 'Withdrawal' ? 'text-rose-500' : 'text-purple-500',
-    bg: tx.type === 'Deposit' ? 'bg-emerald-500/10' : tx.type === 'Withdrawal' ? 'bg-rose-500/10' : 'bg-purple-500/10',
   }));
 
   return (
@@ -125,22 +119,19 @@ export default function SuperAdminDashboard() {
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-sm text-slate-400 mt-1">Welcome back, Super Admin! Here's what's happening with your platform today.</p>
         </div>
-        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50">
-          <Download size={16} /> Download Report
-        </button>
       </div>
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-        <KpiCard label="Total Users" value={stats.totalUsers} icon={Users} tone="blue" percent={12.5} isUp={true} />
-        <KpiCard label="Active Users" value={stats.activeUsers} icon={UserCheck} tone="green" percent={8.4} isUp={true} />
-        <KpiCard label="New Registrations" value={stats.newRegistrations} icon={UserPlus} tone="purple" percent={15.2} isUp={true} />
-        <KpiCard label="Total Deposits" value={stats.totalDeposits} icon={Wallet} tone="orange" prefix="PKR " percent={18.6} isUp={true} />
+        <KpiCard label="Total Users" value={stats.totalUsers} icon={Users} tone="blue" />
+        <KpiCard label="Active Users" value={stats.activeUsers} icon={UserCheck} tone="green" />
+        <KpiCard label="New Registrations (7 days)" value={stats.newRegistrations} icon={UserPlus} tone="purple" />
+        <KpiCard label="Total Deposits" value={stats.totalDeposits} icon={Wallet} tone="orange" prefix="PKR " />
         
-        <KpiCard label="Total Withdrawals" value={stats.totalWithdrawals} icon={Box} tone="red" prefix="PKR " percent={10.3} isUp={true} />
-        <KpiCard label="Pending Withdrawals" value={stats.pendingWithdrawals} icon={Clock} tone="orange" prefix="PKR " percent={2.4} isUp={false} />
-        <KpiCard label="Today's Profit Given" value={stats.todaysProfit} icon={CircleDollarSign} tone="green" prefix="PKR " percent={11.7} isUp={true} />
-        <KpiCard label="Company Balance" value={stats.companyBalance} icon={Landmark} tone="blue" prefix="PKR " percent={9.8} isUp={true} />
+        <KpiCard label="Total Withdrawals" value={stats.totalWithdrawals} icon={Box} tone="red" prefix="PKR " />
+        <KpiCard label="Pending Withdrawals" value={stats.pendingWithdrawals} icon={Clock} tone="orange" prefix="PKR " />
+        <KpiCard label="Today's Profit Given" value={stats.todaysProfit} icon={CircleDollarSign} tone="green" prefix="PKR " />
+        <KpiCard label="User Wallet Balance" value={stats.companyBalance} icon={Landmark} tone="blue" prefix="PKR " />
       </div>
 
       {/* Charts Row */}
@@ -149,9 +140,7 @@ export default function SuperAdminDashboard() {
         <Card className="p-5">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-semibold text-lg">Deposit vs Withdrawal</h2>
-            <button className="flex items-center gap-2 text-sm text-slate-400 hover:text-white border border-white/10 rounded-lg px-3 py-1.5">
-              This Week <ChevronDown size={14} />
-            </button>
+            <span className="text-xs text-slate-400 border border-white/10 rounded-lg px-3 py-1.5">Last 7 days</span>
           </div>
           <div className="h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -174,9 +163,7 @@ export default function SuperAdminDashboard() {
         <Card className="p-5">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-semibold text-lg">Registration Overview</h2>
-            <button className="flex items-center gap-2 text-sm text-slate-400 hover:text-white border border-white/10 rounded-lg px-3 py-1.5">
-              This Week <ChevronDown size={14} />
-            </button>
+            <span className="text-xs text-slate-400 border border-white/10 rounded-lg px-3 py-1.5">Last 7 days</span>
           </div>
           <div className="h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -207,7 +194,7 @@ export default function SuperAdminDashboard() {
         <Card className="p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-lg">Top Investors</h2>
-            <a href="#" className="text-sm text-blue-500 hover:text-blue-400 font-medium">View All</a>
+            <Link to="/super-admin/users" className="text-sm text-blue-500 hover:text-blue-400 font-medium">View all users</Link>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -238,9 +225,7 @@ export default function SuperAdminDashboard() {
         <Card className="p-5">
           <div className="flex items-center justify-between mb-2">
             <h2 className="font-semibold text-lg">Deposit Methods</h2>
-            <button className="flex items-center gap-2 text-sm text-slate-400 hover:text-white border border-white/10 rounded-lg px-2 py-1">
-              This Week <ChevronDown size={14} />
-            </button>
+            <span className="text-xs text-slate-400 border border-white/10 rounded-lg px-2 py-1">All approved deposits</span>
           </div>
           <div className="h-[200px] flex items-center justify-center relative">
             <ResponsiveContainer width="100%" height="100%">

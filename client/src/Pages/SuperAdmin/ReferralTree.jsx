@@ -28,9 +28,9 @@ export default function SuperAdminReferralTree() {
   const loadTree = (userId) => {
     setLoading(true);
     referralAPI.getTree(userId).then(({ data }) => {
-      if (data.success) { setRootUser(data.root); }
+      if (data.success) { setRootUser(data.data); }
       setLoading(false);
-    }).catch(() => { setRootUser(null); setTree([]); setLoading(false); });
+    }).catch(() => { setRootUser(null); setLoading(false); });
   };
 
   const TreeNode = ({ node, level = 0 }) => {
@@ -47,7 +47,7 @@ export default function SuperAdminReferralTree() {
     return (
       <div className="select-none">
         <div
-          className={`flex items-center gap-3 py-2.5 pl-${pl} pr-3 rounded-xl bg-[#0d152a] border border-blue-500/20 hover:border-blue-500/40 hover:bg-blue-500/5 transition-all cursor-pointer group`}
+          className="flex items-center gap-3 py-2.5 pr-3 rounded-xl bg-[#0d152a] border border-blue-500/20 hover:border-blue-500/40 hover:bg-blue-500/5 transition-all cursor-pointer group"
           onClick={toggleNode}
         >
           {hasChildren && (

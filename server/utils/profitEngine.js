@@ -162,7 +162,7 @@ const distributeProfits = async () => {
         const minutesSinceLastProfit =
           (now - new Date(lastAdded))
           /
-          (1000 * 60);
+          (1000 * 60 *60);
 
 
 
