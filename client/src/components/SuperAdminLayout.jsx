@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, Wallet, Download, Upload, Network, 
   TrendingUp, Award, Gift, List, FileBarChart, Bell, HelpCircle, 
   Tag, Settings, ClipboardList, Shield, Monitor, UserPlus, 
-  Send, Search, Calendar, ChevronDown, Menu, LogOut
+  Send, Search, Calendar, ChevronDown, Menu, LogOut, Layers
 } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -16,6 +16,7 @@ const navItems = [
   { to: '/super-admin/withdrawals', icon: Upload, label: 'Withdrawal Management' },
   { to: '/super-admin/referrals', icon: Network, label: 'Referral Tree' },
   { to: '/super-admin/roi', icon: TrendingUp, label: 'ROI Management' },
+  { to: '/super-admin/plans', icon: Layers, label: 'Plan Management' },
   { to: '/super-admin/leaders', icon: Award, label: 'Leader Management' },
   { to: '/super-admin/bonus', icon: Gift, label: 'Bonus Management' },
   { to: '/super-admin/transactions', icon: List, label: 'Transaction History' },
